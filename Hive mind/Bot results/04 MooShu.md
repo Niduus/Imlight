@@ -9,38 +9,38 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Shoji: won 47 time(s) (25 Solo, 22 Team), lost 1. Fastest: Kurrent in 2 rounds, deck for a boss (Balance), hitting with Balance, Life, Death; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Storm Shark.
 - Otomo Courier: won 14 time(s) (12 Solo, 2 Team), lost 23. Fastest: Kitharas Shade in 3 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies), hit with Kraken, Thermic Golem.
 - Imitsu Defouler: won 35 time(s) (35 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hit with Immolate.
-- Maito: won 11 time(s) (11 Solo, 0 Team), lost 24. Fastest: Cyndr in 3 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hit with Sunbird, Immolate.
+- Maito: won 12 time(s) (12 Solo, 0 Team), lost 24. Fastest: Cyndr in 3 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hit with Sunbird, Immolate.
 - Otomo Spotter: won 30 time(s) (30 Solo, 0 Team), lost 2. Fastest: Kitharas Shade in 1 rounds, deck for Myth enemies, hitting with Myth, Fire, Storm; my own fights say about 62% hits in my main deck, hit with Kraken.
 - Otomo Supply Runner: won 27 time(s) (25 Solo, 2 Team), lost 4. Fastest: Kitharas Shade in 3 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Thunder Snake, Thermic Golem.
 - War Oni: won 8 time(s) (6 Solo, 2 Team), lost 22. Fastest: Cyndr in 7 rounds, deck for a boss (Fire), hitting with Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Banshee, Heck Hound.
+- Death Oni: won 14 time(s) (12 Solo, 2 Team), lost 15. Fastest: Kurrent in 3 rounds, plan "hit now", deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck, hit with Kraken.
 - Sanzoku Bandit: won 26 time(s) (24 Solo, 2 Team), lost 0. Fastest: Kitharas Andromeda in 3 rounds, deck for any fight; my own fights say about 54% hits in my main deck (many of my fights lately had 2+ enemies), hit with Heck Hound, Sunbird.
-- Death Oni: won 10 time(s) (8 Solo, 2 Team), lost 15. Fastest: Mythis in 5 rounds, plan "hit now", deck for any fight; my own fights say about 50% hits in my main deck (many of my fights lately had 2+ enemies), hit with Humongofrog, Blood Bat, Minotaur, Cyclops.
 - Katsumori: won 13 time(s) (13 Solo, 0 Team), lost 10. Fastest: Kurrent in 5 rounds, deck for a boss (Fire), hitting with Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Frostbite.
 - Infected Villager: won 18 time(s) (18 Solo, 0 Team), lost 3. Fastest: Kitharas Shade in 3 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies), hit with Kraken.
 - Do-Daga: won 13 time(s) (11 Solo, 2 Team), lost 7. Fastest: Kitharas Rock in 4 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 71% hits in my main deck (many of my fights lately had 2+ enemies), hit with Storm Shark, Kraken.
 - Walking Dead: won 17 time(s) (11 Solo, 6 Team), lost 2. Fastest: Tulkar in 5 rounds, deck for Death enemies, hitting with Death, Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 66% hits in my main deck (most of my fights lately had 2+ enemies), hit with Frostbite, Frost Beetle.
 - Yochimo: won 19 time(s) (17 Solo, 2 Team), lost 0. Fastest: Cyndr in 1 rounds, deck for a boss (Storm), hitting with Storm, Life, Death (most of my fights lately had 2+ enemies), hit with Immolate.
 - Kanago: won 11 time(s) (9 Solo, 2 Team), lost 7. Fastest: Mythis in 7 rounds, deck for a boss (Storm), hitting with Storm, Balance, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hit with Cyclops.
+- Grum Foultooth: won 15 time(s) (15 Solo, 0 Team), lost 2. Fastest: Kitharas Shade in 2 rounds, deck for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 62% hits in my main deck (most of my fights lately had 2+ enemies), hit with Thermic Golem.
 - Otomo Quartermaster: won 13 time(s) (11 Solo, 2 Team), lost 3. Fastest: Kitharas Hart in 3 rounds, deck for a boss (Fire), hitting with Fire, Myth, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 70% hits in my main deck (most of my fights lately had 2+ enemies), hit with Frost Beetle.
-- Grum Foultooth: won 14 time(s) (14 Solo, 0 Team), lost 2. Fastest: Kitharas Shade in 2 rounds, deck for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 62% hits in my main deck (most of my fights lately had 2+ enemies), hit with Thermic Golem.
 - Cursed Ronin: won 16 time(s) (11 Solo, 5 Team), lost 0. Fastest: Kurrent in 3 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hit with Thermic Golem, Thunder Snake, Minor Surge.
 - Aiuchi: won 11 time(s) (11 Solo, 0 Team), lost 4. Fastest: Kurrent in 3 rounds, deck for a boss (Fire), hitting with Fire, Balance, Death; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Thermic Golem.
 - Ronin Mutineer: won 13 time(s) (13 Solo, 0 Team), lost 1. Fastest: Kitharas Shade in 4 rounds, plan "hit now", deck for any fight; my own fights say about 58% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken, Thunder Snake, Storm Shark.
 - Koto: won 11 time(s) (11 Solo, 0 Team), lost 2. Fastest: Cyndr in 4 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Balance, Fire (most of my fights lately had 2+ enemies), hit with Fire Cat, Scald.
 - Plague Oni: won 9 time(s) (6 Solo, 3 Team), lost 3. Fastest: Kurrent in 6 rounds, plan "stack up", deck for a boss (Balance), hitting with Balance, Death, Ice; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Minor Surge, Kraken.
+- Jade Oni: won 3 time(s) (3 Solo, 0 Team), lost 9. Fastest: Garm in 12 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hit with Banshee.
 - Oyotomi the Defiler: won 9 time(s) (7 Solo, 2 Team), lost 3. Fastest: Kurrent in 1 rounds, deck for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken.
 - Kakeda Shadow: won 8 time(s) (6 Solo, 2 Team), lost 4. Fastest: Mythis in 3 rounds, plan "hit now", deck for Storm enemies, hitting with Storm, Death, Myth; my own fights say about 52% hits in my main deck (most of my fights lately had 2+ enemies), hit with Minor Heroic Hit, Humongofrog.
 - Tamauji: won 9 time(s) (7 Solo, 2 Team), lost 2. Fastest: Kitharas Shade in 2 rounds, deck for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; my own fights say about 52% hits in my main deck (most of my fights lately had 2+ enemies), hit with Kraken.
 - Usunoki: won 8 time(s) (6 Solo, 2 Team), lost 3. Fastest: Tulkar in 5 rounds, plan "hit now", deck for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 66% hits in my main deck (many of my fights lately had 2+ enemies), hit with Minor Nova, Frost Beetle, Frostbite.
 - Usegi: won 7 time(s) (7 Solo, 0 Team), lost 4. Fastest: Kurrent in 5 rounds, deck for a boss (Fire), hitting with Fire, Balance, Death; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Banshee.
 - Kyuto: won 9 time(s) (9 Solo, 0 Team), lost 2. Fastest: Cyndr in 5 rounds, deck for a boss (Ice), hitting with Ice, Balance, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Immolate.
-- Jade Oni: won 3 time(s) (3 Solo, 0 Team), lost 6. Fastest: Garm in 12 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hit with Banshee.
+- Otomo Soldier: won 8 time(s) (8 Solo, 0 Team), lost 2. Fastest: Kitharas Shade in 1 rounds, deck for Ice enemies, hitting with Ice, Fire, Myth; my own fights say about 62% hits in my main deck (many of my fights lately had 2+ enemies), hit with Storm Shark.
+- Kakeda Spirit Slave: won 10 time(s) (10 Solo, 0 Team), lost 0. Fastest: Cyndr in 3 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies), hit with Minor Fire Scorch.
 - Tomugawa the Evil: won 7 time(s) (7 Solo, 0 Team), lost 2. Fastest: Cyndr in 6 rounds, plan "stack up", deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Heck Hound.
-- Otomo Soldier: won 7 time(s) (7 Solo, 0 Team), lost 2. Fastest: Kitharas Shade in 1 rounds, deck for Ice enemies, hitting with Ice, Fire, Myth; my own fights say about 62% hits in my main deck (many of my fights lately had 2+ enemies), hit with Storm Shark.
 - Ideyoshi: won 2 time(s) (2 Solo, 0 Team), lost 6. Fastest: Garm in 5 rounds, deck for a boss (Ice), hitting with Ice, Balance, Death; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Vampire.
-- Kakeda Spirit Slave: won 7 time(s) (7 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hit with Sandstorm, Scarab, Locust Swarm.
+- Ember Everburn: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Kitharas Shade in 5 rounds, plan "stack up", deck for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; my own fights say about 52% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken, Thunder Snake, Stormzilla.
 - Sorrow Whisperer: won 7 time(s) (5 Solo, 2 Team), lost 0. Fastest: Kurrent in 2 rounds, deck for any fight; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hit with Kraken, Thunder Snake.
-- Ember Everburn: won 7 time(s) (5 Solo, 2 Team), lost 0. Fastest: Tulkar in 6 rounds, plan "hit now", deck for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies), hit with Blight Hound, Minor Nova, Frost Beetle.
 - Tortured Kakeda Soul: won 6 time(s) (6 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies), hit with Sandstorm, Minor Crusade, Gearhead Destroyer.
 - Ronin Warrior: won 6 time(s) (6 Solo, 0 Team), lost 0. Fastest: Cyndr in 5 rounds, plan "hit now", deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies), hit with Immolate, Scald, Fire Cat.
 - Otomo Grappler: won 4 time(s) (4 Solo, 0 Team), lost 1. Fastest: Kitharas Moon in 7 rounds, plan "stack up", deck for Myth enemies, hitting with Myth, Fire, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies), hit with Frostbite, Minor Nova.
@@ -282,7 +282,8 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (5 min).
 - Finished by Kitharas Hart (15 min).
 - Finished by Kitharas Rock (25 min).
-- Maito: won 11 times (11 Solo, 0 Team) by Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar. The 3 fastest:
+- Finished by Kitharas Andromeda (13 min).
+- Maito: won 12 times (12 Solo, 0 Team) by Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar. The 3 fastest:
 - Won by Mythis (Solo) against Ronin Keyholder (rank 6, 760 health, Ice, a boss) on 2026-11-21 at 04:42:32.
   It took 6 rounds, about 3 minutes.
   Deck made for a boss (Ice), hitting with Ice, Fire, Life; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies).
@@ -638,6 +639,9 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   - Jade Oni: lost 1 time(s) (Ra). Why: its biggest hit took 55% of my health, the fight ran 27 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Jade Oni: lost 1 time(s) (Ra). Why: I went in at 57% health, its biggest hit took 55% of my health, the fight ran 13 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Jade Oni: lost 1 time(s) (Ra). Why: its biggest hit took 55% of my health, the fight ran 15 minutes, so I ran out of good cards. Do instead: fight other creatures for XP first, up to the quest's level.
+  - Jade Oni: lost 1 time(s) (Mythis). Why: its biggest hit took 55% of my health, the fight ran 5 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+  - Jade Oni: lost 1 time(s) (Mythis). Why: its biggest hit took 55% of my health, the fight ran 6 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
+  - Jade Oni: lost 1 time(s) (Mythis). Why: its biggest hit took 55% of my health, the fight ran 13 minutes, so I ran out of good cards. Do instead: look for better gear in this world's shops and the Bazaar, then try again.
 - Avoid, places bots got stuck:
   - Throne Room near (-5500, 0) while looking around for: Defeat Jade Oni: stuck 4 time(s) (Ultimus).
   - Throne Room near (-5500, 0) while resting while "Defeat Jade Oni" waits: stuck 3 time(s) (Ultimus).
@@ -812,7 +816,8 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (9 min).
 - Finished by Kitharas Hart (9 min, 15 min).
 - Finished by Kitharas Rock (5 min).
-- Grum Foultooth: won 14 times (14 Solo, 0 Team) by Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Finished by Kitharas Andromeda (7 min).
+- Grum Foultooth: won 15 times (15 Solo, 0 Team) by Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Won by Kitharas Shade (Solo) against Grum Foultooth (rank 6, 1,240 health, Myth, a boss) on 2026-11-21 at 22:37:36.
   It took 2 rounds, about 1 minutes.
   Deck made for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 62% hits in my main deck (most of my fights lately had 2+ enemies).
@@ -1008,7 +1013,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Kitharas Rock (7 min).
 - Otomo Spotter: won 25 times (25 Solo, 0 Team) by Garm, Kitharas Hart, Kitharas Moon, Kitharas Rock, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Otomo Grappler: won 4 times (4 Solo, 0 Team) by Kitharas Moon, Ra, Ultimus. The 3 fastest:
-- Otomo Soldier: won 7 times (7 Solo, 0 Team) by Cyndr, Idunn, Kitharas Shade. The 3 fastest:
+- Otomo Soldier: won 8 times (8 Solo, 0 Team) by Cyndr, Idunn, Kitharas Andromeda, Kitharas Shade. The 3 fastest:
 - Won by Kitharas Rock (Solo) against Otomo Spotter (rank 5, 675 health, Myth) on 2026-11-22 at 02:32:45.
   It took 1 rounds, about 1 minutes.
   Deck made for Myth enemies, hitting with Myth, Fire, Storm; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
@@ -1053,7 +1058,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   - Otomo Soldier: lost 1 time(s) (Mythis). Why: its biggest hit took 51% of my health, the fight ran 10 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Otomo Spotter: lost 1 time(s) (Kitharas Moon). Why: I went in at 68% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
-  - Crimson Fields near (-5900, 21800) while Talk to Rikugun Mikawa ("Battle of Evermore"): stuck 14 time(s) (Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Mythis, Ra, Tulkar, Ultimus); one bot tried every fix there.
+  - Crimson Fields near (-5900, 21800) while Talk to Rikugun Mikawa ("Battle of Evermore"): stuck 15 time(s) (Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Mythis, Ra, Tulkar, Ultimus); one bot tried every fix there.
   - Crimson Fields near (-3700, 16900) while Clear 5 Otomo Spotter or Otomo Soldier (where they spawn) ("Battle of Evermore"): stuck 1 time(s) (Cyndr).
   - Crimson Fields near (-3800, 15900) while resting while "Clear 5 Otomo Spotter or Otomo Soldier" waits: stuck 1 time(s) (Cyndr).
 
@@ -1117,28 +1122,28 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Ra (6 min).
 - Finished by Garm (34 s).
 - Finished by Mythis (3 min).
-- Death Oni: won 9 times (7 Solo, 2 Team) by Cyndr, Garm, Kurrent, Mythis, Ra, Ultimus. The 3 fastest:
+- Death Oni: won 13 times (11 Solo, 2 Team) by Cyndr, Garm, Kurrent, Mythis, Ra, Ultimus. The 3 fastest:
 - Tortured Kakeda Soul: won 6 times (6 Solo, 0 Team) by Mythis, Ultimus. The 3 fastest:
-- Kakeda Spirit Slave: won 6 times (6 Solo, 0 Team) by Ra, Ultimus. The 3 fastest:
+- Kakeda Spirit Slave: won 8 times (8 Solo, 0 Team) by Cyndr, Ra, Ultimus. The 3 fastest:
 - Won by Ultimus (Solo) against Oyotomi the Defiler (rank 7, 1,840 health, Death, a boss) on 2026-11-20 at 01:52:47.
   It took 9 rounds, about 4 minutes.
   Deck made for any fight (many of my fights lately had 2+ enemies).
   Hits that landed: Minor Crusade, Locust Swarm.
+- Won by Kurrent (Solo) against Death Oni (rank 6, 2,000 health, Death, a boss) on 2026-11-22 at 03:03:53.
+  It took 3 rounds, about 2 minutes.
+  Deck made for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Kraken x2.
+- Won by Kurrent (Solo) against Death Oni (rank 6, 2,000 health, Death, a boss) on 2026-11-22 at 03:25:21.
+  It took 5 rounds, about 3 minutes.
+  Deck made for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Kraken x3, Thunder Snake.
 - Won by Ra (Solo) against Death Oni (rank 6, 2,000 health, Death, a boss) on 2026-11-21 at 06:12:08.
   It took 6 rounds, about 4 minutes.
   Deck made for a boss (Death), hitting with Death, Ice, Storm (most of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
   Hits that landed: Sandstorm x2, Minor Crusade x2, Scarab.
-- Won by Mythis (Solo) against Death Oni (rank 6, 2,000 health, Death, a boss) on 2026-11-22 at 02:34:48.
-  It took 6 rounds, about 1 minutes.
-  Deck made for any fight; my own fights say about 50% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (2 enemies, even).
-  Hits that landed: Minotaur, Blood Bat, Minor Heroic Hit.
-- Won by Cyndr (Team with Kurrent) against Death Oni (rank 6, 2,000 health, Death, a boss) on 2026-11-22 at 03:00:01.
-  It took 8 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 58% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "stack up" (2 enemies, stronger).
-  Hits that landed: Heck Hound x3, Sunbird.
 - Won by Ultimus (Solo) against Tortured Kakeda Soul (rank 6, 760 health, Death) on 2026-11-20 at 02:08:51.
   It took 5 rounds, about 2 minutes.
   Deck made for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies).
@@ -1161,10 +1166,11 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   Deck made for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
   Hits that landed: Minor Crusade x2, Sandstorm, Scarab, Locust Swarm.
-- Won by Ultimus (Solo) against Kakeda Spirit Slave (rank 5, 675 health, Fire) on 2026-11-20 at 02:29:19.
-  It took 6 rounds, about 3 minutes.
-  Deck made for Death enemies, hitting with Death, Fire, Myth (most of my fights lately had 2+ enemies).
-  Hits that landed: Sandstorm, Gearhead Destroyer, Scarab.
+- Won by Cyndr (Solo) against Kakeda Spirit Slave (rank 5, 675 health, Fire) on 2026-11-22 at 03:25:21.
+  It took 5 rounds, about 3 minutes.
+  Deck made for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Scald, Minor Fire Scorch.
 - Won by Ra (Solo) against Walking Dead (rank 6, 700 health, Death) on 2026-11-21 at 05:33:07.
   It took 10 rounds, about 6 minutes.
   Deck made for Death enemies, hitting with Death, Fire, Myth; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies).
@@ -1356,8 +1362,9 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (78 s).
 - Finished by Kitharas Hart (78 s, 2 min).
 - Finished by Kitharas Rock (39 s).
+- Finished by Kitharas Andromeda (80 s).
 - Avoid, places bots got stuck:
-  - Crimson Fields near (-5900, 21800) while Talk to Rikugun Mikawa ("is a Good Defense"): stuck 13 time(s) (Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kurrent, Mythis, Ra, Tulkar, Ultimus).
+  - Crimson Fields near (-5900, 21800) while Talk to Rikugun Mikawa ("is a Good Defense"): stuck 14 time(s) (Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kurrent, Mythis, Ra, Tulkar, Ultimus).
   - Crimson Fields near (-25200, 25900) while Talk to Rikugun Mikawa ("is a Good Defense"): stuck 2 time(s) (Cyndr, Kitharas Hart).
   - Crimson Fields near (-5900, 21900) while Talk to Rikugun Mikawa ("is a Good Defense"): stuck 2 time(s) (Kitharas Shade, Mythis).
 
@@ -1374,8 +1381,9 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (2 min).
 - Finished by Kitharas Hart (2 min, 2 min).
 - Finished by Kitharas Rock (2 min).
+- Finished by Kitharas Andromeda (2 min).
 - Avoid, places bots got stuck:
-  - Crimson Fields near (-5900, 21900) while Talk to Rikugun Mikawa ("Scouring for Scouts"): stuck 15 time(s) (Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar, Ultimus).
+  - Crimson Fields near (-5900, 21900) while Talk to Rikugun Mikawa ("Scouring for Scouts"): stuck 16 time(s) (Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar, Ultimus).
 
 ## A Soldier's Duty
 - Finished by Ultimus (61 s).
@@ -1389,8 +1397,9 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (60 s).
 - Finished by Kitharas Hart (62 s, 65 s).
 - Finished by Kitharas Rock (61 s).
+- Finished by Kitharas Andromeda (59 s).
 - Avoid, places bots got stuck:
-  - Crimson Fields near (-5900, 21900) while Talk to Rikugun Mikawa ("A Soldier's Duty"): stuck 16 time(s) (Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar, Ultimus); one bot tried every fix there.
+  - Crimson Fields near (-5900, 21900) while Talk to Rikugun Mikawa ("A Soldier's Duty"): stuck 17 time(s) (Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar, Ultimus); one bot tried every fix there.
   - Crimson Fields near (-25200, 25900) while Talk to Rikugun Mikawa ("A Soldier's Duty"): stuck 1 time(s) (Mythis).
 
 ## Passing Stones
@@ -1405,8 +1414,9 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (2 min).
 - Finished by Kitharas Hart (2 min, 2 min).
 - Finished by Kitharas Rock (2 min).
+- Finished by Kitharas Andromeda (2 min).
 - Avoid, places bots got stuck:
-  - Crimson Fields near (-10200, 20800) while Talk to Bricktop ("Passing Stones"): stuck 14 time(s) (Cyndr, Garm, Idunn, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Mythis, Ra, Tulkar, Ultimus); one bot tried every fix there.
+  - Crimson Fields near (-10200, 20800) while Talk to Bricktop ("Passing Stones"): stuck 15 time(s) (Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Hart, Kitharas Moon, Kitharas Rock, Kitharas Shade, Mythis, Ra, Tulkar, Ultimus); one bot tried every fix there.
   - Crimson Fields near (-10200, 20900) while Talk to Bricktop ("Passing Stones"): stuck 2 time(s) (Ra, Ultimus).
 
 ## Left Behind
@@ -1414,11 +1424,18 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Ra (6 min).
 - Finished by Garm (62 s).
 - Finished by Mythis (4 min).
+- Finished by Kurrent (36 s).
+- Finished by Cyndr (3 min).
 - Won by Mythis (Solo) against Death Oni (rank 6, 2,000 health, Death, a boss) on 2026-11-22 at 02:23:13.
   It took 5 rounds, about 3 minutes.
   Deck made for any fight; my own fights say about 50% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
   Hits that landed: Humongofrog x2, Blood Bat x2, Minotaur, Cyclops.
+- Won by Cyndr (Solo) against Kakeda Spirit Slave (rank 5, 675 health, Fire) on 2026-11-22 at 03:03:53.
+  It took 3 rounds, about 2 minutes.
+  Deck made for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Fire Scorch.
 - Avoid, places bots got stuck:
   - Tree of Life near (100, 8300) while Go to MooShu,Tree of Life ("Left Behind"): stuck 14 time(s) (Ultimus); one bot tried every fix there.
   - Tree of Life near (100, 8300) while a short break before trying "Go to MooShu,Tree of Life" again: stuck 5 time(s) (Ultimus).
@@ -1441,6 +1458,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (3 min).
 - Finished by Kitharas Hart (45 s, 2 min).
 - Finished by Kitharas Rock (3 min).
+- Finished by Kitharas Andromeda (3 min).
 - Avoid, places bots got stuck:
   - Crimson Fields near (-6400, 16900) while Gather Wood Pile (0 of 4) here ("A Strong Defense..."): stuck 3 time(s) (Ra); one bot tried every fix there.
   - Crimson Fields near (-5900, 21900) while Talk to Rikugun Mikawa ("A Strong Defense..."): stuck 3 time(s) (Cyndr, Kitharas Hart, Mythis).
@@ -1783,6 +1801,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (18 s).
 - Finished by Kitharas Hart (19 s).
 - Finished by Kitharas Rock (19 s).
+- Finished by Kitharas Andromeda (19 s).
 
 ## The General
 - Finished by Ultimus (75 s).
@@ -1797,6 +1816,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Idunn (77 s).
 - Finished by Kitharas Hart (80 s, 72 s).
 - Finished by Kitharas Rock (75 s).
+- Finished by Kitharas Andromeda (76 s).
 
 ## Sword of Omens
 - Finished by Ultimus (27 s).
@@ -2117,7 +2137,13 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (83 s).
 - Finished by Cyndr (5 min).
 - Finished by Kurrent (19 min).
-- Ember Everburn: won 7 times (5 Solo, 2 Team) by Cyndr, Garm, Kurrent, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Finished by Kitharas Shade (18 min).
+- Ember Everburn: won 8 times (6 Solo, 2 Team) by Cyndr, Garm, Kitharas Shade, Kurrent, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Won by Kitharas Shade (Solo) against Ember Everburn (rank 6, 1,400 health, Fire, a boss) on 2026-11-22 at 03:00:55.
+  It took 5 rounds, about 3 minutes.
+  Deck made for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; my own fights say about 52% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "stack up" (2 enemies, stronger).
+  Hits that landed: Kraken, Thunder Snake, Stormzilla.
 - Won by Tulkar (Team with Cyndr) against Ember Everburn (rank 6, 1,400 health, Fire, a boss) on 2026-11-22 at 00:39:00.
   It took 6 rounds, about 4 minutes.
   Deck made for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
@@ -2128,10 +2154,6 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
   Deck made for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
   Hits that landed: Banshee x2.
-- Won by Mythis (Solo) against Ember Everburn (rank 6, 1,400 health, Fire, a boss) on 2026-11-21 at 23:48:08.
-  It took 8 rounds, about 4 minutes.
-  Deck made for a boss (Fire), hitting with Fire, Death, Myth; alone, so single hits only; my own fights say about 55% hits in my main deck (many of my fights lately had 2+ enemies).
-  Hits that landed: Minotaur x2.
 - Won by Kurrent (Solo) against Tamauji (rank 6, 1,480 health, Myth, a boss) on 2026-11-22 at 00:57:59.
   It took 6 rounds, about 4 minutes.
   Deck made for any fight; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
@@ -2146,6 +2168,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (39 s).
 - Finished by Cyndr (41 s).
 - Finished by Kurrent (40 s).
+- Finished by Kitharas Shade (43 s).
 
 ## Grandpa Says Hi!
 - Finished by Ultimus (39 s).
