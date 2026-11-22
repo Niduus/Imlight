@@ -1,70 +1,66 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2b1218"/><stop offset="1" stop-color="#0c080e"/>
+      <stop offset="0" stop-color="#1c0b10"/><stop offset="1" stop-color="#090608"/>
     </linearGradient>
     <linearGradient id="fire" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0" stop-color="#d9200f"/><stop offset=".5" stop-color="#ff7a18"/><stop offset="1" stop-color="#ffd84d"/>
+      <stop offset="0" stop-color="#b3150b"/><stop offset=".45" stop-color="#ff6a14"/><stop offset="1" stop-color="#ffd24a"/>
     </linearGradient>
-    <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#2a2027"/><stop offset="1" stop-color="#0d090c"/>
+    <linearGradient id="body" x1=".2" y1="0" x2=".75" y2="1">
+      <stop offset="0" stop-color="#17101a"/><stop offset=".55" stop-color="#1a0f14"/><stop offset=".8" stop-color="#5a1410"/><stop offset="1" stop-color="#d4380f"/>
     </linearGradient>
-    <radialGradient id="glow" cx=".55" cy=".55" r=".55">
-      <stop offset="0" stop-color="#ff4a12" stop-opacity=".55"/><stop offset="1" stop-color="#ff4a12" stop-opacity="0"/>
+    <radialGradient id="glow" cx=".6" cy=".6" r=".6">
+      <stop offset="0" stop-color="#ff4a12" stop-opacity=".6"/><stop offset="1" stop-color="#ff4a12" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="eye" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#fff7c2"/><stop offset=".45" stop-color="#ffcc33"/><stop offset="1" stop-color="#ff5a14"/>
-    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="soft2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
     <clipPath id="tile"><rect x="8" y="8" width="240" height="240" rx="52"/></clipPath>
+    <path id="head" d="M120 190 C108 180 100 170 96 160
+      L66 162 C58 162 54 158 56 152 L62 146 L102 138
+      L56 130 C44 129 34 123 34 115 C34 108 40 103 48 102 L84 92
+      C94 86 102 80 110 72
+      L118 26 L134 62 L148 34 L160 72
+      C176 82 188 98 192 118 C196 136 190 146 180 152
+      C186 170 194 200 206 256 L96 256 C100 224 108 204 120 190 Z"/>
   </defs>
   <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
   <g clip-path="url(#tile)">
-    <circle cx="140" cy="140" r="120" fill="url(#glow)"/>
-    <!-- flames behind -->
-    <path fill="url(#fire)" d="M100 250 C78 214 86 182 104 160 C100 178 108 186 116 188 C108 156 122 120 146 98
-      C142 120 150 132 160 136 C158 104 172 72 198 52 C192 78 200 98 212 108 C214 92 224 80 238 74
-      C230 98 238 120 236 142 C246 132 250 118 252 108 C262 150 256 200 236 250 Z"/>
-    <path fill="#ffd84d" opacity=".55" d="M150 250 C140 226 146 206 158 192 C158 206 164 212 170 214 C168 194 180 172 196 160
-      C194 178 200 188 208 192 C210 180 218 172 226 168 C224 188 232 214 224 250 Z"/>
-    <!-- neck and shoulders, spiky fur down the back -->
-    <path fill="url(#fur)" d="M92 256 C96 226 104 204 118 186 L130 176 C148 170 166 160 178 146
-      L190 150 L184 160 L200 162 L192 174 L210 178 L200 190 L218 196 L206 206 L224 214 L210 222 L228 232 L214 240 L230 256 Z"/>
-    <!-- head -->
-    <path fill="url(#fur)" d="M118 186 C106 176 100 166 98 158
-      L64 160 C56 160 52 156 54 150 L60 144
-      L104 136
-      L54 128 C44 127 36 121 36 114 C36 108 40 104 46 103 L86 92
-      C96 86 104 80 112 74
-      L122 30 L138 66 L148 38 L158 74
-      C172 82 184 96 188 114 C192 130 188 140 178 146 C166 160 148 170 130 176 Z"/>
-    <!-- inner ears -->
-    <path fill="#5a1d22" d="M124 44 L132 66 L126 70 Z"/>
-    <path fill="#5a1d22" d="M148 52 L154 74 L148 76 Z"/>
-    <!-- open mouth: tongue and gums -->
-    <path fill="#7a1420" d="M60 144 L104 136 L98 150 C88 152 74 154 64 156 Z"/>
-    <path fill="#c43a4a" d="M68 150 C78 146 90 145 98 147 L96 152 C86 154 76 155 68 155 Z"/>
-    <!-- teeth -->
-    <path fill="#f6eee2" d="M52 127 L58 127 L55 139 Z M64 128 L69 128 L66 136 Z M76 130 L80 130 L78 136 Z M88 131 L92 131 L90 136 Z M98 133 L102 133 L100 138 Z"/>
-    <path fill="#f6eee2" d="M60 159 L65 159 L62 148 Z M74 157 L78 157 L76 151 Z M86 156 L90 156 L88 150 Z"/>
-    <!-- nose -->
-    <path fill="#0a0608" d="M34 108 C34 102 40 99 47 100 C52 101 54 106 52 111 C49 116 40 117 36 114 Z"/>
-    <ellipse cx="42" cy="104" rx="4" ry="2" fill="#3b2a33"/>
-    <!-- muzzle wrinkles and brow -->
-    <g fill="none" stroke="#4a3440" stroke-width="2.5" stroke-linecap="round">
-      <path d="M62 108 C70 104 78 104 84 108"/>
-      <path d="M66 116 C74 112 82 112 88 116"/>
-      <path d="M96 92 C104 86 114 84 124 86"/>
-      <path d="M130 120 C140 126 150 128 160 126"/>
-      <path d="M136 134 C146 140 156 140 166 136"/>
-      <path d="M150 96 C160 100 168 108 172 118"/>
+    <circle cx="150" cy="150" r="130" fill="url(#glow)"/>
+    <!-- flames behind, soft -->
+    <path filter="url(#soft)" fill="#ff5a14" opacity=".8" d="M90 256 C70 214 84 176 110 150 C112 176 122 182 130 184 C124 146 146 104 176 80
+      C172 106 182 122 196 128 C198 100 214 80 236 70 C228 104 242 130 240 160 C252 146 256 130 258 118 C270 170 262 220 244 256 Z"/>
+    <path fill="url(#fire)" d="M104 256 C88 220 98 190 116 168 C116 186 124 192 132 194 C126 160 144 122 170 98
+      C168 122 176 138 190 144 C190 116 204 94 226 82 C220 112 232 136 230 162 C240 150 246 136 248 124 C258 170 252 216 236 256 Z"/>
+    <!-- the hound -->
+    <use href="#head" fill="url(#body)"/>
+    <!-- flames licking up over the neck so body and fire blend -->
+    <path fill="url(#fire)" opacity=".9" d="M110 256 C108 236 116 222 126 214 C124 228 130 234 136 236 C134 218 144 204 156 196
+      C154 210 160 220 168 222 C168 204 176 190 188 184 C184 200 192 214 196 222 C200 210 204 200 210 194 C212 216 212 238 208 256 Z"/>
+    <path fill="#ffd24a" opacity=".55" filter="url(#soft2)" d="M128 256 C128 244 134 236 140 232 C140 242 146 246 150 246 C150 236 158 226 166 222 C166 234 172 240 178 242 C180 234 186 228 190 226 C192 238 192 248 190 256 Z"/>
+    <!-- ember rim light on the back of the head and ears -->
+    <path fill="none" stroke="#ff7a1e" stroke-width="3" stroke-linecap="round" filter="url(#soft2)"
+      d="M160 72 C176 82 188 98 192 118 C196 136 190 146 180 152 C186 170 194 200 206 256"/>
+    <path fill="none" stroke="#ff9a3a" stroke-width="1.6" stroke-linecap="round" opacity=".85"
+      d="M134 62 L148 34 L160 72 C176 82 188 98 192 118"/>
+    <!-- faint glow on the front ear and the top of the muzzle -->
+    <path fill="none" stroke="#c2461a" stroke-width="1.6" stroke-linecap="round" opacity=".75" d="M110 72 L118 26 L134 62"/>
+    <path fill="none" stroke="#8a2a14" stroke-width="1.6" stroke-linecap="round" opacity=".7" d="M48 102 L84 92 C94 86 102 80 110 72"/>
+    <!-- subtle fur -->
+    <g fill="none" stroke="#3b2630" stroke-width="2" stroke-linecap="round" opacity=".7">
+      <path d="M150 120 C160 126 170 128 178 126"/><path d="M144 138 C156 146 166 148 176 146"/>
+      <path d="M140 158 C150 166 160 170 172 170"/>
     </g>
-    <!-- eye with glow -->
-    <circle cx="114" cy="98" r="12" fill="#ff6a14" opacity=".35"/>
-    <path fill="url(#eye)" d="M100 101 C106 93 116 90 128 92 C122 100 112 104 100 101 Z"/>
-    <path fill="#2a0a06" d="M114 93 L116 93 L115 101 Z"/>
-    <!-- rim light along the back of head and neck -->
-    <path fill="none" stroke="#ff8a2a" stroke-width="2" stroke-linecap="round" opacity=".8"
-      d="M158 74 C172 82 184 96 188 114 C192 130 188 140 178 146"/>
-    <path fill="none" stroke="#ff8a2a" stroke-width="2" stroke-linecap="round" opacity=".7" d="M138 66 L148 38 L158 74"/>
+    <!-- mouth -->
+    <path fill="#3a0608" d="M62 146 L102 138 L100 150 C88 153 76 156 66 158 Z"/>
+    <path fill="#ff4a12" opacity=".55" filter="url(#soft2)" d="M70 150 C80 146 92 144 100 145 L98 151 C88 154 78 156 70 156 Z"/>
+    <path fill="#efe4d4" d="M50 129 L57 129 L53.5 142 Z M66 131 L71 131 L68.5 139 Z M86 134 L90 134 L88 140 Z"/>
+    <path fill="#efe4d4" d="M62 161 L67 161 L64.5 150 Z M82 158 L86 158 L84 151 Z"/>
+    <!-- nose -->
+    <path fill="#050304" d="M32 110 C32 104 38 100 46 101 C51 102 53 107 51 112 C48 117 39 118 34 115 Z"/>
+    <!-- brow ridge (angry) and eye -->
+    <path fill="#0b070a" d="M94 90 C106 84 120 84 132 90 L128 94 C118 90 106 90 96 94 Z"/>
+    <path fill="#ff7a14" filter="url(#soft2)" d="M102 99 C110 93 120 91 130 92 C124 99 114 102 102 99 Z"/>
+    <path fill="#ffe27a" d="M104 98 C111 94 120 92 128 93 C123 98 114 100 104 98 Z"/>
+    <path fill="#fffbe0" d="M114 95 C118 94 122 93 125 93 C122 96 118 97 114 95 Z"/>
   </g>
 </svg>
