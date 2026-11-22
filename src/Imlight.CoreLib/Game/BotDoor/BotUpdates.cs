@@ -187,6 +187,17 @@ internal static class BotUpdates {
             return;
         }
 
+        // Never back down (2026-11-22: bots-v164 was taken, then its release was deleted, and the newest left on GitHub,
+        // bots-v163, was about to replace it): a bot update that runs stays until a higher number is published.
+        if (BotDoor.Version is { } running && running.StartsWith(TAG_PREFIX, StringComparison.OrdinalIgnoreCase)
+            && int.TryParse(running[TAG_PREFIX.Length..], out var runningNumber) && runningNumber > newest.Number
+            && File.Exists(Path.Combine(BotLoader.UpdatesFolder, running, INFO_FILE))) {
+            s_lastCheckResult = $"keeping {running}: the newest published is {newest.Tag}, an older one";
+            WriteState();
+
+            return;
+        }
+
         var folder = Path.Combine(BotLoader.UpdatesFolder, newest.Tag);
         if (!File.Exists(Path.Combine(folder, INFO_FILE))) {
             Note($"downloading {newest.Tag}");

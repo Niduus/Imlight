@@ -1,0 +1,31 @@
+# Rewrites the notes of one published bot update (bots-v<number>), e.g. to take out something that must not be in a
+# public changelog. Only bot update releases: an app release's notes are not touched.
+name: Fix bot update notes
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The bot update to fix, e.g. bots-v165'
+        required: true
+      line:
+        description: 'One plain-words line for its notes (replaces the bot changes list)'
+        required: true
+        default: 'Bot fixes and improvements.'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rewrite the notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+          LINE: ${{ inputs.line }}
+        run: |
+          case "$TAG" in bots-v[0-9]*) ;; *) echo "Only bots-v<number> releases."; exit 1 ;; esac
+          printf '## Bot changes\n- %s\n\nServers with live bot updates on take this within 10 minutes: the bots log out and come back, nothing else restarts.\n' "$LINE" > notes.md
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file notes.md

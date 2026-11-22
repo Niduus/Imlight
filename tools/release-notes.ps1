@@ -149,7 +149,11 @@ foreach ($record in ($log -split [char]0x1e)) {
     $notApp = @($code | Where-Object { -not $_.StartsWith('src/Hellhound/') -and -not $_.StartsWith('bots/') -and
         $_ -ne 'src/Imlight.sln' -and -not $_.StartsWith('.github/') })
     $hellhound = @($code | Where-Object { $_.StartsWith('src/Hellhound/') }).Count -gt 0
-    if (-not $Bots -and (($hellhound -and $notApp.Count -eq 0) -or $body -match '(?im)^\s*No app notes\s*$')) { continue }
+    if (-not $Bots -and $hellhound -and $notApp.Count -eq 0) { continue }
+    # And out of the bot updates' public notes too (2026-11-22: bots-v165's notes named the bots' app): Hellhound and
+    # anything marked "No app notes" stay out of every changelog.
+    if ($body -match '(?im)^\s*No app notes\s*$') { continue }
+    if ($Bots -and $hellhound) { continue }
 
     if ($added.ContainsKey($hash)) {
         foreach ($file in $added[$hash]) {
