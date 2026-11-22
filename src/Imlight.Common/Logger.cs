@@ -71,6 +71,10 @@ public class Logger {
         ?? "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
     private static readonly string s_logLevel = ConfigurationManager.Settings["Logging.LogLevel"].AsString()
         ?? "INFO";
+    // Old daily logs are deleted by themselves: the newest [Logging] KeepLogFiles files stay (default 7; Niduus, 2026-11-22:
+    // "I want to clear up some space on my PC"). The bot results are kept for good in the Hive mind archive.
+    private static readonly int s_keepFiles = int.TryParse(ConfigurationManager.Settings["Logging.KeepLogFiles"].AsString(), out var keep) && keep > 0
+        ? keep : 7;
     private static readonly string s_seqUrl = ConfigurationManager.Settings["Logging.SeqSinkUrl"].AsString()
         ?? "http://localhost:5341";
 
@@ -86,7 +90,7 @@ public class Logger {
             .Enrich.WithThreadName()
             .Enrich.WithEnvironmentName()
             .WriteTo.Console(outputTemplate: s_logFormat)
-            .WriteTo.File(s_path, rollingInterval: RollingInterval.Day);
+            .WriteTo.File(s_path, rollingInterval: RollingInterval.Day, retainedFileCountLimit: s_keepFiles);
         if (IsThisComputer(s_seqUrl)) {
             config = config.WriteTo.Seq(s_seqUrl);
         }

@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -104,8 +105,48 @@ public static class BotLoader {
         Logger.Information("Bots: {0} are in.", Logger.Args(Label(wanted)));
         BotUpdates.WriteState();
         BotUpdates.Start();
+        PruneUpdates();
 
         return true;
+    }
+
+    /// <summary>
+    /// Old bot updates are deleted (Niduus, 2026-11-22: "clear up some space on my PC"; 116+ folders of about 8 MB piled up):
+    /// the one running, the one picked, every newer one and the 3 newest stay. A folder still in use is skipped.
+    /// </summary>
+    internal static void PruneUpdates() {
+        try {
+            if (!Directory.Exists(UpdatesFolder)) {
+                return;
+            }
+
+            static int Number(string name) => name.StartsWith("bots-v", StringComparison.Ordinal) && int.TryParse(name[6..], out var n) ? n : -1;
+
+            var folders = Directory.GetDirectories(UpdatesFolder).Select(Path.GetFileName).Where(n => Number(n) >= 0)
+                .OrderByDescending(Number).ToList();
+            var keep = new HashSet<string>(folders.Take(3), StringComparer.Ordinal) { Wanted, BotDoor.Version ?? "" };
+            var removed = 0;
+            foreach (var name in folders) {
+                if (keep.Contains(name) || (Number(Wanted) >= 0 && Number(name) >= Number(Wanted))) {
+                    continue;
+                }
+
+                try {
+                    Directory.Delete(Path.Combine(UpdatesFolder, name), recursive: true);
+                    removed++;
+                }
+                catch (Exception) {
+                    // In use or locked: it goes next time.
+                }
+            }
+
+            if (removed > 0) {
+                Logger.Information("Bots: deleted {0} old bot update folder(s) to save space.", Logger.Args(removed));
+            }
+        }
+        catch (Exception e) {
+            Logger.Warning("Bots: old bot updates could not be cleared: {0}", Logger.Args(e.Message));
+        }
     }
 
     /// <summary>
@@ -323,6 +364,7 @@ public static class BotLoader {
             Logger.Information("Bots: {0} are in.", Logger.Args(Label(version)));
             BotUpdates.Note($"now running {Label(version)}");
             BotUpdates.WriteState();
+            PruneUpdates();
             try {
                 oldContext?.Unload();
             }
