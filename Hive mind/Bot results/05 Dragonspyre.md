@@ -13,9 +13,9 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Silver Servant: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 6 rounds, deck for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies), hits with Balance, Banshee.
 - Burning Hate: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 5 rounds, deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hits with Minor Crusade, Judgement.
 - Irate Banshee: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 7 rounds, plan "hit now", deck for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Spectral Blast.
+- Beghastion Crowcaller: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Gearhead Destroyer.
 - Mavra Flamewing: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 15 rounds, deck for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies), hits with Balance, Helping Hands, Sandstorm, Vampire.
 - Clockwork Defender: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Minor Crusade.
-- Beghastion Crowcaller: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Gearhead Destroyer.
 - Ash Spider: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Sandstorm.
 - Fire Avenger: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 8 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Gearhead Destroyer, Locust Swarm.
 - Erratic Servator: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement.
@@ -376,6 +376,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## The Art of War
 - Finished by Ultimus (4 min).
+- Finished by Ra (19 min).
 - Won by Ultimus (Solo) against Burning Hate (rank 6, 670 health, Fire) on 2026-11-21 at 07:45:48.
   It took 10 rounds, about 6 minutes.
   Deck made for any fight (many of my fights lately had 2+ enemies).
@@ -407,6 +408,10 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Deck made for Balance enemies, hitting with Balance, Myth, Death; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Spectral Blast x2, Fairy, Sandstorm, Balance.
+- Won by Ra (Solo) against Beghastion Crowcaller (rank 7, 685 health, Death) on 2026-11-22 at 00:03:15.
+  It took 7 rounds, about 1 minutes.
+  Deck made for Death enemies, hitting with Death, Ice, Storm; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Sandstorm, Locust Swarm, Fairy, Judgement.
 - Avoid, fights lost:
   - Silver Servant: lost 1 time(s) (Ultimus). Why: I went in at 63% health, the fight ran 5 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
@@ -1135,9 +1140,11 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Stone Soup
 - Finished by Ultimus (10 s).
+- Finished by Ra (9 s).
 
 ## Application Procedures
 - Finished by Ultimus (3 min).
+- Finished by Ra (71 s).
 
 ## Fighting With Dishonor
 - Finished by Ultimus (59 s).
