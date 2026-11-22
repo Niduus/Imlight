@@ -77,10 +77,24 @@ public static class BotLoader {
     }
 
     /// <summary>
+    /// Ahziael's own kill switch for the bots (Niduus, 2026-11-22, src/Imlight.Setup/AhziaelKillSwitch.cs): when Ahziael
+    /// started this server with it on, no bots are loaded at all. Mini servers inherit the setting from the game server.
+    /// </summary>
+    public static bool AhziaelSwitchedBotsOff() => Environment.GetEnvironmentVariable("IMLIGHT_AHZIAEL_BOTS_OFF") == "1";
+
+    /// <summary>
     /// The game server's start: puts the bots in (the bot update picked last time when it still builds for this server,
     /// else the built-in ones). Returns false when no bots could be loaded at all; the server then runs without bots.
     /// </summary>
     public static bool LoadAtStart() {
+        if (AhziaelSwitchedBotsOff()) {
+            Logger.Error("Bots: Ahziael's bot kill switch is on, so the server runs without Ultimus, the TCO7, the Quest Team and Bot Players.");
+            Problem = "Ahziael's bot kill switch is on";
+            BotUpdates.WriteState();
+
+            return false;
+        }
+
         // A bot update built for other server parts means the server itself was updated since: its own bots run, and the
         // first check (a minute later) swaps back to the bot update only when it is newer than the server's own code.
         var wanted = Wanted;
@@ -156,6 +170,12 @@ public static class BotLoader {
     public static bool RunMiniServer(string[] args) {
         if (!args.Any(a => a is "--bots" or "--questteam" or "--ultimus")) {
             return false;
+        }
+
+        if (AhziaelSwitchedBotsOff()) {
+            Logger.Fatal("Bots: Ahziael's bot kill switch is on, so the mini server does not run.");
+
+            return true;
         }
 
         var wanted = Wanted;
@@ -310,6 +330,10 @@ public static class BotLoader {
     /// Players and the server stay up. Returns null when done, else why not.
     /// </summary>
     internal static async Task<string> SwapAsync(string version, string why) {
+        if (AhziaelSwitchedBotsOff()) {
+            return "Ahziael's bot kill switch is on";
+        }
+
         if (!await s_swap.WaitAsync(TimeSpan.Zero)) {
             return "a bot swap is already under way";
         }

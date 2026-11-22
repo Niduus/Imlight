@@ -93,10 +93,16 @@ internal static class InstalledCommands {
 
         InstallWaitingServer(installFolder);
         using var gameFiles = StartGameDataServer(installFolder);
+        // Ahziael's own kill switch for the bots (AhziaelKillSwitch): on means the server starts without any bots.
+        var botsOff = AhziaelKillSwitch.BotsOff(ServerFolder(installFolder));
+        if (botsOff) {
+            Console.WriteLine("Ahziael's bot kill switch is on: the server starts without bots.");
+        }
+
         // The Ahziael signal: the bots run only while this Ahziael answers them on this PC (AhziaelSignal).
         var signalPort = int.TryParse(IniFile.Get(ConfigFile(installFolder), "Bots", "AhziaelSignalPort"), out var signalSetting) && signalSetting > 0 ? signalSetting : AhziaelSignal.DEFAULT_PORT;
-        using var signal = AhziaelSignal.TryStart(signalPort);
-        if (signal is null) {
+        using var signal = botsOff ? null : AhziaelSignal.TryStart(signalPort);
+        if (signal is null && !botsOff) {
             Console.WriteLine($"Port {signalPort} is taken, so the bots will not hear Ahziael's signal this run.");
         }
 
@@ -107,6 +113,9 @@ internal static class InstalledCommands {
         // A server built for live patches is started so .NET lets fixes into it while it runs (Game/LivePatches).
         if (signal is not null) {
             startInfo.Environment[AhziaelSignal.TOKEN_VARIABLE] = signal.Token;
+        }
+        if (botsOff) {
+            startInfo.Environment[AhziaelKillSwitch.BOTS_OFF_VARIABLE] = "1";
         }
         if (LivePatchBuild(installFolder) == "patchable") {
             startInfo.Environment["DOTNET_MODIFIABLE_ASSEMBLIES"] = "debug";

@@ -45,6 +45,8 @@ BRAIN = [
 
 
 KILLSWITCH = "killswitch.txt"
+# Ahziael's own bot switch (Niduus: "Make a separate one for that"), signed in when it is there (src/Imlight.Setup/AhziaelKillSwitch.cs).
+AHZIAEL_SWITCH = "ahziael-killswitch.txt"
 
 
 def sha256(data: bytes) -> str:
@@ -90,6 +92,13 @@ def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
     blobs[KILLSWITCH] = data
     files.append({"path": KILLSWITCH, "size": len(data), "sha256": sha256(data)})
 
+    ahziael = os.path.join(source, AHZIAEL_SWITCH)
+    if os.path.isfile(ahziael):
+        with open(ahziael, "rb") as f:
+            data = f.read()
+        blobs[AHZIAEL_SWITCH] = data
+        files.append({"path": AHZIAEL_SWITCH, "size": len(data), "sha256": sha256(data)})
+
     manifest = json.dumps({
         "format": FORMAT,
         "purpose": PURPOSE,
@@ -106,7 +115,8 @@ def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
         for rel, data in blobs.items():
             z.writestr("brain/" + rel, data)
     os.replace(tmp, out)
-    print(f"Signed {len(files) - 1} brain file(s) and the kill switch into {out}.")
+    extra = 1 + (AHZIAEL_SWITCH in blobs)
+    print(f"Signed {len(files) - extra} brain file(s), the kill switch{' and the Ahziael switch' if extra == 2 else ''} into {out}.")
     return 0
 
 
@@ -141,9 +151,13 @@ def verify(pack: str, public_path: str) -> int:
             if sha256(z.read("brain/" + entry["path"])) != entry["sha256"]:
                 print(f"NOT VALID: {entry['path']} was changed after signing.")
                 return 1
-        switch = "missing" if not any(e["path"] == KILLSWITCH for e in info["files"]) else (
-            "ON" if switch_on(z.read("brain/" + KILLSWITCH).decode("utf-8", "replace")) else "off")
-    print(f"Valid: signed by {info['by']} at {info['made']}, {len(info['files'])} file(s), kill switch {switch}.")
+        def state(name):
+            if not any(e["path"] == name for e in info["files"]):
+                return "missing"
+            return "ON" if switch_on(z.read("brain/" + name).decode("utf-8", "replace")) else "off"
+        switch, ahziael = state(KILLSWITCH), state(AHZIAEL_SWITCH)
+    print(f"Valid: signed by {info['by']} at {info['made']}, {len(info['files'])} file(s), kill switch {switch}, "
+          f"Ahziael switch {ahziael}.")
     return 0
 
 

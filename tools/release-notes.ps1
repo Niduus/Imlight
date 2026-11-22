@@ -112,12 +112,23 @@ foreach ($line in @(git log --first-parent --diff-merges=first-parent --diff-fil
     }
 }
 
+# Pull requests left out of every patch note, on the owner's word (tools/release-notes-skip.txt: one number per line).
+$skip = @{}
+$skipFile = Join-Path $PSScriptRoot 'release-notes-skip.txt'
+if (Test-Path $skipFile) {
+    foreach ($line in Get-Content -Encoding utf8 $skipFile) {
+        if ($line -match '^\s*#?(\d+)\s*$') { $skip[$Matches[1]] = $true }
+    }
+}
+
 $result = @()
 $log = (@(git log --first-parent --reverse --pretty=format:'%H%x1f%s%x1f%b%x1e' "$From..$To") -join "`n")
 foreach ($record in ($log -split [char]0x1e)) {
     $fields = $record.Trim("`n") -split [char]0x1f
     if ($fields.Count -lt 2 -or -not $fields[0]) { continue }
     $hash = $fields[0].Trim(); $subject = $fields[1].Trim(); $body = if ($fields.Count -gt 2) { $fields[2] } else { '' }
+    if ($subject -match '\(#(\d+)\)\s*$' -and $skip.ContainsKey($Matches[1])) { continue }
+    if ($subject -match '^Merge pull request #(\d+)' -and $skip.ContainsKey($Matches[1])) { continue }
 
     # Bot changes go in the bot update's notes, everything else in the app's.
     # Which code a change touched: note files, tools and the generated message list do not count (Niduus, 2026-11-19: every

@@ -1,0 +1,8 @@
+# Pull requests left out of every patch note (Niduus, 2026-11-22). One number per line; tools/release-notes.ps1 reads it.
+1656
+1657
+1659
+1660
+1661
+1662
+1667
