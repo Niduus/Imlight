@@ -54,6 +54,9 @@ jobs:
       - name: Build the launcher
         run: dotnet build src/Imlight.Launcher/Imlight.Launcher.csproj -c Release
 
+      - name: Build Ahziael Bots (the bots' own small app)
+        run: dotnet build src/Ahziael.Bots/Ahziael.Bots.csproj -c Release
+
   server:
     name: Server build and Ultimus replay pack
     runs-on: windows-latest
