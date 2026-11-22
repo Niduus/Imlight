@@ -3114,6 +3114,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (7 s).
 - Finished by Mythis (7 s).
 - Finished by Kurrent (7 s).
+- Finished by Idunn (7 s).
 
 ## Welcome to MooShu?
 - Finished by Ra (37 s).
@@ -3122,6 +3123,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (37 s).
 - Finished by Mythis (36 s).
 - Finished by Kurrent (37 s).
+- Finished by Idunn (38 s).
 
 ## Mind Games
 - Finished by Ra (25 s).
@@ -3130,6 +3132,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (26 s).
 - Finished by Mythis (26 s).
 - Finished by Kurrent (25 s).
+- Finished by Idunn (25 s).
 
 ## Do You Mind?
 - Finished by Ra (65 s).
@@ -3138,6 +3141,7 @@ What the bots did in MooShu, from the server log: every quest finished, every fi
 - Finished by Tulkar (67 s).
 - Finished by Mythis (6 min).
 - Finished by Kurrent (67 s).
+- Finished by Idunn (66 s).
 
 ## A Test of Strength
 - Finished by Ra (3 min).

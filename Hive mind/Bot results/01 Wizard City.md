@@ -52,6 +52,7 @@ What the bots did in Wizard City, from the server log: every quest finished, eve
 - Finished by Tulkar (5 s).
 - Finished by Mythis (5 s).
 - Finished by Kurrent (5 s).
+- Finished by Idunn (5 s).
 
 ## Left Behind
 - Finished by Ra (0 s).
