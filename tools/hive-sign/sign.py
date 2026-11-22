@@ -10,6 +10,7 @@ The bots check it with the public key built into them (bots/BotShared/BotHive.cs
 put in any repository: it lives in the project's private files (.keys/hive-signing-key.pem).
 
   python3 tools/hive-sign/sign.py --source <logs-like folder> --key <private key .pem> --out hive-mind.ahzhive
+  python3 tools/hive-sign/sign.py --repo --source <ahziael-bots checkout> --key <private key .pem> --out hive-mind.ahzhive
   python3 tools/hive-sign/sign.py --verify hive-mind.ahzhive --public <public key .pem>
 """
 
@@ -44,13 +45,24 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def build(source: str, key_path: str, out: str) -> int:
+# Niduus/ahziael-bots keeps the same files elsewhere: shared/now = logs/bots, bots/ultimus/now = logs/ultimus.
+REPO_FOLDERS = {"bots": "shared/now", "ultimus": "bots/ultimus/now"}
+
+
+def locate(source: str, rel: str, repo: bool) -> str:
+    top, rest = rel.split("/", 1)
+    if repo:
+        return os.path.join(source, *REPO_FOLDERS[top].split("/"), *rest.split("/"))
+    return os.path.join(source, top, *rest.split("/"))
+
+
+def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
     with open(key_path, "rb") as f:
         key = serialization.load_pem_private_key(f.read(), password=None)
 
     files, blobs = [], {}
     for rel in BRAIN:
-        path = os.path.join(source, *rel.split("/"))
+        path = locate(source, rel, repo)
         if not os.path.isfile(path):
             continue
         with open(path, "rb") as f:
@@ -110,6 +122,7 @@ if __name__ == "__main__":
     parser.add_argument("--source")
     parser.add_argument("--key")
     parser.add_argument("--out", default="hive-mind.ahzhive")
+    parser.add_argument("--repo", action="store_true", help="--source is a Niduus/ahziael-bots checkout")
     parser.add_argument("--verify")
     parser.add_argument("--public")
     args = parser.parse_args()
@@ -117,4 +130,4 @@ if __name__ == "__main__":
         sys.exit(verify(args.verify, args.public))
     if not args.source or not args.key:
         parser.error("--source and --key are needed to sign")
-    sys.exit(build(args.source, args.key, args.out))
+    sys.exit(build(args.source, args.key, args.out, args.repo))
