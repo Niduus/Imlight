@@ -77,7 +77,7 @@ internal static class HellhoundUpdate {
         File.WriteAllText(KeyFile, key);
         _ = Task.Run(CheckAsync);
 
-        return "Key saved. Hellhound now keeps itself up to date.";
+        return "Key saved. Hellhound now keeps itself up to date, and the server gets bot updates with the same key.";
     }
 
     internal static async Task CheckAsync() {

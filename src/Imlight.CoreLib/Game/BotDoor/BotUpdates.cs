@@ -23,6 +23,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -56,8 +57,53 @@ internal static class BotUpdates {
     /// <summary>Whether the server looks for bot updates ([Bots] LiveUpdates). Read live.</summary>
     internal static bool On => ConfigurationManager.GetValue("Bots.LiveUpdates", true);
 
-    /// <summary>The repository bot updates come from ([Bots] UpdateRepository).</summary>
+    /// <summary>The server's own repository ([Bots] UpdateRepository): live patches and the commits servers are built from.</summary>
     internal static string Repository => ConfigurationManager.GetValue("Bots.UpdateRepository", "Niduus/Imlight");
+
+    /// <summary>
+    /// Where bot updates come from ([Bots] CodeRepository). Niduus, 2026-11-22: "all updates going forward about the bots
+    /// are to [the bots app] and the bots repo ONLY", so the bots' code and its bots-v releases live in the private bots
+    /// repo. It is private, so reading it takes the read-only GitHub key Niduus pastes into the bots app once
+    /// (%LOCALAPPDATA%\Hellhound\github-key.txt), or a key in the server's bots folder (bots\github-key.txt). The key is
+    /// sent only to api.github.com and never written to a log.
+    /// </summary>
+    internal static string CodeRepository => ConfigurationManager.GetValue("Bots.CodeRepository", "Niduus/ahziael-bots");
+
+    private const string KEY_FILE = "github-key.txt";
+
+    // The key for the private bots repo, read fresh each check so a key pasted later works at once.
+    private static string Key() {
+        foreach (var path in new[] {
+                     Path.Combine(BotLoader.Folder, KEY_FILE),
+                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Hellhound", KEY_FILE),
+                 }) {
+            try {
+                if (File.Exists(path) && File.ReadAllText(path).Trim() is { Length: >= 20 and <= 400 } key && !key.Any(char.IsWhiteSpace)) {
+                    return key;
+                }
+            }
+            catch (Exception) {
+                // Not readable: try the next place.
+            }
+        }
+
+        return null;
+    }
+
+    // A GitHub request for the bots repo, with the key when there is one (only ever to api.github.com).
+    private static HttpRequestMessage CodeRequest(string url, bool file = false) {
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        if (file) {
+            request.Headers.Accept.Clear();
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
+        }
+
+        if (Key() is { } key && url.StartsWith("https://api.github.com/", StringComparison.Ordinal)) {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
+        }
+
+        return request;
+    }
 
     private static HttpClient MakeClient() {
         var client = new HttpClient { Timeout = TimeSpan.FromMinutes(2) };
@@ -174,12 +220,26 @@ internal static class BotUpdates {
         }
     }
 
-    private sealed record Published(int Number, string Tag, string ZipUrl, string Notes, DateTime When);
+    private sealed record Published(int Number, string Tag, string ZipUrl, string Notes, DateTime When, string Repo);
 
     /// <summary>Looks for a newer bot update, gets it and swaps the bots to it when it is newer than what runs.</summary>
     private static async Task CheckAsync() {
         s_lastCheck = DateTime.Now;
-        var newest = await NewestPublishedAsync();
+        Published newest;
+        try {
+            newest = await NewestPublishedAsync();
+        }
+        catch (HttpRequestException e) when (e.StatusCode is System.Net.HttpStatusCode.NotFound or System.Net.HttpStatusCode.Unauthorized
+                                                 or System.Net.HttpStatusCode.Forbidden) {
+            // A private repo answers "not found" without a working key.
+            s_lastCheckResult = Key() is null
+                ? $"bot updates come from {CodeRepository}, which needs the GitHub key pasted into the bots app"
+                : $"GitHub refused the key for {CodeRepository} ({(int) e.StatusCode}); paste a new one into the bots app";
+            Note(s_lastCheckResult);
+
+            return;
+        }
+
         if (newest is null) {
             s_lastCheckResult = "no bot update is published yet";
             WriteState();
@@ -228,7 +288,11 @@ internal static class BotUpdates {
 
     // The newest bots-v<number> release (not a draft).
     private static async Task<Published> NewestPublishedAsync() {
-        var json = await s_http.GetStringAsync($"https://api.github.com/repos/{Repository}/releases?per_page=50");
+        var repo = CodeRepository;
+        using var request = CodeRequest($"https://api.github.com/repos/{repo}/releases?per_page=50");
+        using var answer = await s_http.SendAsync(request);
+        answer.EnsureSuccessStatusCode();
+        var json = await answer.Content.ReadAsStringAsync();
         Published best = null;
         foreach (var release in JsonNode.Parse(json)?.AsArray() ?? []) {
             var tag = (string) release?["tag_name"] ?? "";
@@ -242,8 +306,9 @@ internal static class BotUpdates {
                 continue;
             }
 
-            best = new Published(number, $"{TAG_PREFIX}{number}", (string) zip["browser_download_url"], (string) release["body"] ?? "",
-                DateTime.TryParse((string) release["published_at"], out var when) ? when : DateTime.UtcNow);
+            // The file's API address works for a private repo too (with the key); the download address only for a public one.
+            best = new Published(number, $"{TAG_PREFIX}{number}", (string) zip["url"] ?? (string) zip["browser_download_url"], (string) release["body"] ?? "",
+                DateTime.TryParse((string) release["published_at"], out var when) ? when : DateTime.UtcNow, repo);
         }
 
         return best;
@@ -259,7 +324,11 @@ internal static class BotUpdates {
             Directory.CreateDirectory(part);
             var zipPath = Path.Combine(part, ASSET);
             await using (var file = File.Create(zipPath)) {
-                await using var stream = await s_http.GetStreamAsync(update.ZipUrl);
+                // GitHub sends the file on from another address; the key is not passed on there.
+                using var request = CodeRequest(update.ZipUrl, file: true);
+                using var answer = await s_http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                answer.EnsureSuccessStatusCode();
+                await using var stream = await answer.Content.ReadAsStreamAsync();
                 await stream.CopyToAsync(file);
             }
 
@@ -285,6 +354,7 @@ internal static class BotUpdates {
                 ["tag"] = update.Tag,
                 ["number"] = update.Number,
                 ["commit"] = (string) made?["commit"] ?? "",
+                ["repo"] = (string) made?["repo"] ?? update.Repo,
                 ["needsServer"] = (string) made?["needsServer"] ?? "",
                 ["published"] = update.When.ToString("o"),
                 ["notes"] = update.Notes,
@@ -308,13 +378,17 @@ internal static class BotUpdates {
     /// </summary>
     private static async Task<string> PickAsync(string newest) {
         var botsCommit = Info(newest)?["commit"]?.GetValue<string>() ?? "";
+        var botsRepo = Info(newest)?["repo"]?.GetValue<string>() ?? "";
         var serverCommit = ServerCommit();
         if (botsCommit.Length == 0 || serverCommit.Length == 0) {
             return newest;
         }
 
         try {
-            var status = await CompareAsync(serverCommit, botsCommit);
+            // A bot update from the bots repo is always the bots' newest code (the server's own bots stopped changing
+            // when the bots moved there), so it is taken over them; only one from the server's own repo can be older.
+            var sameRepo = botsRepo.Length == 0 || botsRepo.Equals(Repository, StringComparison.OrdinalIgnoreCase);
+            var status = sameRepo ? await CompareAsync(serverCommit, botsCommit) : "ahead";
 
             // "ahead": the bot update came after the server's own code. "identical" or "behind": the server's own bots are
             // as new or newer. "diverged" cannot happen on one branch; the update is taken then.
