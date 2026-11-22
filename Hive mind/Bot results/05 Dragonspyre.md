@@ -1179,3 +1179,9 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Charged Up
 - Finished by Ultimus (25 s).
+
+## The Time is Right
+- Finished by Ultimus (4 min).
+
+## Back to the Beginning
+- Finished by Ultimus (3 min).
