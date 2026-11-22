@@ -25,7 +25,7 @@ What the bots did in Wizard City, from the server log: every quest finished, eve
 - Rattlebones: won 29 time(s) (19 Solo, 10 Team), lost 0. Fastest: Cyndr in 2 rounds, deck for any fight (most of my fights lately had 2+ enemies), hit with Minor Fire Scorch, Fire Cat.
 - Field Guard: won 27 time(s) (19 Solo, 8 Team), lost 1. Fastest: Kitharas Wraith in 2 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Sunbird, Fire Cat.
 - Kraken: won 27 time(s) (10 Solo, 17 Team), lost 0. Fastest: Kitharas Andromeda in 1 rounds, deck for any fight (most of my fights lately had 2+ enemies), hit with Sunbird.
-- Cyrus Drake: won 4 time(s) (4 Solo, 0 Team), lost 0. Fastest: Kurrent in 4 rounds, plan "stack up", deck for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken.
+- Cyrus Drake: won 5 time(s) (5 Solo, 0 Team), lost 0. Fastest: Kurrent in 4 rounds, plan "stack up", deck for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken.
 - Firegut: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Kitharas Hart in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Heck Hound, Storm Hound, Minor Nova, Ice Wyvern.
 - Loathsome Creeper: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Gearhead Destroyer, Locust Swarm, Scarab.
 - Rotted Fodder: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Idunn in 2 rounds, plan "build up", deck for any fight (most of my fights lately had 2+ enemies).
@@ -2128,6 +2128,9 @@ What the bots did in Wizard City, from the server log: every quest finished, eve
 - Finished by Kitharas Andromeda (4 s).
 - Finished by Kitharas Rock (5 s).
 - Finished by Kitharas Consumer (4 s).
+- Finished by Kitharas Wraith (5 s).
+- Finished by Kitharas Hexation (7 s).
+- Finished by Crimes Against Kitharas (3 min).
 
 ## The Key at Last
 - Finished by Ultimus (5 s).
@@ -2143,20 +2146,21 @@ What the bots did in Wizard City, from the server log: every quest finished, eve
 - Finished by Kitharas Andromeda (0 s, 0 s, 0 s, 0 s, 0 s, 0 s, 0 s, 0 s, 0 s, 0 s, 13 s, 6 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 7 s, 10 s, 7 s, 12 s, 7 s, 7 s, 5 s, 7 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 8 s, 5 s, 5 s, 5 s, 12 s, 5 s, 5 s, 5 s, 6 s, 7 s, 5 s, 5 s, 5 s, 9 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 9 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 6 s, 6 s, 5 s, 5 s, 5 s, 12 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 8 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 9 s, 5 s, 7 s, 9 s, 6 s, 6 s, 6 s, 7 s, 6 s, 5 s, 5 s, 5 s, 8 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 6 s, 5 s, 9 s, 5 s, 5 s, 8 s, 6 s, 19 s, 11 s, 5 s, 6 s, 10 s, 6 s, 8 s, 5 s, 6 s, 7 s, 6 s, 5 s, 7 s, 5 s, 6 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 9 s, 5 s, 5 s, 10 s, 6 s, 5 s, 5 s, 6 s, 6 s, 10 s, 12 s, 6 s, 6 s, 5 s, 6 s, 6 s, 5 s, 14 s, 9 s, 5 s, 5 s, 6 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 10 s, 6 s, 6 s, 6 s, 6 s, 13 s, 5 s, 6 s, 6 s, 6 s, 7 s, 20 s, 9 s, 7 s, 6 s, 5 s, 5 s, 16 s, 5 s, 5 s, 9 s, 5 s, 5 s, 6 s, 6 s, 6 s, 6 s, 5 s, 5 s, 5 s, 6 s, 5 s, 9 s, 5 s, 5 s, 5 s, 5 s, 5 s, 9 s, 6 s, 5 s, 16 s, 6 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 9 s, 5 s, 5 s, 5 s, 6 s, 5 s, 6 s, 5 s, 6 s, 9 s, 8 s, 12 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 5 s, 5 s, 6 s, 5 s, 5 s, 5 s, 6 s, 5 s, 10 s, 5 s, 5 s, 6 s, 5 s, 5 s).
 
 ## Bad Blood
-- Cyrus Drake: won 4 times (4 Solo, 0 Team) by Garm, Kurrent, Ra, Ultimus. The 3 fastest:
+- Cyrus Drake: won 5 times (5 Solo, 0 Team) by Cyndr, Garm, Kurrent, Ra, Ultimus. The 3 fastest:
 - Won by Kurrent (Solo) against Cyrus Drake (rank 7, 4,000 health, Myth, a boss) on 2026-11-22 at 03:54:47.
   It took 4 rounds, about 2 minutes.
   Deck made for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "stack up" (1 enemy, stronger).
   Hits that landed: Kraken.
+- Won by Cyndr (Solo) against Cyrus Drake (rank 7, 4,000 health, Myth, a boss) on 2026-11-22 at 04:03:52.
+  It took 9 rounds, about 4 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "stack up" (1 enemy, stronger).
+  Hits that landed: Heck Hound.
 - Won by Garm (Solo) against Cyrus Drake (rank 7, 4,000 health, Myth, a boss) on 2026-11-21 at 11:03:14.
   It took 19 rounds, about 10 minutes.
   Deck made for a boss (Myth), hitting with Myth, Storm, Fire (many of my fights lately had 2+ enemies).
   Hits that landed: Poison.
-- Won by Ra (Solo) against Cyrus Drake (rank 7, 4,000 health, Myth, a boss) on 2026-11-21 at 09:03:23.
-  It took 20 rounds, about 11 minutes.
-  Deck made for a boss (Myth), hitting with Myth, Storm, Fire (many of my fights lately had 2+ enemies).
-  Hits that landed: Judgement.
 
 ## The Towering Crystal
 - Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 10:11:32.

@@ -4,7 +4,7 @@ Rebuilt every Bot Update round from the shared mistakes book (shared/now/mistake
 places the bots made it most, how often, what got them out, and the rule to prevent it. Every bot reads the
 same book, so a lesson here is a lesson for all of them.
 
-## stuck (8859 times, 405 places)
+## stuck (8764 times, 400 places)
 
 - **1258x** a few steps back from the puzzle piece "DynaTrigger_MB_Plaque_Sun instance" (now Off, needs On) (it offers its pull agai (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T08:33, KitharasAndromeda, solo)
   - What worked: walk well away and come back another way
@@ -42,7 +42,7 @@ same book, so a lesson here is a lesson for all of them.
   - What worked: walk well away and come back another way
   - Prevent it: Walk round this spot; the way finder bends round it now.
 
-## surprise (2844 times, 258 places)
+## surprise (2848 times, 259 places)
 
 - **467x** to Nightside (training) (WizardCity/WC_Hub; last 2026-11-22T08:46, Kurrent, solo)
   - Prevent it: This way goes to Merle Ambrose's Tower, not Nightside: plan from where it really goes.
@@ -69,13 +69,13 @@ same book, so a lesson here is a lesson for all of them.
 - **45x** Krokotopia/KT_Tomb/KT_WellOfSpirits (Krokotopia/KT_Tomb/KT_WellOfSpirits; last 2026-11-21T23:37, KitharasWasSilenced, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
 
-## no way on the map (2518 times, 148 places)
+## no way on the map (2485 times, 147 places)
 
 - **576x** going along with Kitharas Lamia (my group) (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T03:36, CrimesAgainstKitharas, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 - **309x** to the puzzle piece "DynaTrigger_MB_Plaque_Bird instance" (now Off, needs On) (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T08:33, KitharasAndromeda, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
-- **246x** walks out of the exit and in again through another part of it (WizardCity/WC_Ravenwood_Teleporter; last 2026-11-22T09:47, Ra, solo)
+- **250x** walks out of the exit and in again through another part of it (WizardCity/WC_Ravenwood_Teleporter; last 2026-11-22T10:16, Garm, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 - **228x** walks out of the exit and in again through another part of it (WizardCity/WC_Hub; last 2026-11-22T03:17, Kurrent, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
@@ -96,15 +96,13 @@ same book, so a lesson here is a lesson for all of them.
 - **31x** to Ravenwood (training) (WizardCity/WC_Hub; last 2026-11-21T21:24, CrimesAgainstKitharas, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 
-## out of bounds (979 times, 28 places)
+## out of bounds (947 times, 28 places)
 
 - **633x** a few steps back from the puzzle piece "DynaTrigger_MB_Plaque_Sun instance" (now Off, needs On) (it offers its pull agai (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T08:33, KitharasAndromeda, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 - **119x** to Katzenstein's Lab (Defeat Firegut) (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T04:54, KitharasDevourer, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 - **52x** onto the puzzle piece "Brazier1" (now Storm, needs Fire) (it turns when stepped on) (Krokotopia/KT_Pyramid/KT_ThroneRoom; last 2026-11-20T21:32, KitharasWraith, solo)
-  - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
-- **34x** Talk to Nolan Stormgate (WizardCity/WC_Streets/WC_Cyclops; last 2026-11-22T07:46, Zoom, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 - **22x** Talk to Temple Gatekeeper (Krokotopia/KT_Tomb/KT_TempleOfStorms; last 2026-11-21T23:16, KitharasDevourer, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
@@ -118,12 +116,14 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 - **9x** to the puzzle piece "Part2Moon1" (now Idle_Off, needs Idle_On) (Krokotopia/KT_Tomb/KT_TempleOfStorms; last 2026-11-19T17:13, Idunn, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
-- **8x** to Third Tower - The Tower Archives (Talk to Lidia Brightmoon) (DragonSpire/DS_A1_Knowledge/DS_A1Z1_WizardTower; last 2026-11-20T14:02, Ultimus, solo)
+- **9x** to Third Tower - The Tower Archives (Talk to Lidia Brightmoon) (DragonSpire/DS_A1_Knowledge/DS_A1Z1_WizardTower; last 2026-11-22T10:15, Kurrent, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 - **7x** Use Lever here (WizardCity/WC_Streets/WC_Triton; last 2026-11-20T12:49, LumeriaOfKitharas, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
+- **6x** onto the puzzle piece "Brazier4" (now Storm, needs Fire) (it turns when stepped on) (Krokotopia/KT_Pyramid/KT_ThroneRoom; last 2026-11-20T17:34, KitharasWraith, solo)
+  - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 
-## lost fight (834 times, 49 places)
+## lost fight (835 times, 49 places)
 
 - **152x** Bellows (Marleybone/MB_Hub; last 2026-11-22T09:00, KitharasDevourer, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
@@ -135,9 +135,9 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
 - **42x** Clockwork Wizard (Marleybone/MB_Hub; last 2026-11-22T07:48, KitharasLamia, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
-- **35x** Firegut (Marleybone/MB_Hub; last 2026-11-22T04:18, KitharasLibra, solo)
+- **36x** Gear Spinner (Marleybone/MB_Hub; last 2026-11-22T10:09, KitharasHydra, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
-- **35x** Gear Spinner (Marleybone/MB_Hub; last 2026-11-22T09:41, AlchemiZistOfKitharas, solo)
+- **35x** Firegut (Marleybone/MB_Hub; last 2026-11-22T04:18, KitharasLibra, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
 - **30x** O'Leary Conniver (Marleybone/MB_Hub; last 2026-11-22T08:12, KitharasHexation, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
@@ -150,7 +150,7 @@ same book, so a lesson here is a lesson for all of them.
 - **24x** Maito (MooShu/MS_Hub; last 2026-11-22T07:56, KitharasRock, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
 
-## off the main story (700 times, 76 places)
+## off the main story (703 times, 79 places)
 
 - **194x** KT-CRYHub-C01-004 (Krokotopia/KT_HubFlyingShip_ToIsland; last 2026-11-21T20:27, KitharasSentence, solo)
   - Prevent it: Never go into a dungeon the story step is not in (not for wisps, not for potions).

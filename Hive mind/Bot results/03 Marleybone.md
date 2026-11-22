@@ -6,16 +6,16 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - Gearhead: won 207 time(s) (177 Solo, 30 Team), lost 80. Fastest: Ultimus in 1 rounds, deck for a boss (Ice), hitting with Ice, Death (most of my fights lately had 2+ enemies), hit with Heck Hound.
 - O'Leary Conniver: won 250 time(s) (221 Solo, 29 Team), lost 34. Fastest: Kitharas Andromeda in 1 rounds, plan "hit now", deck for a boss (Balance), hitting with Balance, Storm, Life; my own fights say about 54% hits in my main deck (many of my fights lately had 2+ enemies), hit with Meteor Strike.
 - Clockwork Warrior: won 192 time(s) (188 Solo, 4 Team), lost 65. Fastest: Kitharas Andromeda in 1 rounds, deck for any fight (many of my fights lately had 2+ enemies), hit with Immolate.
-- Clockwork Wizard: won 199 time(s) (193 Solo, 6 Team), lost 45. Fastest: Ultimus in 1 rounds, plan "hit now", deck for a boss (Life), hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies), hit with Minor Crusade.
+- Clockwork Wizard: won 200 time(s) (194 Solo, 6 Team), lost 45. Fastest: Ultimus in 1 rounds, plan "hit now", deck for a boss (Life), hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies), hit with Minor Crusade.
 - Clanker: won 217 time(s) (149 Solo, 68 Team), lost 7. Fastest: Kitharas Andromeda in 1 rounds, deck for a boss (Life), hitting with Storm, Life, Fire (most of my fights lately had 2+ enemies), hit with Immolate.
 - Filcher: won 182 time(s) (156 Solo, 26 Team), lost 39. Fastest: Kitharas Rock in 1 rounds, plan "hit now", deck for a boss (Myth), hitting with Myth, Storm, Fire; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 71% hits in my main deck (most of my fights lately had 2+ enemies), hit with Kraken.
 - Bellows: won 50 time(s) (44 Solo, 6 Team), lost 152. Fastest: Kitharas Wraith in 1 rounds, deck for a boss (Storm), hitting with Storm, Fire, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hit with Sunbird.
 - Firegut: won 148 time(s) (108 Solo, 40 Team), lost 35. Fastest: Kitharas Lamia in 1 rounds, deck for any fight (many of my fights lately had 2+ enemies), hit with Immolate.
-- Meowiarty: won 127 time(s) (120 Solo, 7 Team), lost 32. Fastest: Cyndr in 2 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Fire Cat, Immolate.
-- Kettlehead: won 107 time(s) (103 Solo, 4 Team), lost 34. Fastest: Kurrent in 1 rounds, deck for a boss (Balance), hitting with Balance, Storm, Myth (most of my fights lately had 2+ enemies), hit with Storm Shark.
+- Meowiarty: won 133 time(s) (120 Solo, 13 Team), lost 32. Fastest: Cyndr in 2 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Fire Cat, Immolate.
+- Kettlehead: won 109 time(s) (105 Solo, 4 Team), lost 34. Fastest: Kurrent in 1 rounds, deck for a boss (Balance), hitting with Balance, Storm, Myth (most of my fights lately had 2+ enemies), hit with Storm Shark.
 - Midnighter: won 114 time(s) (114 Solo, 0 Team), lost 26. Fastest: Kitharas Shade in 1 rounds, deck for any fight (most of my fights lately had 2+ enemies), hit with Storm Shark.
-- Gear Spinner: won 87 time(s) (77 Solo, 10 Team), lost 47. Fastest: Ultimus in 1 rounds, deck for a boss (Myth), hitting with Myth, Storm, Fire; a rival that keeps beating me, so more shields and heals (most of my fights lately had 2+ enemies), hit with Storm Hound.
-- O'Leary Rowdy: won 85 time(s) (71 Solo, 14 Team), lost 34. Fastest: Ultimus in 1 rounds, deck for a boss (Ice), hitting with Ice, Death (most of my fights lately had 2+ enemies), hit with Sandstorm.
+- Gear Spinner: won 88 time(s) (78 Solo, 10 Team), lost 48. Fastest: Ultimus in 1 rounds, deck for a boss (Myth), hitting with Myth, Storm, Fire; a rival that keeps beating me, so more shields and heals (most of my fights lately had 2+ enemies), hit with Storm Hound.
+- O'Leary Rowdy: won 86 time(s) (72 Solo, 14 Team), lost 34. Fastest: Ultimus in 1 rounds, deck for a boss (Ice), hitting with Ice, Death (most of my fights lately had 2+ enemies), hit with Sandstorm.
 - Deadly Scratcher: won 102 time(s) (63 Solo, 39 Team), lost 9. Fastest: Kurrent in 1 rounds, deck for any fight (many of my fights lately had 2+ enemies), hit with Storm Shark.
 - Jacques the Scratcher: won 75 time(s) (75 Solo, 0 Team), lost 25. Fastest: Kitharas Wraith in 1 rounds, deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Immolate.
 - Sprockets: won 49 time(s) (41 Solo, 8 Team), lost 47. Fastest: Kitharas Wraith in 3 rounds, plan "hit now", deck for a boss (Storm), hitting with Storm, Myth, Death; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hit with Immolate, Fire Cat.
@@ -39,8 +39,8 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - O'Leary Brute: won 21 time(s) (21 Solo, 0 Team), lost 0. Fastest: Kurrent in 1 rounds, deck for any fight (many of my fights lately had 2+ enemies), hit with Storm Shark.
 - O'Leary Burglar: won 18 time(s) (16 Solo, 2 Team), lost 0. Fastest: Kitharas Hexation in 2 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Myth (most of my fights lately had 2+ enemies), hit with Cyclops.
 - Shrieker: won 11 time(s) (7 Solo, 4 Team), lost 4. Fastest: Kitharas Rock in 3 rounds, plan "stack up", deck for a boss (Myth), hitting with Myth, Storm, Fire; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 71% hits in my main deck (most of my fights lately had 2+ enemies), hit with Thermic Golem.
+- Ember Everburn: won 11 time(s) (11 Solo, 0 Team), lost 0. Fastest: Kitharas Shade in 1 rounds, deck for any fight; my own fights say about 52% hits in my main deck (many of my fights lately had 2+ enemies), hit with Storm Shark.
 - O'Leary Thug: won 10 time(s) (10 Solo, 0 Team), lost 0. Fastest: Kurrent in 3 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Thunder Snake.
-- Ember Everburn: won 9 time(s) (9 Solo, 0 Team), lost 0. Fastest: Kitharas Shade in 1 rounds, deck for any fight; my own fights say about 52% hits in my main deck (many of my fights lately had 2+ enemies), hit with Storm Shark.
 - Scrounger: won 9 time(s) (9 Solo, 0 Team), lost 0. Fastest: Kurrent in 1 rounds, deck for Life enemies, hitting with Life, Storm, Myth (most of my fights lately had 2+ enemies), hit with Storm Shark.
 - Yochimo: won 8 time(s) (8 Solo, 0 Team), lost 0. Fastest: Kitharas Rock in 2 rounds, deck for any fight; my own fights say about 71% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken.
 - Street Sweeper: won 6 time(s) (6 Solo, 0 Team), lost 0. Fastest: Kitharas Consumer in 2 rounds, deck for Myth enemies, hitting with Myth, Storm, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hit with Gearhead Destroyer.
@@ -337,20 +337,24 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - Finished by Kitharas Andromeda (20 min).
 - Finished by Kitharas Consumer (13 min).
 - Finished by Crimes Against Kitharas (17 min).
+- Finished by Kitharas Hexation (31 min).
+- Finished by AlchemiZist of Kitharas (31 min).
+- Finished by Kitharas Wraith (33 min).
+- Finished by Lumeria of Kitharas (33 min).
 - The step's creature: won 8 times (8 Solo, 0 Team) by Kitharas Was Silenced, Ultimus. The 3 fastest:
 - Clockwork Wizard: won 69 times (66 Solo, 3 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Shade, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Gearhead: won 62 times (57 Solo, 5 Team) by Crimes Against Kitharas, Cyndr, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Was Silenced, Kitharas Wraith, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Filcher: won 142 times (122 Solo, 20 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Shade, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Brown Recluse: won 35 times (27 Solo, 8 Team) by Crimes Against Kitharas, Cyndr, Idunn, Kitharas Consumer, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Umbella, Kitharas Wraith, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
-- O'Leary Rowdy: won 58 times (51 Solo, 7 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
-- Kettlehead: won 58 times (54 Solo, 4 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- O'Leary Rowdy: won 59 times (52 Solo, 7 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Kettlehead: won 60 times (56 Solo, 4 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Midnighter: won 21 times (21 Solo, 0 Team) by Kitharas Mordiael, Kitharas Wraith, Ra, Tulkar, Ultimus. The 3 fastest:
 - O'Leary Conniver: won 24 times (22 Solo, 2 Team) by AlchemiZist of Kitharas, Ra, Tulkar, Ultimus. The 3 fastest:
 - Gear Spinner: won 19 times (19 Solo, 0 Team) by Cyndr, Idunn, Kitharas Consumer, Kitharas Hexation, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Was Silenced, Kitharas Wraith, Ra, Tulkar, Ultimus. The 3 fastest:
 - Potbelly: won 42 times (38 Solo, 4 Team) by AlchemiZist of Kitharas, Cyndr, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Umbella, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Ra, Tulkar, Ultimus. The 3 fastest:
 - Nightmare Spirit: won 52 times (46 Solo, 6 Team) by Cyndr, Garm, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Shield Skeleton: won 44 times (40 Solo, 4 Team) by Cyndr, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Jackle, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Umbella, Kitharas Was Silenced, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
-- Meowiarty: won 119 times (112 Solo, 7 Team) by AlchemiZist of Kitharas, Crimes Against Kitharas, Cyndr, Garm, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Shade, Kitharas Wraith, Kurrent, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Meowiarty: won 123 times (112 Solo, 11 Team) by AlchemiZist of Kitharas, Crimes Against Kitharas, Cyndr, Garm, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Shade, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Shrieker: won 11 times (7 Solo, 4 Team) by AlchemiZist of Kitharas, Idunn, Kitharas Consumer, Kitharas Hart, Kitharas Jackle, Kitharas Rock, Kitharas Umbella, Kurrent, Mythis, Tulkar. The 3 fastest:
 - Bellows: won 6 times (6 Solo, 0 Team) by Kitharas Was Silenced. The 3 fastest:
 - Won by Kitharas Was Silenced (Solo) against the step's creature on 2026-11-22 at 00:02:09.
@@ -730,6 +734,7 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   - Meowiarty: lost 1 time(s) (Lumeria of Kitharas). Why: its biggest hit took 75% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - O'Leary Rowdy: lost 1 time(s) (Kitharas Hydra). Why: its biggest hit took 72% of my health, the fight ran 8 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Meowiarty: lost 1 time(s) (Kitharas Wraith). Why: its biggest hit took 75% of my health, the fight ran 6 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
+  - Gear Spinner: lost 1 time(s) (Kitharas Hydra). Why: its biggest hit took 61% of my health, the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
   - Big Ben near (0, 19600) while Defeat 1 creatures ("The Last Meow"): stuck 324 time(s) (Ultimus); one bot tried every fix there.
   - Big Ben near (-4200, 10600) while Defeat 1 creatures ("The Last Meow"): stuck 44 time(s) (Idunn, Ultimus); one bot tried every fix there.
@@ -1109,9 +1114,9 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - Finished by Kitharas Hydra (17 min).
 - Finished by Kitharas Umbella (32 min).
 - Finished by Kitharas Devourer (65 s).
-- Gear Spinner: won 42 times (35 Solo, 7 Team) by AlchemiZist of Kitharas, Crimes Against Kitharas, Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Lamia, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Shade, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Gear Spinner: won 43 times (36 Solo, 7 Team) by AlchemiZist of Kitharas, Crimes Against Kitharas, Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Hart, Kitharas Hexation, Kitharas Hydra, Kitharas Jackle, Kitharas Lamia, Kitharas Libra, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Shade, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Sprockets: won 5 times (5 Solo, 0 Team) by Idunn, Kitharas Wraith, Ultimus. The 3 fastest:
-- Clockwork Wizard: won 56 times (55 Solo, 1 Team) by AlchemiZist of Kitharas, Crimes Against Kitharas, Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Lamia, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Shade, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
+- Clockwork Wizard: won 57 times (56 Solo, 1 Team) by AlchemiZist of Kitharas, Crimes Against Kitharas, Cyndr, Garm, Idunn, Kitharas Andromeda, Kitharas Consumer, Kitharas Devourer, Kitharas Hart, Kitharas Hexation, Kitharas Lamia, Kitharas Libra, Kitharas Moon, Kitharas Mordiael, Kitharas Rock, Kitharas Sentence, Kitharas Shade, Kitharas Umbella, Kitharas Was Silenced, Kitharas Wraith, Kurrent, Lumeria of Kitharas, Mythis, Ra, Tulkar, Ultimus. The 3 fastest:
 - Clockwork Warrior: won 7 times (7 Solo, 0 Team) by Kitharas Andromeda, Kitharas Hydra, Kitharas Jackle, Kitharas Mordiael, Kitharas Sentence, Kitharas Was Silenced, Mythis. The 3 fastest:
 - Firegut: won 4 times (4 Solo, 0 Team) by Crimes Against Kitharas. The 3 fastest:
 - Won by Kitharas Lamia (Solo) against Gear Spinner (rank 5, 675 health, Myth, a boss) on 2026-11-21 at 22:05:32.
@@ -2845,6 +2850,11 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   It took 8 rounds, about 5 minutes.
   Deck made for a boss (Myth), hitting with Myth, Storm, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies).
   Hits that landed: Gearhead Destroyer x2, Sandstorm, Minor Crusade.
+- Won by Crimes Against Kitharas (Team with Kitharas Wraith) against Meowiarty (rank 6, 2,000 health, Myth, a boss) on 2026-11-22 at 04:05:31.
+  It took 15 rounds, about 9 minutes.
+  Deck made for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 50% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (3+ enemies, stronger).
+  Hits that landed: Banshee.
 - Won by Cyndr (Team with Tulkar) against Clockwork Wizard (rank 4, 560 health, Life, a boss) on 2026-11-20 at 20:40:51.
   It took 4 rounds, about 2 minutes.
   Deck made for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies).
@@ -3679,6 +3689,7 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   - Big Ben near (-31600, 12000) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 2 time(s) (Kitharas Rock); one bot tried every fix there.
   - Big Ben near (24000, 20600) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 1 time(s) (Kitharas Rock); one bot tried every fix there.
   - Big Ben near (26700, 21000) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 1 time(s) (Kitharas Rock); one bot tried every fix there.
+  - Big Ben near (26400, 21000) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 1 time(s) (Kitharas Rock).
 
 ## Torchure
 - Won by Kitharas Shade (Solo) against Ember Everburn (rank 6, 1,400 health, Fire, a boss) on 2026-11-22 at 03:09:07.
@@ -3689,7 +3700,7 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   - Counterweight West near (500, -600) while joining Kitharas Devourer's battle (my group) (): stuck 1 time(s) (Kitharas Shade).
 
 ## To the Great Beyond
-- Ember Everburn: won 7 times (7 Solo, 0 Team) by Kitharas Shade. The 3 fastest:
+- Ember Everburn: won 9 times (9 Solo, 0 Team) by Kitharas Shade. The 3 fastest:
 - Won by Kitharas Shade (Solo) against Ember Everburn (rank 6, 1,400 health, Fire, a boss) on 2026-11-22 at 03:55:22.
   It took 1 rounds, about 1 minutes.
   Deck made for any fight; my own fights say about 52% hits in my main deck (many of my fights lately had 2+ enemies).
@@ -3725,6 +3736,7 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - Avoid, places bots got stuck:
   - Big Ben near (-31100, 13400) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 2 time(s) (Kitharas Moon).
   - Big Ben near (25600, 21100) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 1 time(s) (Kitharas Moon).
+  - Big Ben near (-21800, 12000) while to Regent's Square (leaving Big Ben: a side dungeon, my story is in Regent's Square): stuck 1 time(s) (Kitharas Moon); one bot tried every fix there.
 
 ## To the Front!
 - Katsumori: won 4 times (4 Solo, 0 Team) by Kitharas Hart. The 3 fastest:
@@ -4468,3 +4480,10 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   Deck made for a boss (Fire), hitting with Fire, Myth, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 52% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
   Hits that landed: Banshee, Fire Elf.
+
+## Welcome to MooShu?
+- Won by Kitharas Consumer (Team with Lumeria of Kitharas) against Meowiarty (rank 6, 2,000 health, Myth, a boss) on 2026-11-22 at 04:05:45.
+  It took 11 rounds, about 8 minutes.
+  Deck made for any fight; my own fights say about 72% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (3+ enemies, stronger).
+  Hits that landed: Gearhead Destroyer x2, Sandstorm x2, Scarab.
