@@ -4,7 +4,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Best way to beat each creature
 - Loathsome Creeper: won 102 time(s) (71 Solo, 31 Team), lost 0. Fastest: Ra in 1 rounds, deck for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-- Petrov Gloomstrider: won 56 time(s) (52 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
+- Petrov Gloomstrider: won 58 time(s) (54 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
 - Sea Lord: never beaten yet, lost 35 time(s). Most common reason: its biggest hit took 90% of my health, the fight ran 6 minutes, so I ran out of good cards.
 - Wandering Wizard: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
 - Earth Elemental: won 1 time(s) (1 Solo, 0 Team), lost 4. Fastest: Ultimus in 31 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Elemental Shield, Fairy.
@@ -287,6 +287,11 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   It took 24 rounds, about 11 minutes.
   Deck made for a boss (Balance), hitting with Balance, Fire, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies).
   Spells that landed the hits: Balance x4, Elemental Shield x2, Fairy, Helping Hands, Banshee.
+- Won by Ra (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:14:48.
+  It took 6 rounds, about 3 minutes.
+  Deck made for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Minor Crusade x2, Judgement, Gearhead Destroyer, Locust Swarm.
 - Avoid, fights lost:
   - Zarathax: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 17 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Zarathax: lost 1 time(s) (Ultimus). Why: I went in at 69% health, its biggest hit took 54% of my health, the fight ran 12 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -957,6 +962,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## The Last Key
 - Finished by Ultimus (5 min).
 - Finished by Garm (5 min).
+- Finished by Ra (4 min).
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 08:35:32.
   It took 5 rounds, about 3 minutes.
   Deck made for a boss (Ice), hitting with Ice, Death, Myth (most of my fights lately had 2+ enemies).
@@ -967,10 +973,15 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Poison.
+- Won by Ra (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:02:29.
+  It took 5 rounds, about 2 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Judgement x2.
 
 ## The Dragon's Claw
 - Finished by Ultimus (53 s).
 - Finished by Garm (53 s).
+- Finished by Ra (53 s).
 
 ## Warkeeper
 - Finished by Ultimus (17 s).
