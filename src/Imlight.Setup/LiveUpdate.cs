@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 
 namespace Imlight.Setup;
 
@@ -116,6 +117,20 @@ internal static class LiveUpdate {
     /// it in. <paramref name="dataReload"/>: the update also brought game data the server should read again once it's in.
     /// </summary>
     internal static void Ask(string installFolder, string sourceFolder, string serverFolder, string version, bool dataReload) {
+        var label = HandOver(sourceFolder, serverFolder, version);
+        File.WriteAllText(MarkPath(installFolder), new JsonObject {
+            ["label"] = label,
+            ["version"] = WaitingVersion(installFolder),
+            ["asked"] = DateTime.Now.ToString("o"),
+            ["reload"] = dataReload,
+            ["state"] = "asked",
+            ["why"] = "",
+        }.ToJsonString());
+        File.WriteAllText(Path.Combine(LiveFolder(serverFolder), "put-in.txt"), label);
+    }
+
+    /// <summary>Copies the update's server code where the running server reads it; returns its name ("ahziael-0.10.962").</summary>
+    private static string HandOver(string sourceFolder, string serverFolder, string version) {
         var label = PREFIX + version;
         var updates = Path.Combine(LiveFolder(serverFolder), "updates");
         var folder = Path.Combine(updates, label);
@@ -160,15 +175,76 @@ internal static class LiveUpdate {
             }
         }
 
-        File.WriteAllText(MarkPath(installFolder), new JsonObject {
-            ["label"] = label,
-            ["version"] = WaitingVersion(installFolder),
-            ["asked"] = DateTime.Now.ToString("o"),
-            ["reload"] = dataReload,
-            ["state"] = "asked",
-            ["why"] = "",
-        }.ToJsonString());
+        // A result from an earlier try of the same update is not this one's answer.
+        File.Delete(Path.Combine(folder, "result.json"));
+
+        return label;
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // Before the build (Niduus, 2026-11-21: "what the fuck was the point in streamlining updates if my envision for them
+    // still required me to do the things I wanted to dodge. UPDATE, BUILD AND RESTART"): an update whose only program
+    // change is the server's own code goes into the running server as soon as its code is downloaded, before anything is
+    // built. The build still runs after, in the background, for the server's files at its next start; nobody waits for it.
+    // ---------------------------------------------------------------------------------------------------------------
+
+    /// <summary>The source of the build that runs now, as SourceParts.Hash wrote it (the program parts other than the server's own code).</summary>
+    internal const string SOURCE_PARTS = "source-parts.txt";
+
+    /// <summary>Why the update downloaded to <paramref name="sourceFolder"/> can't go into the running server before it is built, or null.</summary>
+    internal static string? EarlyWhyNot(string installFolder, string sourceFolder, string serverFolder) {
+        if (!File.Exists(Path.Combine(installFolder, ServerManager.LIVE_PATCHES_ON_FILE))) {
+            return "the Live patches switch is off";
+        }
+
+        if (!InstalledCommands.IsServerRunning(installFolder)) {
+            return "the server isn't running";
+        }
+
+        if (InstalledCommands.LivePatchBuild(installFolder) != "patchable") {
+            return "the running server isn't built for live patches yet";
+        }
+
+        var state = ReadJson(Path.Combine(LiveFolder(serverFolder), "state.json"));
+        if ((bool?) state?["takesUpdates"] != true) {
+            return "the running server can't take an update while it runs";
+        }
+
+        // The other program parts the running server was built from: its own files, or those of an update that already went
+        // into it live (their other parts are the same, or it wouldn't have).
+        var pending = Path.Combine(installFolder, "Pending", "Server");
+        var running = WentIn(installFolder, serverFolder) && File.Exists(Path.Combine(pending, "live-patches", SOURCE_PARTS))
+            ? Path.Combine(pending, "live-patches", SOURCE_PARTS)
+            : Path.Combine(LiveFolder(serverFolder), SOURCE_PARTS);
+        if (!File.Exists(running)) {
+            return "the running server was built before Ahziael noted its parts (this one update builds first)";
+        }
+
+        var now = SourceParts.Hash(sourceFolder);
+        var then = File.ReadAllText(running).Trim();
+        return now == then ? null : "it changes server parts other than the server's own code";
+    }
+
+    /// <summary>
+    /// Hands the update's server code to the running server and waits for its answer. Null when it is in; else why not.
+    /// <paramref name="say"/> gets a line for the person while it waits.
+    /// </summary>
+    internal static async Task<string?> PutInNowAsync(string sourceFolder, string serverFolder, string version, Action<string> say) {
+        var label = HandOver(sourceFolder, serverFolder, version);
         File.WriteAllText(Path.Combine(LiveFolder(serverFolder), "put-in.txt"), label);
+        say("The update's fixes are going into the running server now; nobody is disconnected.");
+        var resultPath = Path.Combine(LiveFolder(serverFolder), "updates", label, "result.json");
+        var started = DateTime.Now;
+        while (DateTime.Now - started < LongestWait) {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            if (ReadJson(resultPath) is not { } result) {
+                continue;
+            }
+
+            return (bool?) result["done"] == true ? null : (string?) result["problem"] is { Length: > 0 } why ? why : "the server couldn't take it";
+        }
+
+        return "the server didn't answer in time";
     }
 
     internal enum Stage { None, Asked, In, Refused }

@@ -418,6 +418,18 @@ public static class LivePatchUpdates {
     /// this program, built for live patches from the code a live patch starts from, tries to put the newer code in.
     /// Exit code 0: it can go live; 2: it needs a full update; 1: the check itself could not run.
     /// </summary>
+    // How many game messages the server's services answer, read the way sessions read them (MessageHandlerTable).
+    private static int GameMessageAnswers() {
+        try {
+            return LivePatcher.Target.GetTypes()
+                .Where(t => !t.IsAbstract && typeof(Imlight.CoreLib.Shared.Networking.ReceiveProtocolDispatcher).IsAssignableFrom(t))
+                .Sum(t => Imlight.CoreLib.Shared.Networking.MessageHandlerTable.HandlersOf(t).Count);
+        }
+        catch (Exception) {
+            return 0;
+        }
+    }
+
     public static int Check(string repositoryRoot) {
         if (LivePatcher.WhyNot is { } why) {
             Console.WriteLine($"CHECK FAILED: {why}");
@@ -425,11 +437,28 @@ public static class LivePatchUpdates {
             return 1;
         }
 
+        var answersBefore = GameMessageAnswers();
         var outcome = LivePatcher.ApplyAsync(Path.GetFullPath(repositoryRoot), "check").GetAwaiter().GetResult();
         if (outcome.Done) {
             Console.WriteLine(outcome.NothingNew
                 ? "CAN GO LIVE: nothing in the server's code changed."
                 : $"CAN GO LIVE: {outcome.Methods} methods change in the running server.");
+            // The cloud check can call one static method of the patched code (IMLIGHT_LIVE_PATCH_PROBE=Namespace.Type.Method).
+            if (Environment.GetEnvironmentVariable("IMLIGHT_LIVE_PATCH_PROBE") is { Length: > 0 } probe && probe.LastIndexOf('.') is > 0 and var dot) {
+                try {
+                    var method = LivePatcher.Target.GetType(probe[..dot])?.GetMethod(probe[(dot + 1)..],
+                        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+                    Console.WriteLine($"PROBE: {method?.Invoke(null, null) ?? "(no such method)"}");
+                }
+                catch (Exception e) {
+                    Console.WriteLine($"PROBE: failed ({(e.InnerException ?? e).Message})");
+                }
+            }
+
+            var answersAfter = GameMessageAnswers();
+            if (answersAfter != answersBefore) {
+                Console.WriteLine($"NOTE: the server answers {answersAfter - answersBefore} more kinds of game message right away.");
+            }
             foreach (var note in outcome.Notes) {
                 Console.WriteLine($"NOTE: {note}");
             }

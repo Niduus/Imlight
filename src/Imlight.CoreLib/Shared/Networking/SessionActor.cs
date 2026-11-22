@@ -601,8 +601,22 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
                 .Result
                 .Service;
             _services.Add(childRef, identity);
+        }
 
-            // Populate the dispatch table.
+        FillDispatchTable();
+    }
+
+    // The handler table version the dispatch table was filled from (MessageHandlerTable.Version).
+    private int _dispatchVersion;
+
+    /// <summary>
+    /// Which service gets which game message. Filled again after a live patch, so a handler the patch added is called
+    /// in sessions that were already open.
+    /// </summary>
+    private void FillDispatchTable() {
+        _dispatchVersion = MessageHandlerTable.Version;
+        _dispatchTable.Clear();
+        foreach (var (childRef, identity) in _services) {
             foreach (var msgType in identity.MessageHandlers.Keys) {
                 if (!_dispatchTable.TryGetValue(msgType, out var list)) {
                     list = [];
@@ -659,6 +673,10 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         }
         else if (packet is WIZARD2_53_PROTOCOL.MSG_CLIENTZONED) {
             NoteClientZoned();
+        }
+
+        if (_dispatchVersion != MessageHandlerTable.Version) {
+            FillDispatchTable();
         }
 
         if (_dispatchTable.TryGetValue(packet.GetType(), out var handlers)) {

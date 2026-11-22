@@ -77,6 +77,8 @@ public static class LivePatcher {
     private static Type s_serviceType;
     private static ProjectId s_project;
     private static string s_projectDir;
+    // Members put in as properties that start when first read (LiveStartValues), kept that way until a restart.
+    private static HashSet<string> s_lazy = new(StringComparer.Ordinal);
     private static Solution s_current;
 
     // The code files that come from the repository (not the build's own generated ones), by their path in the project.
@@ -162,13 +164,37 @@ public static class LivePatcher {
             }
 
             // A field or property the change adds to a class that already runs, with a starting value: the objects made before
-            // it went in get the field with no value (null, 0), never the starting one, and code reading it breaks there. v0.10.941
-            // added two lists to the zones' trigger part; every zone open at the time threw on each arrival and doors stopped
-            // taking anyone on for 15 minutes (2026-11-21 00:31-00:46). Such a change waits for a restart instead.
+            // it went in would get the field with no value (null, 0), never the starting one, and code reading it breaks there
+            // (v0.10.941: two lists added to the zones' trigger part; every open zone threw on each arrival, 2026-11-21 00:31).
+            // Such a member goes in as a property that takes its starting value when first read (LiveStartValues), and stays
+            // written that way in every later patch until the server restarts.
             var before = await s_current.GetProject(s_project)!.GetCompilationAsync(cancel);
-            if (before is not null && NewStartValues(before, compilation) is { Count: > 0 } started) {
-                return new Outcome(false, 0, "it adds a starting value the server's running parts would not get (" +
-                    string.Join(", ", started.Take(4)) + (started.Count > 4 ? ", ..." : "") + "), so it needs a restart", []);
+            var lazy = new HashSet<string>(s_lazy, StringComparer.Ordinal);
+            if (before is not null) {
+                lazy.UnionWith(LiveStartValues.Added(before, compilation));
+            }
+
+            var made = await LiveStartValues.MakeLazyAsync(next, s_project, lazy, cancel);
+            if (made.Problem is not null) {
+                return new Outcome(false, 0, $"it adds a starting value that can't be given to the running parts ({made.Problem}), so it needs a restart", []);
+            }
+
+            next = made.Solution;
+            if (lazy.Count > 0) {
+                // Unchanged files stay exactly what runs now.
+                foreach (var (_, id) in docs) {
+                    if (s_current.GetDocument(id) is { } was && next.GetDocument(id) is { } now
+                        && Same((await was.GetTextAsync(cancel)).ToString(), (await now.GetTextAsync(cancel)).ToString())) {
+                        next = next.WithDocumentText(id, await was.GetTextAsync(cancel));
+                    }
+                }
+
+                compilation = await next.GetProject(s_project)!.GetCompilationAsync(cancel);
+                errors = compilation!.GetDiagnostics(cancel).Where(d => d.Severity == DiagnosticSeverity.Error).Take(4).ToList();
+                if (errors.Count > 0) {
+                    return new Outcome(false, 0, "it adds a starting value that is used in a way the running parts can't take (" +
+                        string.Join(" | ", errors.Select(Plain)) + "), so it needs a restart", []);
+                }
             }
 
             var steps = await GoInAsync(s_current, next, label, 0, cancel);
@@ -177,6 +203,7 @@ public static class LivePatcher {
                     // Part of it went in: what runs now is that part.
                     s_current = steps.Reached;
                     s_docs = DocsOf(steps.Reached);
+                    s_lazy = lazy;
                 }
 
                 return new Outcome(false, 0, steps.Problem, []);
@@ -184,8 +211,9 @@ public static class LivePatcher {
 
             s_current = next;
             s_docs = docs;
+            s_lazy = lazy;
 
-            return new Outcome(true, steps.Methods, null, steps.Notes.Distinct().ToList());
+            return new Outcome(true, steps.Methods, null, steps.Notes.Distinct().ToList(), NothingNew: steps.Methods == 0);
         }
         catch (Exception e) {
             Logger.Error("Live patches: {0} could not go in: {1}", Logger.Args(label, e));
@@ -409,6 +437,38 @@ public static class LivePatcher {
     // Closed over the outputs object: every project of the one-project workspace has the same outputs.
     private static T SameOutputs<T>(T outputs, Project project) => outputs;
 
+    /// <summary>
+    /// After code changed in the running server: what .NET itself keeps about the code (the list of a type's methods and
+    /// their marks, which reflection reads) is dropped, as the runtime's own hot reload tool does, then tables the game
+    /// reads from the code once (its message handlers) are read again. Without the first part a [MessageHandler] that a
+    /// patch added is never seen (0.10.960's Friendly Players quest answer stayed silent until a restart).
+    /// </summary>
+    private static void CodeChanged() {
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+            IEnumerable<MetadataUpdateHandlerAttribute> handlers;
+            try {
+                handlers = assembly.GetCustomAttributes<MetadataUpdateHandlerAttribute>().ToList();
+            }
+            catch {
+                continue;
+            }
+
+            foreach (var handler in handlers) {
+                foreach (var name in new[] { "ClearCache", "UpdateApplication" }) {
+                    try {
+                        handler.HandlerType.GetMethod(name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, [typeof(Type[])])
+                            ?.Invoke(null, [null]);
+                    }
+                    catch (Exception e) {
+                        Logger.Warning("Live patches: {0}.{1} failed after the change: {2}", Logger.Args(handler.HandlerType.FullName, name, e.Message));
+                    }
+                }
+            }
+        }
+
+        Imlight.CoreLib.Shared.Networking.MessageHandlerTable.CodeChanged();
+    }
+
     private sealed record Update(ImmutableArray<byte> Metadata, ImmutableArray<byte> IL, ImmutableArray<byte> Pdb, int Methods);
 
     private sealed record Steps(int Methods, string Problem, List<string> Notes, Solution Reached);
@@ -458,7 +518,8 @@ public static class LivePatcher {
         }
 
         var blockers = notes.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
-        if (blockers.Count > 0 || (updates.Count == 0 && from != to)) {
+        // No update and no blocker: nothing that runs differs (a file read again unchanged).
+        if (blockers.Count > 0) {
             var reason = blockers.Count > 0
                 ? string.Join(" | ", blockers.Take(4).Select(Plain))
                 : notes.Count > 0 ? string.Join(" | ", notes.Take(4).Select(Plain)) : "no change could be worked out";
@@ -472,6 +533,9 @@ public static class LivePatcher {
             MetadataUpdater.ApplyUpdate(Target, update.Metadata.AsSpan(), update.IL.AsSpan(), update.Pdb.AsSpan());
             Keep(label, update);
         }
+
+        // Tables read from the code once (the game's message handlers) are read again.
+        CodeChanged();
 
         return new Steps(methods, null, notes.Where(d => d.Id.StartsWith("ENC", StringComparison.Ordinal)).Select(Plain).ToList(), to);
     }
@@ -649,6 +713,7 @@ public static class LivePatcher {
                                 File.ReadAllBytes(Path.Combine(AppliedFolder, $"{step}.il")),
                                 File.ReadAllBytes(Path.Combine(AppliedFolder, $"{step}.pdb")));
                             taken = step;
+                            CodeChanged();
                             Logger.Information("Live patches: this mini server took change {0} from the game server.", Logger.Args(step));
                         }
                     }

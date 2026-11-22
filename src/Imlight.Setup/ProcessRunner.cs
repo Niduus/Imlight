@@ -34,7 +34,7 @@ internal static class ProcessRunner {
     /// <paramref name="workingDirectory"/>, when given, is the folder it runs in.
     /// </summary>
     internal static async Task<int> RunAsync(string fileName, IEnumerable<string> arguments, bool showProgress = false,
-        string? workingDirectory = null) {
+        string? workingDirectory = null, bool lowPriority = false) {
         var startInfo = CreateStartInfo(fileName, arguments);
         if (workingDirectory is not null) {
             startInfo.WorkingDirectory = workingDirectory;
@@ -58,6 +58,16 @@ internal static class ProcessRunner {
         process.OutputDataReceived += (_, e) => OnLine(e.Data);
         process.ErrorDataReceived += (_, e) => OnLine(e.Data);
         process.Start();
+        if (lowPriority) {
+            // A build in the background gives way to the game and the server (its helper processes take this on).
+            try {
+                process.PriorityClass = ProcessPriorityClass.BelowNormal;
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or System.ComponentModel.Win32Exception or PlatformNotSupportedException) {
+                // Ended already, or not allowed here: it builds at the usual speed.
+            }
+        }
+
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         await process.WaitForExitAsync();

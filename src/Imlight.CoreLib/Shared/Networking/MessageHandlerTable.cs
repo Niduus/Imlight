@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 
 namespace Imlight.CoreLib.Shared.Networking;
 
@@ -52,6 +53,24 @@ internal static class MessageHandlerTable {
 
     private static readonly ConcurrentDictionary<Type, Dictionary<Type, MethodInfo>> s_handlersByReceiver = new();
     private static readonly ConcurrentDictionary<(Type Receiver, Type Message), Action<object, object>> s_dispatchers = new();
+    private static int s_version;
+
+    /// <summary>
+    /// Goes up each time the server's code changes while it runs (a live patch): a handler table read before is stale
+    /// then (SessionActor reads its own again).
+    /// </summary>
+    public static int Version => Volatile.Read(ref s_version);
+
+    /// <summary>
+    /// A live patch went in (Niduus, 2026-11-21: updates without "UPDATE, BUILD AND RESTART"): a [MessageHandler] it added
+    /// or moved is found from now on, in this server and in the bots' mini servers that take the same change. Before
+    /// this, 0.10.960's Friendly Players quest answer was never called until a restart.
+    /// </summary>
+    public static void CodeChanged() {
+        s_handlersByReceiver.Clear();
+        s_dispatchers.Clear();
+        Interlocked.Increment(ref s_version);
+    }
 
     public static Dictionary<Type, MethodInfo> HandlersOf(Type receiverType) {
         // Shared by every instance of the type; callers only read it.

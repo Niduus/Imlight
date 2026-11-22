@@ -62,10 +62,10 @@ public class InternalMessageHandlerAttribute(Type messageType) : MessageHandlerA
 /// </summary>
 public class ReceiveProtocolDispatcher : ReceiveActor {
 
-    public Dictionary<Type, MethodInfo> MessageHandlers { get; private set; }
+    /// <summary>The message handlers of this type, read again after a live patch (MessageHandlerTable).</summary>
+    public Dictionary<Type, MethodInfo> MessageHandlers => MessageHandlerTable.HandlersOf(GetType());
 
     protected ReceiveProtocolDispatcher() {
-        MessageHandlers = MessageHandlerTable.HandlersOf(GetType());
         ConfigureReceivers();
     }
 

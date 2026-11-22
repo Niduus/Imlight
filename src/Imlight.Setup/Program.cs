@@ -243,6 +243,20 @@ internal static class Program {
             var dotnet = await steps.EnsureDotnetAsync();
             await steps.DownloadSourceAsync();
             steps.PrepareGeneratorInputs(rootWad);
+            // Live patches on and only the server's own code changed: the fixes go into the running server now, before the
+            // build, so nobody waits for it (LiveUpdate). The build below is then only for the server's files at its next start.
+            var version = SelfUpdate.CurrentVersion.ToString();
+            var whyNotNow = LiveUpdate.EarlyWhyNot(options.InstallFolder, steps.SourceFolder, steps.ServerFolder);
+            if (whyNotNow is null) {
+                var refused = await LiveUpdate.PutInNowAsync(steps.SourceFolder, steps.ServerFolder, version, SetupLog.Info);
+                SetupLog.Info(refused is null
+                    ? $"Imlight {version}'s fixes are in the running server; nobody was disconnected. The rest is built in the background."
+                    : $"Imlight {version} couldn't go into the running server before it was built ({refused}); it is built first.");
+            }
+            else if (File.Exists(Path.Combine(options.InstallFolder, ServerManager.LIVE_PATCHES_ON_FILE))) {
+                SetupLog.Detail($"Imlight {version} is built before it goes in: {whyNotNow}.");
+            }
+
             await steps.BuildServerAsync(dotnet, toPending: true);
             SetupLog.Info($"Imlight {SelfUpdate.CurrentVersion} is ready to install.");
 

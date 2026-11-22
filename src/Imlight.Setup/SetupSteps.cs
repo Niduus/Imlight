@@ -711,14 +711,18 @@ internal sealed class SetupSteps : IDisposable {
         // Imcodec builds an MSBuild task against the running SDK's own MSBuild, which only compiles on .NET 10.
         string[] publish = ["publish", project, "-c", "Release", "-r", RuntimeIdentifier(), "--self-contained", "true", "-o", staging, "-nologo"];
         // Ahziael's Live patches switch (off by default): the server part is built so fixes can go into it while it runs.
+        // The other program parts this server is built from, so the next update can tell before it builds whether it can go
+        // straight into the running server (LiveUpdate.EarlyWhyNot).
+        string? sourceParts = null;
         if (File.Exists(Path.Combine(_options.InstallFolder, ServerManager.LIVE_PATCHES_ON_FILE))) {
+            sourceParts = SourceParts.Hash(SourceFolder);
             SetupLog.Info("Live patches are on, so the server is built ready for fixes that go in without a restart.");
             // Without the repository's commit stamped in, a part whose code didn't change builds to the same file, so an
             // update that only changes the server's own code can go into the running server (LiveUpdate).
             publish = [.. publish, "-p:LivePatches=true", "-p:IncludeSourceRevisionInInformationalVersion=false", "-p:EnableSourceLink=false",
                 "-p:EnableSourceControlManagerQueries=false"];
         }
-        var exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder);
+        var exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder, lowPriority: toPending);
         if (exitCode != 0 && reused) {
             // The last build's leftovers are never a reason for an update to fail: the whole server is built again.
             SetupLog.Info("The quick build did not work, so the whole server is built again (a few minutes).");
@@ -727,7 +731,7 @@ internal sealed class SetupSteps : IDisposable {
                 Directory.Delete(staging, recursive: true);
             }
 
-            exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder);
+            exitCode = await ProcessRunner.RunAsync(dotnet, publish, showProgress: true, workingDirectory: SourceFolder, lowPriority: toPending);
         }
 
         if (exitCode != 0) {
@@ -736,6 +740,10 @@ internal sealed class SetupSteps : IDisposable {
 
         if (_sourceStamp is not null) {
             File.WriteAllText(Path.Combine(staging, ServerSource.STAMP_FILE), _sourceStamp);
+        }
+
+        if (sourceParts is not null && Directory.Exists(Path.Combine(staging, "live-patches"))) {
+            File.WriteAllText(Path.Combine(staging, "live-patches", LiveUpdate.SOURCE_PARTS), sourceParts);
         }
 
         if (_gameMessages is not null) {
