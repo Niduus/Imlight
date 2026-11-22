@@ -25,6 +25,7 @@ internal static class Program {
         var once = false;
         var openBrowser = true;
         string? game = null;
+        var afterUpdate = args.Contains("--after-update");
         for (var i = 0; i < args.Length; i++) {
             switch (args[i]) {
                 case "--server" when i + 1 < args.Length:
@@ -48,8 +49,19 @@ internal static class Program {
             return 0;
         }
 
-        // One Hellhound at a time: a second start just opens the window again.
-        using var single = new Mutex(true, "Local\\Hellhound", out var first);
+        // One Hellhound at a time: a second start just opens the window again. After it updated itself, the new copy waits
+        // for the old one to step aside.
+        s_single = new Mutex(true, "Local\\Hellhound", out var first);
+        if (!first && afterUpdate) {
+            try {
+                first = s_single.WaitOne(TimeSpan.FromSeconds(20));
+            }
+            catch (AbandonedMutexException) {
+                first = true;
+            }
+        }
+
+        SelfUpdate.Tidy();
         var portFile = Path.Combine(AppWindow.DataFolder, "port.txt");
         if (!first) {
             if (File.Exists(portFile) && int.TryParse(File.ReadAllText(portFile).Trim(), out var running)) {
@@ -59,8 +71,18 @@ internal static class Program {
             return 0;
         }
 
-        var listener = new TcpListener(IPAddress.Loopback, 0);
-        listener.Start();
+        // The same address as last time when it is free, so a window left open (after an update) carries on.
+        TcpListener listener;
+        try {
+            var last = File.Exists(portFile) && int.TryParse(File.ReadAllText(portFile).Trim(), out var p) && p is > 1024 and < 65536 ? p : 0;
+            listener = new TcpListener(IPAddress.Loopback, last);
+            listener.Start();
+        }
+        catch (Exception) {
+            listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+        }
+
         var port = ((IPEndPoint) listener.LocalEndpoint).Port;
         var url = $"http://127.0.0.1:{port}/";
         AppWindow.Log($"Hellhound is running at {url} for the server in {files.Folder}.");
@@ -71,7 +93,7 @@ internal static class Program {
         catch (Exception) {
         }
 
-        if (openBrowser && AppWindow.Open(url) is { } window) {
+        if (openBrowser && !afterUpdate && AppWindow.Open(url) is { } window) {
             // Closing Hellhound's window closes Hellhound.
             // (When an old Hellhound window is still open, Edge hands the new one to it and its first process quits at
             // once: Hellhound then keeps running.)
@@ -88,9 +110,11 @@ internal static class Program {
         var spectator = new Spectator(files);
         var pictures = new GamePictures(files.Folder, game);
         pictures.Warm();
+        var updater = new SelfUpdate(args);
+        updater.Start();
         while (true) {
             var client = listener.AcceptTcpClient();
-            _ = Task.Run(() => Answer(client, files, spectator, pictures, page, port));
+            _ = Task.Run(() => Answer(client, files, spectator, pictures, updater, page, port));
         }
     }
 
@@ -104,7 +128,7 @@ internal static class Program {
 
     // One request per connection: GET / (the page), GET /api/status (the bots, as JSON), or one of the POST actions below.
     // Anything else is refused.
-    private static void Answer(TcpClient client, ServerFiles files, Spectator spectator, GamePictures pictures, byte[] page, int port) {
+    private static void Answer(TcpClient client, ServerFiles files, Spectator spectator, GamePictures pictures, SelfUpdate updater, byte[] page, int port) {
         using (client) {
             try {
                 client.ReceiveTimeout = 5000;
@@ -126,7 +150,9 @@ internal static class Program {
                         Send(stream, "403 Forbidden", "text/plain", "Not allowed."u8.ToArray());
                     }
                     else {
-                        Send(stream, "200 OK", "text/plain; charset=utf-8", Encoding.UTF8.GetBytes(Do(files, parts[1])));
+                        var said = parts[1] == "/api/key" ? updater.SaveKey(Header(lines, "X-Key") ?? "")
+                            : parts[1] == "/api/self-update" ? Later(updater) : Do(files, parts[1]);
+                        Send(stream, "200 OK", "text/plain; charset=utf-8", Encoding.UTF8.GetBytes(said));
                     }
                 }
                 else if (parts.Length < 2 || parts[0] != "GET") {
@@ -166,6 +192,13 @@ internal static class Program {
                             ["ready"] = pictures.Ready ? "yes" : "no", ["folder"] = pictures.Folder,
                         }, HellhoundJson.Default.DictionaryStringString)));
                 }
+                else if (parts[1] == "/api/self") {
+                    Send(stream, "200 OK", "application/json; charset=utf-8",
+                        Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, string> {
+                            ["version"] = ServerFiles.AppVersion, ["state"] = updater.State, ["latest"] = updater.Latest,
+                            ["key"] = updater.HasKey ? "yes" : "no",
+                        }, HellhoundJson.Default.DictionaryStringString)));
+                }
                 else if (parts[1] == "/api/status") {
                     Send(stream, "200 OK", "application/json; charset=utf-8", Encoding.UTF8.GetBytes(files.ToJson()));
                 }
@@ -177,6 +210,23 @@ internal static class Program {
                 // The browser went away mid-answer.
             }
         }
+    }
+
+    private static Mutex? s_single;
+
+    /// <summary>Lets go of "one Hellhound at a time" so the updated copy can start.</summary>
+    internal static void LetGo() {
+        try {
+            s_single?.ReleaseMutex();
+        }
+        catch (Exception) {
+        }
+    }
+
+    private static string Later(SelfUpdate updater) {
+        _ = Task.Run(updater.CheckAsync);
+
+        return "Looking for a Hellhound update now.";
     }
 
     private static string? Header(string[] lines, string name)

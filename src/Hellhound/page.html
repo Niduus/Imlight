@@ -142,6 +142,22 @@
     <h1>Bot updates</h1><p class="sub">The server looks for bot updates by itself every 10 minutes and swaps them in without a restart.</p>
     <div class="card rows" id="updateRows"></div>
     <div style="margin-top:14px"><button class="btn main" onclick="act('/api/check-updates')">Look for a bot update now</button></div>
+    <h3>Hellhound itself</h3>
+    <div class="card rows" id="selfRows"></div>
+    <div class="card" id="keyBox" style="margin-top:14px" hidden>
+      <b>Let Hellhound update itself</b>
+      <p class="dim" style="margin:6px 0 10px">Hellhound's updates live in your private bots repo, so it needs a read-only key once. It stays on this PC.</p>
+      <ol style="margin:0 0 12px 18px;padding:0;line-height:1.7">
+        <li>Open <b>github.com/settings/personal-access-tokens/new</b> (signed in as Niduus).</li>
+        <li>Token name: <b>Hellhound</b>. Expiration: <b>No expiration</b> (or the longest offered).</li>
+        <li>Repository access: <b>Only select repositories</b>, then pick <b>ahziael-bots</b>.</li>
+        <li>Permissions: <b>Repository permissions</b>, then <b>Contents: Read-only</b>. Leave everything else as it is.</li>
+        <li>Click <b>Generate token</b>, copy it, and paste it here:</li>
+      </ol>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="keyIn" type="password" placeholder="github_pat_..." autocomplete="off"
+        style="flex:1;min-width:260px;font:inherit;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:7px 10px">
+        <button class="btn main" onclick="saveKey()">Save key</button></div>
+    </div>
   </section>
 </main>
 <div id="toast"></div>
@@ -234,6 +250,27 @@ async function refresh() {
 }
 refresh();
 setInterval(refresh, 5000);
+async function refreshSelf() {
+  let me; try { me = await (await fetch("/api/self", { cache: "no-store" })).json(); } catch { return; }
+  document.getElementById("selfRows").innerHTML =
+    `<div class="row"><b>This copy</b><span>Hellhound ${esc(me.version)}</span></div>` +
+    `<div class="row"><b>Newest</b><span>${esc(me.latest || "not known yet")}</span></div>` +
+    `<div class="row"><b>Updates itself</b><span>${esc(me.state)}</span></div>` +
+    (me.key === "yes" ? `<div class="row"><b></b><span><button class="btn" onclick="act('/api/self-update')">Look for a Hellhound update now</button></span></div>` : "");
+  document.getElementById("keyBox").hidden = me.key === "yes";
+}
+async function saveKey() {
+  const key = document.getElementById("keyIn").value.trim(); if (!key) return;
+  let text;
+  try { text = await (await fetch("/api/key", { method: "POST", headers: { "X-Hellhound": "1", "X-Key": key } })).text(); }
+  catch { text = "Hellhound isn't answering."; }
+  document.getElementById("keyIn").value = "";
+  const t = document.getElementById("toast"); t.textContent = text; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 6000);
+  refreshSelf();
+}
+refreshSelf();
+setInterval(refreshSelf, 10000);
 
 // ---- Watch: the wizard's own minimap and, in a battle, its hand (the overlay's Spectate Anyone feed) ----
 // Niduus, 2026-11-22: "Minimap to update in real time, not some choppy shit show". The server is asked several times a
