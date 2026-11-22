@@ -175,6 +175,15 @@ internal static class BotKnowledge {
         }
     }
 
+    /// <summary>
+    /// Zoom, the quest scout, and True Form keep their own data: they never write to the shared brain (this book, the
+    /// mistakes book, RouteMemory), so nothing they do at max level, by teleport or by one-shot is taken as a questing bot's.
+    /// </summary>
+    internal static bool KeptApart(Ultimus.UltimusSeat seat) => seat is { IsZoom: true } or { IsTrueForm: true };
+
+    internal static bool KeptApart(string bot) =>
+        !string.IsNullOrEmpty(bot) && (bot == Ultimus.UltimusSeat.Zoom.Key || bot == Ultimus.UltimusSeat.TrueForm.Key);
+
     /// <summary>Whether a battle circle is a server-run wizard (Ultimus, a Quest Team wizard or a Bot Player).</summary>
     internal static bool IsServerBot(CombatDuelSubCircle circle) {
         if (circle is null || !circle.IsHumanPlayer || circle.ParticipantObject is not { } who) {
@@ -183,6 +192,11 @@ internal static class BotKnowledge {
 
         var gid = who.m_globalID.Full;
         var charId = circle._wizard?.CharId ?? 0;
+        // Zoom (max level, one-shots) and True Form (any setup, any level) are no questing bot's measure: what a creature does
+        // to them stays out of the shared brain (Niduus: their data stays separate).
+        if (KeptApart(Ultimus.UltimusSeat.OfGlobal(gid) ?? Ultimus.UltimusSeat.OfCharacter(charId))) {
+            return false;
+        }
 
         return BotPlayers.BotIds.IsBotObject(gid) || Ultimus.UltimusDirector.RoleOf(gid) is not null
                || QuestTeam.QuestTeamRoster.IsMember(charId) || Ultimus.UltimusRoster.IsMember(charId);
@@ -278,7 +292,7 @@ internal static class BotKnowledge {
 
     /// <summary>A lesson in words, from any bot (counted again when the same lesson comes up).</summary>
     internal static void Learn(string bot, string topic, string text) {
-        if (string.IsNullOrWhiteSpace(text)) {
+        if (string.IsNullOrWhiteSpace(text) || KeptApart(bot)) {
             return;
         }
 

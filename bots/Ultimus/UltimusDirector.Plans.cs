@@ -358,7 +358,10 @@ internal sealed partial class UltimusDirectorActor {
             lines.Add($"{fight.Key} took half my health or more {fight.Count()} time(s).");
         }
 
-        foreach (var lesson in BotKnowledge.Since(DateTime.UtcNow.AddDays(-1)).Where(l => l.Topic == "surprise").Take(5)) {
+        // His own surprises only: the shared book holds every bot's, and another bot's ("I lost to Filcher") is not his to
+        // tell as his own (Zoom's review in Wizard City listed Marleybone losses he never had, 2026-11-22).
+        foreach (var lesson in BotKnowledge.Since(DateTime.UtcNow.AddDays(-1))
+                     .Where(l => l.Topic == "surprise" && l.Bot == UltimusSeat.Current.Key).Take(5)) {
             lines.Add($"Surprise: {lesson.Text}");
         }
 

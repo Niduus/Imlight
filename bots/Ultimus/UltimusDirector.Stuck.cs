@@ -109,7 +109,11 @@ internal sealed partial class UltimusDirectorActor {
 
         // Written down (RouteMemory): the way finder bends round this spot from now on, for every bot, and a proven walk
         // through it no longer counts (Niduus, 2026-11-13: "adapt to new paths to get to his quest goal").
-        RouteMemory.Stuck(member.CharId, member.Zone, member.X, member.Y);
+        // Not Zoom's: he stands at his teleport spots beside NPCs, and RouteMemory is shared, so every bot's way finder would
+        // bend round quest NPCs (Private Quinn, Lizzo FireSpitter, Shelus Gruffheart in Firecat Alley, 2026-11-22).
+        if (!_seat.IsZoom) {
+            RouteMemory.Stuck(member.CharId, member.Zone, member.X, member.Y);
+        }
 
         // Stuck on a side trip (a shop, a trainer, selling, the Bazaar): it is not worth a single fix round. He drops it at
         // once, remembers that place as out of reach for a while, and goes back to the story (his log, 2026-11-15: stuck

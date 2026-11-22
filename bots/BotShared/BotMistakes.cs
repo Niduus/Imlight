@@ -82,6 +82,12 @@ internal static class BotMistakes {
     /// </summary>
     internal static Mistake Record(string bot, string kind, string zone, float x, float y, string step, string what, string reasoning,
                                    string prevention, string tried = null, string foe = null) {
+        // Zoom and True Form keep their own books: a teleporting max-level scout's "stuck" beside an NPC is no other bot's
+        // lesson, and would overwrite a real bot's entry at the same spot (BotKnowledge.KeptApart).
+        if (BotKnowledge.KeptApart(bot)) {
+            return null;
+        }
+
         lock (s_lock) {
             var all = All();
             var mistake = Find(all, kind, zone, x, y, foe);
