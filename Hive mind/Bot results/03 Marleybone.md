@@ -21,12 +21,12 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - Nightmare Spirit: won 31 time(s) (25 Solo, 6 Team), lost 3. Fastest: Mythis in 2 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Cyclops, Blood Bat.
 - Jacques the Scratcher: won 21 time(s) (19 Solo, 2 Team), lost 7. Fastest: Cyndr in 4 rounds, deck for a boss (Ice), hitting with Ice, Fire; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Immolate.
 - Deadly Scratcher: won 24 time(s) (13 Solo, 11 Team), lost 3. Fastest: Kurrent in 1 rounds, deck for any fight (many of my fights lately had 2+ enemies), hits with Storm Shark.
-- Potbelly: won 18 time(s) (18 Solo, 0 Team), lost 7. Fastest: Tulkar in 2 rounds, deck for a boss (Storm), hitting with Storm, Myth, Life (most of my fights lately had 2+ enemies).
+- Potbelly: won 20 time(s) (20 Solo, 0 Team), lost 7. Fastest: Tulkar in 2 rounds, deck for a boss (Storm), hitting with Storm, Myth, Life (most of my fights lately had 2+ enemies).
 - Nails O'Leary: won 16 time(s) (10 Solo, 6 Team), lost 2. Fastest: Kurrent in 2 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Storm Shark, Thunder Snake.
 - Agony Wraith: won 12 time(s) (10 Solo, 2 Team), lost 5. Fastest: Cyndr in 2 rounds, deck for a boss (Death), hitting with Death, Storm, Fire; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Fairy, Minor Fire Scorch.
 - Dr. Von Katzenstein: won 10 time(s) (10 Solo, 0 Team), lost 7. Fastest: Kurrent in 3 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Thunder Snake, Banshee.
 - Brown Recluse: won 8 time(s) (6 Solo, 2 Team), lost 7. Fastest: Cyndr in 4 rounds, deck for a boss (Myth), hitting with Myth, Storm, Fire; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Immolate, Dream Shield, Fire Cat, Sunbird.
-- Shield Skeleton: won 14 time(s) (12 Solo, 2 Team), lost 0. Fastest: Cyndr in 2 rounds, plan "hit now", deck for a boss (Death), hitting with Death, Storm, Fire (most of my fights lately had 2+ enemies), hits with Meteor Strike, Minor Fire Scorch.
+- Shield Skeleton: won 15 time(s) (13 Solo, 2 Team), lost 0. Fastest: Cyndr in 2 rounds, plan "hit now", deck for a boss (Death), hitting with Death, Storm, Fire (most of my fights lately had 2+ enemies), hits with Meteor Strike, Minor Fire Scorch.
 - O'Leary Scurrier: won 13 time(s) (11 Solo, 2 Team), lost 0. Fastest: Tulkar in 1 rounds, deck for Ice enemies, hitting with Ice, Death, Fire (many of my fights lately had 2+ enemies).
 - Brady the Sneak: won 12 time(s) (4 Solo, 8 Team), lost 1. Fastest: Idunn in 1 rounds, deck for a boss (Myth), hitting with Death, Myth, Fire (many of my fights lately had 2+ enemies).
 - Hooligan: won 13 time(s) (4 Solo, 9 Team), lost 0. Fastest: Tulkar in 3 rounds, deck for Myth enemies, hitting with Myth, Storm, Fire (most of my fights lately had 2+ enemies).
@@ -4097,6 +4097,20 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   Deck made for a boss (Death), hitting with Death, Storm, Ice; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 67% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Minor Wrath x2, Legend Golem, Imp, Seraph.
+- Won by Idunn (Solo) against Shield Skeleton (rank 5, 625 health, Death, a boss) on 2026-11-21 at 19:48:01.
+  It took 4 rounds, about 2 minutes.
+  Deck made for a boss (Death), hitting with Death, Storm, Fire; my own fights say about 67% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Minor Wrath, Legend Golem, Seraph.
+- Won by Idunn (Solo) against Potbelly (rank 5, 575 health, Storm, a boss) on 2026-11-21 at 19:50:31.
+  It took 4 rounds, about 2 minutes.
+  Deck made for a boss (Death), hitting with Death, Storm, Fire; my own fights say about 67% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Nature's Wrath, Imp, Seraph.
+- Won by Idunn (Solo) against Potbelly (rank 5, 575 health, Storm, a boss) on 2026-11-21 at 19:53:55.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Storm), hitting with Storm, Myth, Life; my own fights say about 67% hits in my main deck (most of my fights lately had 2+ enemies).
+  Spells that landed the hits: Minor Wrath, Seraph.
 - Avoid, fights lost:
   - Clockwork Wizard: lost 1 time(s) (Tulkar). Why: the fight ran 9 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Filcher: lost 1 time(s) (Tulkar). Why: I went in at 76% health, its biggest hit took 67% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
