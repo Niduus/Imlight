@@ -88,7 +88,8 @@ internal static class QuestTeamHost {
 
     /// <summary>A new session for the pretend game <paramref name="client"/>, or null when the server did not open one.</summary>
     internal static async Task<(IActorRef Session, ushort Id)> OpenSession(IActorRef client, string who) {
-        if (s_server is not { } server) {
+        // Every bot wizard comes in through here: only on Niduus's own Imlight server (BotHomeGuard).
+        if (s_server is not { } server || !BotShared.BotHomeGuard.Home) {
             return (null, 0);
         }
 

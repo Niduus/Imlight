@@ -89,6 +89,11 @@ jobs:
           "needs=$needs" >> $env:GITHUB_OUTPUT
           Write-Host "Needs server commit: $needs"
 
+      - name: Bots stay home (no way to the official game)
+        if: steps.changed.outputs.new == 'true'
+        shell: pwsh
+        run: ./tools/bots-home-check/check.ps1
+
       - name: Generator inputs
         if: env.GENERATOR_INPUTS != '' && steps.changed.outputs.new == 'true'
         shell: pwsh

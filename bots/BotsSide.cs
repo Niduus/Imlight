@@ -46,15 +46,29 @@ internal sealed class BotsSide : BotSide {
     // ---------------------------------------------------------------- start and stop
 
     internal override void Start(ActorSystem system) {
+        // The bots only ever play on Niduus's own Imlight server: anywhere else nothing of them starts (BotHomeGuard).
+        if (!BotShared.BotHomeGuard.Home) {
+            return;
+        }
+
         // Zoom's and True Form's leftovers in the shared books go first (Hive Mind audit, 2026-11-22).
         BotShared.BotMistakes.ForgetKeptApart();
         BotBodies.Start(system);
     }
 
-    internal override void GameServerReady(IActorRef server, ActorSystem system, string realmName)
-        => QuestTeamHost.GameServerReady(server, system, realmName);
+    internal override void GameServerReady(IActorRef server, ActorSystem system, string realmName) {
+        if (!BotShared.BotHomeGuard.Home) {
+            return;
+        }
+
+        QuestTeamHost.GameServerReady(server, system, realmName);
+    }
 
     internal override void StartWatching() {
+        if (!BotShared.BotHomeGuard.Home) {
+            return;
+        }
+
         // Bot Players: their mini server runs only while [BotPlayers] Enabled is on, and is stopped when it is turned off.
         BotLink.StartWatching();
         // The Quest Team: its mini server and its four wizards run only while [QuestTeam] Enabled is on.
@@ -64,6 +78,11 @@ internal sealed class BotsSide : BotSide {
     }
 
     internal override bool RunMiniServer(string[] args) {
+        // A bots mini server outside Imlight's own server does nothing and ends (it still counts as handled).
+        if (Array.Exists(args, a => a is "--bots" or "--questteam" or "--ultimus") && !BotShared.BotHomeGuard.Home) {
+            return true;
+        }
+
         if (Array.IndexOf(args, "--bots") >= 0) {
             BotBrain.Run(args);
 

@@ -44,6 +44,10 @@ jobs:
           echo "Type dump: $dump"
           cp "$dump" submodule/Imcodec/src/Imcodec.ObjectProperty/GeneratorInput/
 
+      - name: Bots stay home (no way to the official game)
+        shell: pwsh
+        run: ./tools/bots-home-check/check.ps1
+
       - name: Build Ahziael
         run: dotnet build src/Imlight.Setup/Imlight.Setup.csproj -c Release
 
