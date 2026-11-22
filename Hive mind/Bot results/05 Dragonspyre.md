@@ -1,57 +1,53 @@
 # Dragonspyre: what worked
 
-What the bots did in Dragonspyre, from the server log: every quest finished, every fight won (to copy), every fight lost and every place they got stuck (to avoid). Solo means the bot fought alone; Team means another of our bots won the same fight with it. Updated after each bots update.
+What the bots did in Dragonspyre, from the server log: every quest finished, every fight won (to copy), every fight lost and every place they got stuck (to avoid). Ultimus, the TCO7 and the Kitharas Family (Zoom and True Form are kept apart). Solo means the bot fought alone; Team means another of our bots was in the same battle. Updated after each bots update and kept for good, so nothing falls off.
 
 ## Best way to beat each creature
-- Loathsome Creeper: won 102 time(s) (71 Solo, 31 Team), lost 0. Fastest: Ra in 1 rounds, deck for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-- Petrov Gloomstrider: won 71 time(s) (67 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
-- Sea Lord: won 2 time(s) (2 Solo, 0 Team), lost 39. Fastest: Ultimus in 9 rounds, plan "stack up", deck for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Volcanic Shield, Judgement.
-- Zarathax: won 7 time(s) (7 Solo, 0 Team), lost 4. Fastest: Ra in 4 rounds, plan "hit now", deck for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Sandstorm, Minor Crusade.
-- Sysiphan: won 5 time(s) (5 Solo, 0 Team), lost 5. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Judgement.
-- Wandering Wizard: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
-- Earth Elemental: won 2 time(s) (2 Solo, 0 Team), lost 4. Fastest: Ra in 18 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Helping Hands, Spectral Blast.
-- Silver Servant: won 3 time(s) (3 Solo, 0 Team), lost 1. Fastest: Ultimus in 6 rounds, deck for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies), hits with Balance, Banshee.
-- Mavra Flamewing: won 2 time(s) (2 Solo, 0 Team), lost 2. Fastest: Ultimus in 15 rounds, deck for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies), hits with Balance, Helping Hands, Sandstorm, Vampire.
-- Vasek Ashweaver: won 1 time(s) (1 Solo, 0 Team), lost 3. Fastest: Ultimus in 16 rounds, plan "stack up", deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Dryad, Flowering Dryad, Satyr, Judgement.
-- Burning Hate: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 5 rounds, deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hits with Minor Crusade, Judgement.
-- Irate Banshee: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 7 rounds, plan "hit now", deck for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Spectral Blast.
-- Clockwork Defender: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Minor Crusade.
-- Sandor Spearcaller: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ra in 6 rounds, deck for a boss (Ice), hitting with Ice, Balance, Death; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hits with Locust Swarm.
-- Terrorwing Warlock: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ultimus in 7 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Gearhead Destroyer.
-- Beghastion Crowcaller: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Gearhead Destroyer.
-- Ash Spider: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Sandstorm.
-- Fire Avenger: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Minor Crusade, Gearhead Destroyer.
-- Crystal Crawler: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for any fight; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies), hits with Spectral Blast, Minor Crusade, Elemental Shield, Locust Swarm.
-- Erratic Servator: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement.
-- General Firetusk: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 15 rounds, plan "stack up", deck for a boss (Fire), hitting with Fire, Myth; alone, so single hits only; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Sun Shield, Satyr.
-- Bone Warrior: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Spectral Blast, Minor Crusade, Locust Swarm.
-- Beghastion Fieldburner: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Balance, Sandstorm, Locust Swarm, Minor Crusade.
-- Ghost of Sylvia Drake: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 8 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Death; alone, so single hits only; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement.
-- Tamauji: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Kurrent in 7 rounds, deck for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hits with Thermic Golem, Moon Shield, Fairy.
+- Loathsome Creeper: won 102 time(s) (94 Solo, 8 Team), lost 0. Fastest: Ra in 2 rounds, deck for any fight (many of my fights lately had 2+ enemies), hit with Judgement.
+- Petrov Gloomstrider: won 71 time(s) (69 Solo, 2 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Judgement, Gearhead Destroyer, Minor Crusade.
+- Sea Lord: won 2 time(s) (2 Solo, 0 Team), lost 39. Fastest: Ultimus in 9 rounds, plan "stack up", deck for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
+- Zarathax: won 7 time(s) (7 Solo, 0 Team), lost 4. Fastest: Ra in 4 rounds, plan "hit now", deck for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement, Sandstorm, Minor Crusade.
+- Sysiphan: won 5 time(s) (5 Solo, 0 Team), lost 5. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies), hit with Gearhead Destroyer, Judgement.
+- Wandering Wizard: won 8 time(s) (8 Solo, 0 Team), lost 0. Fastest: Ultimus in 4 rounds, plan "hit now", deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies), hit with Locust Swarm, Scarab.
+- Earth Elemental: won 2 time(s) (2 Solo, 0 Team), lost 4. Fastest: Ra in 18 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement, Spectral Blast.
+- Silver Servant: won 3 time(s) (3 Solo, 0 Team), lost 1. Fastest: Ultimus in 6 rounds, deck for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies), hit with Banshee.
+- Mavra Flamewing: won 2 time(s) (2 Solo, 0 Team), lost 2. Fastest: Ultimus in 15 rounds, deck for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies), hit with Sandstorm, Vampire, Minor Crusade.
+- Vasek Ashweaver: won 1 time(s) (1 Solo, 0 Team), lost 3. Fastest: Ultimus in 16 rounds, plan "stack up", deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
+- Burning Hate: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 5 rounds, deck for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Minor Crusade, Judgement.
+- Irate Banshee: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 7 rounds, plan "hit now", deck for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement, Minor Crusade, Spectral Blast.
+- Beghastion Crowcaller: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 5 rounds, deck for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies), hit with Gearhead Destroyer.
+- Clockwork Defender: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hit with Minor Crusade.
+- Sandor Spearcaller: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ra in 6 rounds, deck for a boss (Ice), hitting with Ice, Balance, Death; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Locust Swarm.
+- Terrorwing Warlock: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ultimus in 7 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement, Minor Crusade, Gearhead Destroyer.
+- Ash Spider: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement, Sandstorm.
+- Fire Avenger: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement, Minor Crusade, Gearhead Destroyer.
+- Erratic Servator: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
+- Crystal Crawler: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for any fight; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies), hit with Spectral Blast, Minor Crusade, Locust Swarm.
+- General Firetusk: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 15 rounds, plan "stack up", deck for a boss (Fire), hitting with Fire, Myth; alone, so single hits only; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
+- Bone Warrior: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, plan "hit now", deck for Balance enemies, hitting with Balance, Death, Ice; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Spectral Blast, Minor Crusade, Locust Swarm.
+- Beghastion Fieldburner: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Sandstorm, Locust Swarm, Minor Crusade.
+- Ghost of Sylvia Drake: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 8 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Death; alone, so single hits only; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement.
+- Tamauji: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Kurrent in 7 rounds, deck for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Thermic Golem.
 
 ## Wizard and Crystal
 - Finished by Ultimus (19 min).
 - Finished by Garm (6 min).
 - Finished by Ra (21 min).
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 08:25:38.
-  It took 13 rounds, about 7 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Death, Myth (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Elemental Shield x2, Helping Hands x2, Sandstorm, Locust Swarm, Spirit Shield.
-- Won by Garm (Team with Ra) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:50:45.
-  It took 10 rounds, about 5 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Skeletal Pirate, Poison, Spirit Armor, Minor Dark Blow.
-- Won by Ra (Team with Garm) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:50:47.
-  It took 15 rounds, about 3 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "stack up" (2 enemies, stronger).
-  Spells that landed the hits: Spectral Blast x2, Fairy, Elemental Shield, Locust Swarm.
+- Petrov Gloomstrider: won 4 times (3 Solo, 1 Team) by Garm, Ra, Ultimus. The 3 fastest:
 - Won by Ra (Team with Garm) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:55:35.
   It took 6 rounds, about 3 minutes.
   Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Fairy, Locust Swarm, Spectral Blast.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Locust Swarm, Spectral Blast.
+- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:50:45.
+  It took 10 rounds, about 5 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (2 enemies, stronger).
+  Hits that landed: Skeletal Pirate, Poison, Minor Dark Blow.
+- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 08:25:38.
+  It took 13 rounds, about 7 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth (most of my fights lately had 2+ enemies).
+  Hits that landed: Sandstorm, Locust Swarm.
 - Avoid, fights lost:
   - Petrov Gloomstrider: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Petrov Gloomstrider: lost 1 time(s) (Ra). Why: its biggest hit took 68% of my health, the fight ran 8 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -60,417 +56,113 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Finished by Ultimus (45 min).
 - Finished by Ra (8 min).
 - Finished by Garm (23 min).
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 09:54:26.
-  It took 12 rounds, about 10 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 15:29:09.
-  It took 13 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x10, Vampire x8, Scarab x6, Storm Hound x3, Helping Hands x2, Elemental Shield x2, Gearhead Destroyer x2, Locust Swarm, Sandstorm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 19:02:17.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x3, Minor Crusade x2, Scarab x2, Fairy x2, Heck Hound x2, Storm Hound x2, Locust Swarm, Sunbird, Judgement, Elemental Shield, Helping Hands.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 19:07:16.
-  It took 6 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Minor Crusade, Vampire.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 19:14:19.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm, Gearhead Destroyer, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 19:21:33.
-  It took 11 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Helping Hands x2, Locust Swarm, Vampire, Spirit Shield, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 19:32:04.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x3, Minor Crusade x2, Sandstorm, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 19:42:08.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x6, Helping Hands x2, Scarab x2, Gearhead Destroyer, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 20:01:14.
-  It took 16 rounds, about 9 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer x2, Helping Hands x2, Sunbird x2, Elemental Shield, Fairy, Judgement.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 20:10:11.
-  It took 14 rounds, about 9 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Heck Hound x2, Helping Hands x2, Locust Swarm, Elemental Shield, Fairy, Scarab, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 20:31:22.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Gearhead Destroyer x2, Scarab x2, Locust Swarm x2, Sandstorm x2, Helping Hands x2, Fairy.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 20:35:24.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Sandstorm, Minor Crusade.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 20:43:27.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Sandstorm, Gearhead Destroyer, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 22:17:50.
-  It took 10 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x5, Gearhead Destroyer x3, Sandstorm, Elemental Shield, Scarab, Locust Swarm, Vampire.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 22:23:08.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x3, Locust Swarm, Helping Hands, Minor Crusade.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 22:43:36.
-  It took 13 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x6, Gearhead Destroyer x3, Sandstorm x2, Scarab x2, Helping Hands x2, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 22:50:29.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Locust Swarm, Gearhead Destroyer, Elemental Shield, Helping Hands, Sandstorm, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 22:59:58.
-  It took 12 rounds, about 8 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands x2, Fairy, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 23:05:03.
-  It took 8 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 23:10:01.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm, Minor Crusade.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 23:32:50.
-  It took 15 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Vampire x3, Sandstorm x2, Gearhead Destroyer, Spirit Shield, Helping Hands, Scarab, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 23:55:12.
-  It took 10 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Gearhead Destroyer x3, Scarab x3, Elemental Shield x2, Fairy x2, Sunbird, Sandstorm, Heck Hound.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 23:59:12.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Minor Crusade x2.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 00:08:49.
-  It took 15 rounds, about 1 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm, Helping Hands, Fairy, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 00:21:34.
-  It took 14 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Gearhead Destroyer x2, Helping Hands x2, Locust Swarm, Scarab, Vampire.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 00:32:18.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Scarab x2, Sandstorm, Minor Crusade, Vampire.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 00:38:06.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer, Spirit Shield, Helping Hands.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 01:31:22.
-  It took 7 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Scarab, Gearhead Destroyer, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 01:41:31.
-  It took 8 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Vampire x3, Scarab x3, Gearhead Destroyer x2, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 01:45:58.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Scarab x2, Gearhead Destroyer, Helping Hands, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 01:54:06.
-  It took 8 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Locust Swarm, Helping Hands, Elemental Shield, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 02:04:33.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Helping Hands x2, Fairy, Spirit Shield, Minor Crusade.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 02:13:55.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Scarab x2, Locust Swarm, Gearhead Destroyer, Sandstorm, Minor Crusade.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 02:24:21.
-  It took 15 rounds, about 9 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Helping Hands x2, Ice Hound, Fairy, Locust Swarm, Sandstorm, Spirit Shield, Minor Crusade, Sunbird.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 02:44:48.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Vampire x2, Locust Swarm, Gearhead Destroyer, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 02:50:45.
-  It took 8 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:09:03.
-  It took 9 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Locust Swarm, Helping Hands, Gearhead Destroyer, Sandstorm, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:16:58.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Gearhead Destroyer x2, Sandstorm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:24:14.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Locust Swarm, Gearhead Destroyer, Helping Hands, Elemental Shield, Judgement, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:29:49.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Helping Hands, Fairy, Sandstorm, Scarab, Minor Crusade.
+- Petrov Gloomstrider: won 64 times (64 Solo, 0 Team) by Garm, Ra, Ultimus. The 3 fastest:
+- Zarathax: won 7 times (7 Solo, 0 Team) by Garm, Ra, Ultimus. The 3 fastest:
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:32:41.
   It took 5 rounds, about 2 minutes.
   Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:50:35.
-  It took 17 rounds, about 9 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Scarab x2, Gearhead Destroyer x2, Locust Swarm, Helping Hands, Spirit Shield, Ice Hound, Vampire.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement, Gearhead Destroyer, Minor Crusade.
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 03:58:03.
   It took 5 rounds, about 3 minutes.
   Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Gearhead Destroyer, Sandstorm, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 04:07:07.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Vampire x2, Sandstorm, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 04:13:33.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Helping Hands x3, Minor Crusade x2, Sandstorm, Scarab, Gearhead Destroyer, Spirit Shield, Locust Swarm.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 04:17:53.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Minor Crusade, Vampire.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 04:39:11.
-  It took 17 rounds, about 4 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Helping Hands x8, Gearhead Destroyer x3, Minor Crusade x3, Sandstorm, Scarab.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 04:47:15.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Sandstorm x2, Minor Crusade x2, Helping Hands.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Crusade x2, Gearhead Destroyer, Sandstorm, Locust Swarm.
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 05:00:34.
   It took 5 rounds, about 3 minutes.
   Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Sandstorm, Minor Crusade, Locust Swarm, Scarab, Spirit Shield.
-- Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 05:17:20.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Sandstorm, Locust Swarm, Minor Crusade, Gearhead Destroyer.
-- Won by Ultimus (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-21 at 06:11:46.
-  It took 24 rounds, about 11 minutes.
-  Deck made for a boss (Balance), hitting with Balance, Fire, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Balance x4, Elemental Shield x2, Fairy, Helping Hands, Banshee.
-- Won by Ra (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:14:48.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Judgement, Gearhead Destroyer, Locust Swarm.
-- Won by Ra (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:19:57.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast, Judgement, Locust Swarm.
-- Won by Ra (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:23:23.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Spectral Blast, Minor Crusade, Sandstorm.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:25:37.
-  It took 15 rounds, about 8 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Poison x3, Skeletal Pirate x2, Sunbird x2, Minor Dark Blow x2, Satyr, Banshee, Fairy.
-- Won by Ra (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-21 at 22:43:28.
-  It took 12 rounds, about 6 minutes.
-  Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands x2, Spectral Blast.
-- Won by Ra (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-21 at 22:47:27.
-  It took 7 rounds, about 4 minutes.
-  Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Minor Crusade x2.
-- Won by Ra (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-21 at 23:04:04.
-  It took 22 rounds, about 12 minutes.
-  Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands x3, Fairy, Spectral Blast, Locust Swarm.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Gearhead Destroyer x2, Sandstorm, Minor Crusade, Locust Swarm, Scarab.
 - Won by Ra (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-21 at 23:12:37.
   It took 4 rounds, about 2 minutes.
   Deck made for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Sandstorm, Minor Crusade.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:15:43.
-  It took 13 rounds, about 7 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "stack up" (2 enemies, weaker).
-  Spells that landed the hits: Poison x7, Skeletal Pirate x2, Minor Dark Blow, Fairy, Banshee, Satyr.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:20:26.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Banshee x2, Poison, Minor Dark Blow.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:26:23.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x2, Dark Sprite x2, Skeletal Pirate, Banshee.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:35:26.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x2, Sandstorm, Minor Crusade.
+- Won by Ra (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-21 at 22:47:27.
   It took 7 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison, Dark Sprite, Satyr.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:41:15.
-  It took 8 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Poison, Banshee.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:59:42.
-  It took 13 rounds, about 8 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x2, Poison x2, Banshee, Spirit Armor, Fairy.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-22 at 00:39:40.
-  It took 12 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x4, Poison x3, Banshee x2, Spirit Armor x2, Skeletal Pirate, Minor Dark Blow, Satyr, Elemental Shield.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-22 at 00:51:45.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x2, Dark Sprite x2.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-22 at 00:57:24.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Poison, Minor Dark Blow.
-- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-22 at 01:03:22.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Poison x2, Minor Dark Blow.
-- Won by Garm (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-22 at 01:27:59.
-  It took 15 rounds, about 7 minutes.
-  Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Satyr x3, Poison x2, Dark Sprite x2, Seraph.
+  Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Spectral Blast x2, Minor Crusade x2.
 - Won by Garm (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-22 at 01:32:54.
   It took 7 rounds, about 4 minutes.
   Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Skeletal Pirate, Poison, Fairy, Minor Dark Blow.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Skeletal Pirate, Poison, Minor Dark Blow.
 - Avoid, fights lost:
   - Zarathax: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 17 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Zarathax: lost 1 time(s) (Ultimus). Why: I went in at 69% health, its biggest hit took 54% of my health, the fight ran 12 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Zarathax: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: fight other creatures for XP first, up to the quest's level.
   - Zarathax: lost 1 time(s) (Garm). Why: its biggest hit took 54% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
-  - The Tower Archives near (12300, -7200) while Go to Dragonspyre,The Tower Archives ("Portal Combat"): stuck 50 time(s) (Ultimus); one bot tried every fix there.
-  - The Tower Archives near (13000, -11500) while Go to Dragonspyre,The Tower Archives ("Portal Combat"): stuck 32 time(s) (Ultimus); one bot tried every fix there.
-  - The Tower Archives near (-31800, -14000) while resting while "Go to Dragonspyre,The Tower Archives" waits: stuck 14 time(s) (Ultimus); one bot tried every fix there.
-  - The Basilica near (-1200, 1200) while to The Atheneum (Go to Dragonspyre,The Tower Archives): stuck 13 time(s) (Ultimus); one bot tried every fix there.
-  - The Tower Archives near (8400, -10300) while Use Blue Crystal here ("Portal Combat"): stuck 11 time(s) (Ultimus); one bot tried every fix there.
-  - The Basilica near (200, -500) while a short break before trying "Go to Dragonspyre,The Tower Archives" again: stuck 9 time(s) (Ultimus); one bot tried every fix there.
-  - The Tower Archives near (12300, -7200) while a short break before trying "Go to Dragonspyre,The Tower Archives" again: stuck 6 time(s) (Ultimus); one bot tried every fix there.
-  - The Tower Archives near (13000, -11500) while a short break before trying "Go to Dragonspyre,The Tower Archives" again: stuck 6 time(s) (Ultimus); one bot tried every fix there.
+  - The Tower Archives near (12300, -7200) while Go to Dragonspyre,The Tower Archives ("Portal Combat"): stuck 44 time(s) (Ultimus); one bot tried every fix there.
+  - The Tower Archives near (13000, -11500) while Go to Dragonspyre,The Tower Archives ("Portal Combat"): stuck 30 time(s) (Ultimus); one bot tried every fix there.
+  - The Tower Archives near (-31800, -14000) while resting while "Go to Dragonspyre,The Tower Archives" waits: stuck 12 time(s) (Ultimus); one bot tried every fix there.
+  - The Basilica near (-1200, 1200) while to The Atheneum (Go to Dragonspyre,The Tower Archives): stuck 12 time(s) (Ultimus); one bot tried every fix there.
+  - The Tower Archives near (8400, -10300) while Use Blue Crystal here ("Portal Combat"): stuck 10 time(s) (Ultimus); one bot tried every fix there.
+  - The Basilica near (200, -500) while a short break before trying "Go to Dragonspyre,The Tower Archives" again: stuck 8 time(s) (Ultimus); one bot tried every fix there.
+  - The Tower Archives near (12300, -7200) while a short break before trying "Go to Dragonspyre,The Tower Archives" again: stuck 5 time(s) (Ultimus); one bot tried every fix there.
+  - The Tower Archives near (17400, -10600) while to The Atheneum (Talk to Milos Bookwyrm): stuck 5 time(s) (Garm, Ra); one bot tried every fix there.
 
 ## The Art of War
 - Finished by Ultimus (4 min).
 - Finished by Ra (19 min).
-- Won by Ultimus (Solo) against Burning Hate (rank 6, 670 health, Fire) on 2026-11-21 at 07:45:48.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer, Locust Swarm.
-- Won by Ultimus (Solo) against Irate Banshee (rank 6, 785 health, Death) on 2026-11-21 at 07:54:46.
-  It took 12 rounds, about 7 minutes.
-  Deck made for Fire enemies, hitting with Fire, Death, Myth (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Scarab x2, Gearhead Destroyer x2, Fairy, Locust Swarm, Spirit Armor.
-- Won by Ultimus (Solo) against Silver Servant (rank 7, 810 health, Balance) on 2026-11-21 at 08:17:37.
-  It took 6 rounds, about 3 minutes.
-  Deck made for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Balance x5, Banshee.
-- Won by Ultimus (Solo) against Beghastion Crowcaller (rank 7, 685 health, Death) on 2026-11-21 at 08:29:49.
-  It took 5 rounds, about 2 minutes.
-  Deck made for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands, Spirit Shield, Gearhead Destroyer.
 - Won by Ra (Solo) against Burning Hate (rank 6, 670 health, Fire) on 2026-11-21 at 23:47:48.
   It took 5 rounds, about 3 minutes.
   Deck made for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade, Judgement.
-- Won by Ra (Solo) against Irate Banshee (rank 6, 785 health, Death) on 2026-11-21 at 23:52:34.
-  It took 7 rounds, about 4 minutes.
-  Deck made for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Minor Crusade x2, Spectral Blast.
-- Won by Ra (Solo) against Silver Servant (rank 7, 810 health, Balance) on 2026-11-21 at 23:58:31.
-  It took 10 rounds, about 5 minutes.
-  Deck made for Balance enemies, hitting with Balance, Myth, Death; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Fairy, Sandstorm, Balance.
-- Won by Ra (Solo) against Beghastion Crowcaller (rank 7, 685 health, Death) on 2026-11-22 at 00:03:15.
-  It took 7 rounds, about 1 minutes.
-  Deck made for Death enemies, hitting with Death, Ice, Storm; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Locust Swarm, Fairy, Judgement.
+  Hits that landed: Minor Crusade, Judgement.
 - Won by Garm (Solo) against Burning Hate (rank 6, 670 health, Fire) on 2026-11-22 at 02:32:15.
   It took 7 rounds, about 5 minutes.
   Deck made for Fire enemies, hitting with Fire, Death, Myth; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Poison, Dark Sprite.
+  Hits that landed: Poison, Dark Sprite.
+- Won by Ultimus (Solo) against Burning Hate (rank 6, 670 health, Fire) on 2026-11-21 at 07:45:48.
+  It took 10 rounds, about 6 minutes.
+  Deck made for any fight (many of my fights lately had 2+ enemies).
+  Hits that landed: Gearhead Destroyer, Locust Swarm.
+- Won by Ra (Solo) against Irate Banshee (rank 6, 785 health, Death) on 2026-11-21 at 23:52:34.
+  It took 7 rounds, about 4 minutes.
+  Deck made for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x2, Minor Crusade x2, Spectral Blast.
 - Won by Garm (Solo) against Irate Banshee (rank 6, 785 health, Death) on 2026-11-22 at 02:37:15.
   It took 10 rounds, about 5 minutes.
   Deck made for Death enemies, hitting with Death, Myth, Fire; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Leprechaun x2, Evil Snowman x2, Banshee.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Leprechaun x2, Evil Snowman x2, Banshee.
+- Won by Ultimus (Solo) against Irate Banshee (rank 6, 785 health, Death) on 2026-11-21 at 07:54:46.
+  It took 12 rounds, about 7 minutes.
+  Deck made for Fire enemies, hitting with Fire, Death, Myth (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Crusade x3, Scarab x2, Gearhead Destroyer x2, Locust Swarm.
+- Won by Ultimus (Solo) against Silver Servant (rank 7, 810 health, Balance) on 2026-11-21 at 08:17:37.
+  It took 6 rounds, about 3 minutes.
+  Deck made for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies).
+  Hits that landed: Banshee.
 - Won by Garm (Solo) against Silver Servant (rank 7, 810 health, Balance) on 2026-11-22 at 02:41:42.
   It took 7 rounds, about 4 minutes.
   Deck made for Balance enemies, hitting with Balance, Myth, Death; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Skeletal Pirate, Dark Sprite, Poison, Banshee.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Skeletal Pirate, Dark Sprite, Poison, Banshee.
+- Won by Ra (Solo) against Silver Servant (rank 7, 810 health, Balance) on 2026-11-21 at 23:58:31.
+  It took 10 rounds, about 5 minutes.
+  Deck made for Balance enemies, hitting with Balance, Myth, Death; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Spectral Blast x2, Sandstorm.
+- Won by Ultimus (Solo) against Beghastion Crowcaller (rank 7, 685 health, Death) on 2026-11-21 at 08:29:49.
+  It took 5 rounds, about 2 minutes.
+  Deck made for Death enemies, hitting with Death, Ice, Storm (many of my fights lately had 2+ enemies).
+  Hits that landed: Gearhead Destroyer.
+- Won by Ra (Solo) against Beghastion Crowcaller (rank 7, 685 health, Death) on 2026-11-22 at 00:03:15.
+  It took 7 rounds, about 1 minutes.
+  Deck made for Death enemies, hitting with Death, Ice, Storm; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
+  Hits that landed: Sandstorm, Locust Swarm, Judgement.
 - Avoid, fights lost:
   - Silver Servant: lost 1 time(s) (Ultimus). Why: I went in at 63% health, the fight ran 5 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+  - Beghastion Crowcaller: lost 1 time(s) (Garm). Why: I went in at 59% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
-  - The Basilica near (0, 0) while stuck: Go to Dragonspyre,Plaza of Conquests: no way from The Basilica to Plaza of Conquests could be found: stuck 10 time(s) (Ultimus); one bot tried every fix there.
-  - Plaza of Conquests near (-2100, -200) while to Plaza of Conquests (leaving Plaza of Conquests: a side dungeon, my story is in Plaza of Conquests): stuck 5 time(s) (Ultimus); one bot tried every fix there.
+  - The Basilica near (0, 0) while stuck: Go to Dragonspyre,Plaza of Conquests: no way from The Basilica to Plaza of Conquests could be found: stuck 8 time(s) (Ultimus); one bot tried every fix there.
+  - Plaza of Conquests near (-2100, -200) while to Plaza of Conquests (leaving Plaza of Conquests: a side dungeon, my story is in Plaza of Conquests): stuck 4 time(s) (Ultimus); one bot tried every fix there.
   - Plaza of Conquests near (-2100, -200) while a short break before trying "to Plaza of Conquests (leaving Plaza of Conquests: a side du..." again: stuck 4 time(s) (Ultimus).
-  - Plaza of Conquests near (-2100, -100) while to Plaza of Conquests (leaving Plaza of Conquests: a side dungeon, my story is in Plaza of Conquests): stuck 4 time(s) (Ultimus); one bot tried every fix there.
+  - Plaza of Conquests near (-2100, -100) while to Plaza of Conquests (leaving Plaza of Conquests: a side dungeon, my story is in Plaza of Conquests): stuck 3 time(s) (Ultimus); one bot tried every fix there.
   - The Basilica near (-100, -300) while stuck: Go to Dragonspyre,Plaza of Conquests: no way from The Basilica to Plaza of Conquests could be found: stuck 2 time(s) (Ultimus).
   - The Basilica near (0, 0) while a short break before trying "Go to Dragonspyre,Plaza of Conquests" again: stuck 2 time(s) (Ultimus).
   - Plaza of Conquests near (-100, 1300) while to Plaza of Conquests (leaving Plaza of Conquests: a side dungeon, my story is in Plaza of Conquests): stuck 2 time(s) (Ultimus).
@@ -482,12 +174,12 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ultimus (Solo) against Mavra Flamewing (rank 7, 1,600 health, Storm) on 2026-11-21 at 08:50:51.
   It took 15 rounds, about 9 minutes.
   Deck made for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Balance x6, Helping Hands x3, Sandstorm x2, Vampire x2, Minor Crusade, Elemental Shield.
+  Hits that landed: Sandstorm x2, Vampire x2, Minor Crusade.
 - Won by Ra (Solo) against Mavra Flamewing (rank 7, 1,600 health, Storm) on 2026-11-22 at 00:40:18.
   It took 18 rounds, about 5 minutes.
   Deck made for a boss (Storm), hitting with Storm, Fire, Ice; alone, so single hits only; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Helping Hands x2, Spectral Blast, Heck Hound, Sunbird.
+  Plan: "stack up" (3+ enemies, stronger).
+  Hits that landed: Judgement x2, Spectral Blast, Heck Hound, Sunbird.
 - Avoid, fights lost:
   - Mavra Flamewing: lost 1 time(s) (Ultimus). Why: its biggest hit took 75% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Mavra Flamewing: lost 1 time(s) (Ra). Why: its biggest hit took 75% of my health, the fight ran 10 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -495,15 +187,14 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## No Weaklings Allowed
 - Finished by Ultimus (34 min).
 - Finished by Ra (10 min).
-- Won by Ultimus (Solo) against Earth Elemental (rank 7, 5,600 health, Life) on 2026-11-21 at 12:06:28.
-  It took 31 rounds, about 16 minutes.
-  Deck made for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands, Spirit Shield, Elemental Shield, Fairy.
 - Won by Ra (Solo) against Earth Elemental (rank 7, 5,600 health, Life) on 2026-11-22 at 00:57:37.
   It took 18 rounds, about 9 minutes.
   Deck made for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Judgement, Helping Hands, Spectral Blast.
+  Plan: "stack up" (1 enemy, stronger).
+  Hits that landed: Judgement, Spectral Blast.
+- Won by Ultimus (Solo) against Earth Elemental (rank 7, 5,600 health, Life) on 2026-11-21 at 12:06:28.
+  It took 31 rounds, about 16 minutes.
+  Deck made for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies).
 - Avoid, fights lost:
   - Earth Elemental: lost 1 time(s) (Ultimus). Why: the fight ran 21 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Earth Elemental: lost 1 time(s) (Ultimus). Why: the fight ran 19 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -517,12 +208,12 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   It took 9 rounds, about 5 minutes.
   Deck made for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "stack up" (1 enemy, stronger).
-  Spells that landed the hits: Volcanic Shield, Judgement.
+  Hits that landed: Judgement.
 - Won by Ra (Solo) against Sea Lord (rank 8, 6,400 health, Storm) on 2026-11-22 at 02:09:21.
   It took 20 rounds, about 10 minutes.
   Deck made for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Regenerate x2, Judgement x2, Helping Hands x2.
+  Plan: "stack up" (1 enemy, stronger).
+  Hits that landed: Judgement x2.
 - Avoid, fights lost:
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 59% of my health, the fight ran 9 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 62% of my health, the fight ran 11 minutes, so I ran out of good cards. Do instead: fight other creatures for XP first, up to the quest's level.
@@ -555,7 +246,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   - Sea Lord: lost 1 time(s) (Ra). Why: its biggest hit took 100% of my health, the fight ran 9 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
   - Sea Lord: lost 1 time(s) (Ra). Why: its biggest hit took 100% of my health, the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
-  - Plaza of Conquests near (-1300, 4500) while stuck: Defeat Sea Lord: no creature for this step is in the area: stuck 8 time(s) (Ultimus); one bot tried every fix there.
+  - Plaza of Conquests near (-1300, 4500) while stuck: Defeat Sea Lord: no creature for this step is in the area: stuck 7 time(s) (Ultimus); one bot tried every fix there.
   - Plaza of Conquests near (-1300, 4500) while a short break before trying "Defeat Sea Lord" again: stuck 2 time(s) (Ultimus).
   - The Basilica near (200, -500) while a short break before trying "Defeat Sea Lord" again: stuck 2 time(s) (Ultimus).
   - Plaza of Conquests near (-1200, 4400) while stuck: Defeat Sea Lord: no creature for this step is in the area: stuck 1 time(s) (Ultimus).
@@ -567,34 +258,39 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ultimus (Solo) against Clockwork Defender (rank 7, 760 health, Storm) on 2026-11-21 at 22:53:36.
   It took 4 rounds, about 1 minutes.
   Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade.
-- Won by Ultimus (Solo) against Ash Spider (rank 7, 685 health, Life) on 2026-11-21 at 22:56:05.
-  It took 3 rounds, about 2 minutes.
-  Deck made for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement x2, Sandstorm.
-- Won by Ultimus (Solo) against Fire Avenger (rank 8, 765 health, Fire) on 2026-11-21 at 23:00:25.
-  It took 8 rounds, about 4 minutes.
-  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Gearhead Destroyer x2, Locust Swarm.
-- Won by Ultimus (Solo) against Erratic Servator (rank 7, 810 health, Storm) on 2026-11-21 at 23:09:06.
-  It took 2 rounds, about 1 minutes.
-  Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement.
+  Hits that landed: Minor Crusade.
 - Won by Ra (Solo) against Clockwork Defender (rank 7, 760 health, Storm) on 2026-11-22 at 02:37:13.
   It took 11 rounds, about 8 minutes.
   Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x3, Helping Hands x2, Locust Swarm, Minor Crusade, Spectral Blast.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x3, Locust Swarm, Minor Crusade, Spectral Blast.
+- Won by Ultimus (Solo) against Ash Spider (rank 7, 685 health, Life) on 2026-11-21 at 22:56:05.
+  It took 3 rounds, about 2 minutes.
+  Deck made for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies).
+  Hits that landed: Judgement x2, Sandstorm.
 - Won by Ra (Solo) against Ash Spider (rank 7, 685 health, Life) on 2026-11-22 at 02:39:45.
   It took 3 rounds, about 2 minutes.
   Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement x2, Sandstorm.
+  Hits that landed: Judgement x2, Sandstorm.
 - Won by Ra (Solo) against Fire Avenger (rank 8, 765 health, Fire) on 2026-11-22 at 02:44:00.
   It took 6 rounds, about 4 minutes.
   Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x3, Minor Crusade x2, Gearhead Destroyer.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x3, Minor Crusade x2, Gearhead Destroyer.
+- Won by Ultimus (Solo) against Fire Avenger (rank 8, 765 health, Fire) on 2026-11-21 at 23:00:25.
+  It took 8 rounds, about 4 minutes.
+  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x2, Gearhead Destroyer x2, Locust Swarm.
+- Won by Ultimus (Solo) against Erratic Servator (rank 7, 810 health, Storm) on 2026-11-21 at 23:09:06.
+  It took 2 rounds, about 1 minutes.
+  Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
+  Hits that landed: Judgement.
+- Won by Ra (Solo) against Erratic Servator (rank 7, 810 health, Storm) on 2026-11-22 at 02:48:09.
+  It took 7 rounds, about 4 minutes.
+  Deck made for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x2, Spectral Blast, Minor Crusade, Locust Swarm, Sandstorm.
 - Avoid, fights lost:
   - Clockwork Defender: lost 1 time(s) (Ultimus). Why: I went in at 38% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 
@@ -602,19 +298,19 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Finished by Ultimus (15 min).
 - Finished by Ra (11 min).
 - Finished by Garm (11 min).
-- Won by Ultimus (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 06:43:59.
-  It took 23 rounds, about 12 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Fire, Death (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands x2, Scarab, Elemental Shield, Fairy, Minor Crusade.
 - Won by Ra (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 23:24:03.
   It took 6 rounds, about 2 minutes.
   Deck made for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer, Judgement.
+  Plan: "stack up" (2 enemies, stronger).
+  Hits that landed: Gearhead Destroyer, Judgement.
 - Won by Garm (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-22 at 02:25:01.
   It took 15 rounds, about 9 minutes.
   Deck made for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Elemental Shield, Fairy, Dark Sprite, Banshee.
+  Hits that landed: Dark Sprite, Banshee.
+- Won by Ultimus (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 06:43:59.
+  It took 23 rounds, about 12 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Fire, Death (many of my fights lately had 2+ enemies).
+  Hits that landed: Scarab, Minor Crusade.
 - Avoid, fights lost:
   - Sysiphan: lost 1 time(s) (Ra). Why: its biggest hit took 54% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Sysiphan: lost 1 time(s) (Garm). Why: I went in at 72% health, its biggest hit took 54% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -627,8 +323,8 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ultimus (Solo) against Vasek Ashweaver (rank 8, 5,600 health, Death) on 2026-11-22 at 01:52:46.
   It took 16 rounds, about 8 minutes.
   Deck made for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Dryad, Flowering Dryad, Satyr, Judgement.
+  Plan: "stack up" (1 enemy, stronger).
+  Hits that landed: Judgement.
 - Avoid, fights lost:
   - Vasek Ashweaver: lost 1 time(s) (Ultimus). Why: I went in at 64% health, the fight ran 8 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Vasek Ashweaver: lost 1 time(s) (Ultimus). Why: the fight ran 8 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
@@ -637,15 +333,15 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## Trapper Keeper
 - Finished by Ultimus (18 min).
 - Finished by Ra (5 min).
-- Won by Ultimus (Solo) against Sandor Spearcaller (rank 7, 1,600 health, Ice) on 2026-11-21 at 12:22:32.
-  It took 17 rounds, about 10 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Balance, Death (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x3, Balance x2, Minor Crusade x2, Locust Swarm, Heck Hound, Helping Hands, Fairy, Scarab.
 - Won by Ra (Solo) against Sandor Spearcaller (rank 7, 1,600 health, Ice) on 2026-11-22 at 01:14:57.
   It took 6 rounds, about 3 minutes.
   Deck made for a boss (Ice), hitting with Ice, Balance, Death; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm.
+  Hits that landed: Locust Swarm.
+- Won by Ultimus (Solo) against Sandor Spearcaller (rank 7, 1,600 health, Ice) on 2026-11-21 at 12:22:32.
+  It took 17 rounds, about 10 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Balance, Death (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Gearhead Destroyer x3, Minor Crusade x2, Locust Swarm, Heck Hound, Scarab.
 - Avoid, fights lost:
   - Sandor Spearcaller: lost 1 time(s) (Ra). Why: its biggest hit took 86% of my health, the fight ran 5 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 
@@ -653,475 +349,19 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Finished by Ultimus (16 min).
 - Finished by Ra (21 min).
 - Finished by Garm (28 min).
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 09:38:01.
-  It took 9 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Scarab x2, Minor Crusade x2, Locust Swarm, Vampire, Sandstorm.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 09:42:54.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Sandstorm, Minor Crusade, Locust Swarm, Fairy, Gearhead Destroyer.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 10:23:45.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Gearhead Destroyer, Locust Swarm, Scarab, Vampire.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 10:29:29.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Scarab x2, Gearhead Destroyer, Minor Crusade, Locust Swarm, Sunbird.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 10:46:26.
-  It took 9 rounds, about 4 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Fairy x3, Gearhead Destroyer x2, Scarab x2, Judgement, Minor Crusade, Sandstorm, Lycian Chimera.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 10:52:10.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Scarab, Arcticzilla.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:06:16.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Scarab x2, Locust Swarm, Gearhead Destroyer, Helping Hands, Elemental Shield, Sandstorm.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:15:19.
-  It took 9 rounds, about 7 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Scarab x2, Helping Hands x2, Sandstorm, Locust Swarm, Spirit Shield, Minor Crusade.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:23:23.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Gearhead Destroyer x2, Scarab x2, Helping Hands, Spirit Shield, Sandstorm, Fairy.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:42:30.
-  It took 11 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x5, Scarab x4, Sandstorm x3, Fairy x2, Gearhead Destroyer, Elemental Shield, Skeletal Pirate, Locust Swarm.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:48:05.
-  It took 8 rounds, about 3 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Vampire, Minor Dark Blow, Poison.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:51:00.
-  It took 7 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Sandstorm, Scarab, Gearhead Destroyer, Locust Swarm.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:59:32.
-  It took 18 rounds, about 10 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x2, Banshee x2, Heck Hound x2, Sacrifice x2, Dark Sprite, Minor Dark Blow, Fairy, Vampire.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 12:08:56.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Banshee, Dark Sprite, Poison, Vampire.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 12:28:13.
-  It took 14 rounds, about 9 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x4, Vampire x2, Poison x2, Sacrifice x2, Minor Dark Blow.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 12:31:18.
-  It took 5 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Vampire, Poison, Dark Sprite.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 12:35:53.
-  It took 6 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Banshee, Poison, Vampire.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 12:43:23.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x2, Banshee, Vampire, Dark Sprite, Minor Dark Blow, Sacrifice.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:07:46.
-  It took 5 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Sandstorm, Minor Crusade.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:12:01.
-  It took 7 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x4, Spectral Blast.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:16:18.
-  It took 5 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Locust Swarm, Judgement.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:21:49.
-  It took 11 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x7, Minor Dark Blow x5, Vampire x2, Poison x2, Judgement, Banshee.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:42:35.
-  It took 5 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Elemental Shield, Sandstorm, Minor Crusade, Locust Swarm.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:42:36.
-  It took 5 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite, Minor Dark Blow, Ice Hound, Banshee.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 13:58:03.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x6, Gearhead Destroyer x3, Spectral Blast x2, Locust Swarm.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:01:51.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Minor Dark Blow x2, Dark Sprite x2, Banshee.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:06:40.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Sandstorm, Judgement, Spectral Blast.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:06:59.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x2, Dark Sprite, Minor Dark Blow, Vampire.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:12:03.
-  It took 7 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Spectral Blast, Minor Crusade, Helping Hands, Elemental Shield.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:17:25.
-  It took 9 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Judgement, Fairy, Gearhead Destroyer, Minor Crusade.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:32:06.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x3, Sandstorm, Minor Crusade.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:35:52.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Sandstorm, Gearhead Destroyer.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:36:24.
-  It took 15 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Dark Blow x4, Fairy, Dark Sprite, Dream Shield, Poison, Sacrifice, Banshee, Vampire.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:38:49.
-  It took 5 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade x2.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:42:16.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Judgement, Locust Swarm.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:42:39.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x2, Vampire, Poison, Minor Dark Blow.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:46:43.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Dark Blow, Sacrifice, Dark Sprite.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:55:09.
-  It took 12 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Sandstorm, Minor Crusade, Locust Swarm, Judgement, Helping Hands, Storm Hound, Spirit Shield, Spectral Blast.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 14:58:41.
-  It took 16 rounds, about 11 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Sacrifice x2, Fairy, Banshee, Minor Dark Blow, Poison, Vampire.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:02:53.
-  It took 4 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:04:59.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x2, Poison, Minor Dark Blow, Vampire.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:28:46.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement, Gearhead Destroyer.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:35:26.
-  It took 9 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x12, Minor Dark Blow x4, Dark Sprite x2, Fairy.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:37:18.
-  It took 12 rounds, about 8 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Spectral Blast, Helping Hands, Fairy, Gearhead Destroyer.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:40:35.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm, Spectral Blast.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:43:30.
-  It took 10 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Minor Dark Blow x2, Poison, Dream Shield, Fairy, Spirit Armor.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:01:08.
-  It took 13 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Dark Sprite, Spirit Armor, Ice Hound, Elemental Shield, Minor Dark Blow, Skeletal Pirate.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:13:16.
-  It took 5 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Spectral Blast, Minor Crusade, Judgement.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:19:50.
-  It took 8 rounds, about 12 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Dark Blow x3, Dark Sprite x2, Poison x2, Skeletal Pirate x2, Banshee, Fairy, Judgement.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:19:50.
-  It took 8 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Judgement, Spectral Blast.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:23:59.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Dark Blow x2, Poison, Banshee, Skeletal Pirate.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:25:31.
-  It took 10 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Judgement, Spectral Blast, Sandstorm, Fairy, Locust Swarm.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:34:13.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Gearhead Destroyer, Spectral Blast.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:37:29.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Sandstorm, Judgement, Spectral Blast.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:37:48.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x2, Poison, Banshee, Spirit Armor, Tower Shield, Skeletal Pirate.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:51:04.
-  It took 4 rounds, about 2 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Spectral Blast, Gearhead Destroyer.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:53:30.
-  It took 9 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Minor Dark Blow, Spirit Armor, Tower Shield, Skeletal Pirate.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:55:41.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Spectral Blast, Judgement, Sandstorm, Spirit Shield.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:09:41.
-  It took 10 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement, Helping Hands, Fairy, Minor Crusade.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:12:02.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Poison x2, Banshee, Tower Shield, Fairy, Skeletal Pirate.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:16:50.
-  It took 12 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer x2, Judgement, Locust Swarm, Fairy.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:24:52.
-  It took 8 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Dark Sprite x2, Tower Shield, Minor Dark Blow, Fairy, Skeletal Pirate.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:25:06.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement, Minor Crusade.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:32:47.
-  It took 11 rounds, about 6 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Minor Dark Blow x2, Dark Sprite x2, Fairy, Skeletal Pirate.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:41:38.
-  It took 9 rounds, about 5 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Spectral Blast x2, Helping Hands x2, Judgement.
+- Loathsome Creeper: won 99 times (92 Solo, 7 Team) by Garm, Ra. The 3 fastest:
 - Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:43:15.
   It took 2 rounds, about 1 minutes.
   Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:45:36.
-  It took 12 rounds, about 7 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Dark Blow x3, Skeletal Pirate, Fairy, Tower Shield, Heck Hound, Dark Sprite.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:46:38.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement, Locust Swarm.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:50:32.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm, Gearhead Destroyer.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 17:54:48.
-  It took 7 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Spectral Blast, Locust Swarm, Judgement, Sandstorm.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:04:34.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade, Locust Swarm.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:11:35.
-  It took 18 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x7, Minor Dark Blow x6, Spirit Armor x2, Banshee x2, Skeletal Pirate x2, Satyr x2, Poison x2, Tower Shield.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:15:39.
-  It took 8 rounds, about 6 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Minor Crusade x2, Spectral Blast x2, Helping Hands.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:21:53.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer, Helping Hands, Minor Crusade.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:21:55.
-  It took 17 rounds, about 10 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Minor Dark Blow x2, Judgement x2, Skeletal Pirate, Spirit Armor, Elemental Shield, Fairy, Dark Sprite.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:25:13.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Sandstorm, Minor Crusade, Locust Swarm.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:29:48.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Minor Crusade x2, Helping Hands, Spectral Blast.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:43:00.
-  It took 9 rounds, about 6 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x3, Fairy, Spectral Blast, Minor Crusade, Gearhead Destroyer.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:49:15.
-  It took 6 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands x2, Elemental Shield, Spectral Blast.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 18:49:15.
-  It took 14 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x3, Minor Dark Blow x2, Skeletal Pirate x2, Satyr x2, Poison x2, Banshee, Elemental Shield.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:02:20.
-  It took 5 rounds, about 18 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:02:20.
-  It took 5 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Dark Blow x3, Skeletal Pirate, Banshee.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:21:02.
-  It took 6 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast, Minor Crusade, Judgement, Locust Swarm, Gearhead Destroyer.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:21:19.
-  It took 7 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x13, Dark Sprite, Skeletal Pirate.
-- Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:32:40.
-  It took 9 rounds, about 2 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x4, Minor Dark Blow x2, Banshee.
-- Won by Ra (Team with Garm) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:34:07.
-  It took 8 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Spectral Blast x2, Judgement.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:47:14.
-  It took 9 rounds, about 6 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison, Banshee, Fairy, Skeletal Pirate.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:54:07.
-  It took 11 rounds, about 6 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x3, Minor Dark Blow, Dark Sprite, Tower Shield, Fairy.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:55:42.
-  It took 7 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x5, Judgement x3, Sandstorm x2, Helping Hands, Locust Swarm.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 19:59:48.
-  It took 7 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer x2, Minor Crusade, Locust Swarm, Helping Hands, Spectral Blast.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:13:33.
-  It took 18 rounds, about 10 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x4, Poison x3, Spirit Armor x2, Heck Hound x2, Minor Dark Blow x2, Skeletal Pirate x2, Banshee, Fairy, Tower Shield, Satyr.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:20:14.
+  Hits that landed: Judgement.
+- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 15:02:53.
   It took 4 rounds, about 2 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Banshee, Skeletal Pirate.
-- Won by Ra (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:22:22.
-  It took 12 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x4, Sandstorm x2, Judgement x2, Helping Hands x2, Spectral Blast, Ice Hound, Heck Hound, Gearhead Destroyer.
-- Won by Ra (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:23:12.
-  It took 1 rounds, about 1 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:26:36.
-  It took 5 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Minor Crusade x2, Judgement.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:43:22.
-  It took 10 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Dark Sprite x2, Skeletal Pirate x2, Poison, Judgement.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:53:15.
-  It took 14 rounds, about 8 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Storm Hound x3, Locust Swarm x2, Spectral Blast x2, Judgement x2, Helping Hands, Elemental Shield, Fairy.
-- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 20:57:24.
-  It took 6 rounds, about 3 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x3, Spectral Blast, Locust Swarm.
-- Won by Garm (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 21:02:10.
-  It took 9 rounds, about 6 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Dark Sprite x2, Poison, Judgement, Skeletal Pirate.
+  Deck made for any fight (many of my fights lately had 2+ enemies).
+  Hits that landed: Minor Crusade.
+- Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 16:51:04.
+  It took 4 rounds, about 2 minutes.
+  Deck made for any fight (many of my fights lately had 2+ enemies).
+  Hits that landed: Spectral Blast, Gearhead Destroyer.
 - Avoid, places bots got stuck:
   - The Tower Archives near (12300, -7200) while Use Yellow Crystal here ("The Towering Crystal"): stuck 1 time(s) (Ultimus).
   - The Tower Archives near (6700, -1000) while Use Yellow Crystal here ("The Towering Crystal"): stuck 1 time(s) (Garm).
@@ -1153,60 +393,40 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Finished by Ultimus (6 min).
 - Finished by Ra (4 min).
 - Finished by Garm (6 min).
-- Won by Ultimus (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-20 at 07:36:15.
-  It took 10 rounds, about 6 minutes.
-  Deck made for Death enemies, hitting with Death, Fire, Myth (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Gearhead Destroyer, Scarab, Helping Hands, Elemental Golem, Ice Hound.
 - Won by Ra (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 09:10:49.
   It took 6 rounds, about 3 minutes.
   Deck made for Death enemies, hitting with Death, Fire, Myth.
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Gearhead Destroyer, Elemental Golem, Scarab.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Gearhead Destroyer, Elemental Golem, Scarab.
 - Won by Garm (Team with Ra) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-21 at 11:15:19.
   It took 9 rounds, about 22 minutes.
   Deck made for Death enemies, hitting with Death, Fire, Myth.
-  Spells that landed the hits: Minor Dark Blow, Banshee, Poison, Dark Sprite.
+  Hits that landed: Minor Dark Blow, Banshee, Poison, Dark Sprite.
+- Won by Ultimus (Solo) against Loathsome Creeper (rank 6, 695 health, Death) on 2026-11-20 at 07:36:15.
+  It took 10 rounds, about 6 minutes.
+  Deck made for Death enemies, hitting with Death, Fire, Myth (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Crusade x3, Gearhead Destroyer, Scarab, Elemental Golem, Ice Hound.
 
 ## Friend of My Friend
 - Finished by Ultimus (17 min).
 - Finished by Ra (19 min).
 - Finished by Garm (26 min).
+- Wandering Wizard: won 8 times (8 Solo, 0 Team) by Garm, Ra, Ultimus. The 3 fastest:
 - Won by Ultimus (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-20 at 07:56:22.
   It took 4 rounds, about 26 minutes.
   Deck made for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Locust Swarm x3, Scarab.
-- Won by Ultimus (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-20 at 07:59:12.
-  It took 2 rounds, about 2 minutes.
-  Deck made for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
-- Won by Ra (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:04:27.
-  It took 10 rounds, about 5 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade, Helping Hands, Gearhead Destroyer.
-- Won by Garm (Team with Ra) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:25:56.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Locust Swarm x3, Scarab.
+- Won by Garm (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:25:56.
   It took 6 rounds, about 4 minutes.
   Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Dark Blow x2, Poison, Dark Sprite, Banshee.
-- Won by Ra (Team with Garm) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:26:29.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Dark Blow x2, Poison, Dark Sprite, Banshee.
+- Won by Ra (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:26:29.
   It took 6 rounds, about 4 minutes.
   Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Locust Swarm, Spectral Blast.
-- Won by Ra (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:34:06.
-  It took 13 rounds, about 7 minutes.
-  Deck made for Life enemies, hitting with Life, Fire, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Minor Crusade x2, Spectral Blast x2, Spirit Shield, Heck Hound.
-- Won by Garm (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:36:30.
-  It took 10 rounds, about 5 minutes.
-  Deck made for Life enemies, hitting with Life, Fire, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison x2, Minor Dark Blow, Dark Sprite, Spirit Armor, Banshee.
-- Won by Garm (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:41:48.
-  It took 9 rounds, about 5 minutes.
-  Deck made for Life enemies, hitting with Life, Fire, Storm; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Skeletal Pirate, Poison, Fairy.
+  Hits that landed: Locust Swarm, Spectral Blast.
 
 ## Key to Trust
 - Finished by Ultimus (65 s).
@@ -1220,17 +440,17 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 08:35:32.
   It took 5 rounds, about 3 minutes.
   Deck made for a boss (Ice), hitting with Ice, Death, Myth (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Sandstorm x2, Scarab.
-- Won by Garm (Team with Ra) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:55:35.
-  It took 6 rounds, about 3 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Poison.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Sandstorm x2, Scarab.
 - Won by Ra (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 22:02:29.
   It took 5 rounds, about 2 minutes.
   Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Judgement x2.
+  Hits that landed: Judgement x2.
+- Won by Garm (Team with Ra) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:55:35.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Poison.
 
 ## The Dragon's Claw
 - Finished by Ultimus (53 s).
@@ -1259,11 +479,11 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ra (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 23:35:26.
   It took 7 rounds, about 4 minutes.
   Deck made for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer, Spectral Blast.
+  Hits that landed: Gearhead Destroyer, Spectral Blast.
 - Won by Ra (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 23:41:14.
   It took 8 rounds, about 5 minutes.
   Deck made for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
-  Spells that landed the hits: Gearhead Destroyer.
+  Hits that landed: Gearhead Destroyer.
 
 ## Stone Soup
 - Finished by Ultimus (10 s).
@@ -1296,16 +516,16 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## Crystal Crawlies
 - Finished by Ultimus (10 min).
 - Finished by Ra (3 min).
-- Won by Ultimus (Solo) against Crystal Crawler (rank 8, 765 health, Ice) on 2026-11-21 at 22:45:45.
-  It took 12 rounds, about 6 minutes.
-  Deck made for Ice enemies, hitting with Ice, Death, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x2, Locust Swarm, Judgement, Glacial Shield, Satyr, Gearhead Destroyer.
 - Won by Ra (Solo) against Crystal Crawler (rank 8, 765 health, Ice) on 2026-11-22 at 02:26:54.
   It took 6 rounds, about 3 minutes.
   Deck made for any fight; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Minor Crusade x2, Elemental Shield, Locust Swarm.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Spectral Blast x2, Minor Crusade x2, Locust Swarm.
+- Won by Ultimus (Solo) against Crystal Crawler (rank 8, 765 health, Ice) on 2026-11-21 at 22:45:45.
+  It took 12 rounds, about 6 minutes.
+  Deck made for Ice enemies, hitting with Ice, Death, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Crusade x2, Locust Swarm, Judgement, Gearhead Destroyer.
 
 ## Charged Up
 - Finished by Ultimus (25 s).
@@ -1322,8 +542,8 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ultimus (Solo) against General Firetusk (rank 8, 3,200 health, Fire) on 2026-11-22 at 00:39:41.
   It took 15 rounds, about 6 minutes.
   Deck made for a boss (Fire), hitting with Fire, Myth; alone, so single hits only; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2, Sun Shield, Satyr.
+  Plan: "stack up" (1 enemy, stronger).
+  Hits that landed: Judgement x2.
 
 ## Forward... Into History!
 - Finished by Ultimus (3 min).
@@ -1342,17 +562,17 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Ultimus (Solo) against Bone Warrior (rank 7, 685 health, Balance) on 2026-11-22 at 02:00:33.
   It took 6 rounds, about 3 minutes.
   Deck made for Balance enemies, hitting with Balance, Death, Ice; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Spectral Blast x2, Minor Crusade x2, Locust Swarm.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Spectral Blast x2, Minor Crusade x2, Locust Swarm.
 - Won by Ultimus (Solo) against Beghastion Fieldburner (rank 7, 810 health, Fire) on 2026-11-22 at 02:04:55.
   It took 6 rounds, about 4 minutes.
   Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Balance x3, Sandstorm, Locust Swarm, Minor Crusade.
+  Hits that landed: Sandstorm, Locust Swarm, Minor Crusade.
 - Won by Ultimus (Solo) against Ghost of Sylvia Drake (rank 8, 2,400 health, Life) on 2026-11-22 at 02:09:37.
   It took 8 rounds, about 4 minutes.
   Deck made for a boss (Life), hitting with Life, Fire, Death; alone, so single hits only; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies).
-  Plan: "stack up" (mine and every other bot's).
-  Spells that landed the hits: Judgement x2.
+  Plan: "stack up" (2 enemies, stronger).
+  Hits that landed: Judgement x2.
 
 ## Control Ring
 - Finished by Ultimus (10 s).
@@ -1362,20 +582,20 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Textbook Example
 - Finished by Ultimus (21 min).
-- Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:27:26.
-  It took 11 rounds, about 6 minutes.
-  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Minor Crusade x3, Gearhead Destroyer x3, Sandstorm x2, Satyr x2, Judgement, Fairy, Elemental Shield.
 - Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:31:39.
   It took 7 rounds, about 4 minutes.
   Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Plan: "hit now" (mine and every other bot's).
-  Spells that landed the hits: Judgement x4, Minor Crusade, Gearhead Destroyer.
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x4, Minor Crusade, Gearhead Destroyer.
 - Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:36:33.
   It took 7 rounds, about 5 minutes.
   Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Minor Crusade, Fairy, Judgement.
+  Hits that landed: Minor Crusade, Judgement.
+- Won by Ultimus (Solo) against Terrorwing Warlock (rank 8, 765 health, Fire) on 2026-11-22 at 02:27:26.
+  It took 11 rounds, about 6 minutes.
+  Deck made for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Minor Crusade x3, Gearhead Destroyer x3, Sandstorm x2, Judgement.
 
 ## Et tu, Statue?
 - Finished by Ultimus (3 min).
@@ -1393,4 +613,4 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Won by Kurrent (Solo) against Tamauji (rank 6, 1,480 health, Myth, a boss) on 2026-11-22 at 00:39:40.
   It took 7 rounds, about 5 minutes.
   Deck made for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Thermic Golem x2, Moon Shield, Fairy.
+  Hits that landed: Thermic Golem x2.

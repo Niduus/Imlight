@@ -1,6 +1,6 @@
 # How the bots quest
 
-The rules every bot follows on a quest. Ultimus sets the example, and the TCO7 and the Quest Team do the same, or better.
+The rules every questing bot follows on a quest. Ultimus sets the example, and the TCO7, the Kitharas Family and the Quest Team do the same, or better. Zoom, the story scout, is the one exception: he may teleport to a step and one-shot what he meets, and so his walks, stucks and fights never go into what the others learn.
 
 ## Playing like a player
 - They quest the way a person does. No command finishes or skips a step for them. When a step looks broken they flag it and keep trying it as a player would.
@@ -21,3 +21,4 @@ The rules every bot follows on a quest. Ultimus sets the example, and the TCO7 a
 - Potions are kept for right before the quest's boss. Fleeing a dungeon counts as a loss, so they come back with Dungeon Recall where the game allows it.
 - When health is low they heal from wisps first, then potions, and only shop for potions when they have none.
 - After losing, they look at why: they may buy better gear or treasure cards at the Bazaar, or change their deck, before trying again.
+- Ultimus fights bosses alone and gets better by learning, not by asking for help. A TCO7 wizard who loses the same quest fight 4 times may ask a free teammate to help.
