@@ -105,6 +105,65 @@ internal static class BotSheet {
         member["itemGrid"] = new JsonArray([.. ItemCopies(wizard).Select(c => (JsonNode) new JsonObject {
             ["id"] = c.Id, ["school"] = SchoolOf(c.Id), ["off"] = c.Off,
         })]);
+
+        // What each card above looks like, for Hellhound's pictures (Niduus, 2026-11-22: "Clicking on a bot shows it's stats
+        // and deck ... WITH PICTURES!"): name, school, pips, the art and frame files in the game's .wad files. Hellhound reads
+        // the pictures from the game files on the PC; the gear rows get each piece's icon file the same way.
+        var ids = new List<uint>();
+        foreach (var grid in new[] { "deckGrid", "treasureGrid", "treasureStockGrid", "spellGrid", "itemGrid", "otherGrid" }) {
+            foreach (var entry in (member[grid] as JsonArray ?? []).OfType<JsonObject>()) {
+                if (entry["id"] is JsonValue v && v.TryGetValue<uint>(out var id)) {
+                    ids.Add(id);
+                }
+            }
+        }
+
+        member["cards"] = CardLooks(ids);
+        foreach (var row in (member["gearRows"] as JsonArray ?? []).OfType<JsonObject>()) {
+            if (row["id"] is JsonValue v && v.TryGetValue<uint>(out var id) && id != 0) {
+                row["icon"] = ItemIcon(id);
+            }
+        }
+    }
+
+    private static JsonObject CardLooks(IEnumerable<uint> ids) {
+        var looks = new JsonObject();
+        foreach (var id in ids.Distinct()) {
+            try {
+                if (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) is not Imcodec.ObjectProperty.TypeCache.SpellTemplate t) {
+                    continue;
+                }
+
+                var rank = t.m_spellRank;
+                looks[id.ToString(System.Globalization.CultureInfo.InvariantCulture)] = new JsonObject {
+                    ["name"] = SpellName(id),
+                    ["school"] = (string) t.m_sMagicSchoolName ?? "",
+                    ["type"] = t.m_sTypeName.ToString() ?? "",
+                    ["pips"] = rank?.m_spellRank ?? 0,
+                    ["x"] = rank?.m_xPipSpell ?? false,
+                    ["shadow"] = rank?.m_shadowPips ?? 0,
+                    ["acc"] = t.m_accuracy,
+                    ["tc"] = t.m_Treasure,
+                    ["img"] = t.m_imageName.ToString() ?? "",
+                    ["front"] = t.m_cardFront.ToString() ?? "",
+                };
+            }
+            catch (Exception) {
+                // A card it can't read shows by name only.
+            }
+        }
+
+        return looks;
+    }
+
+    private static string ItemIcon(uint id) {
+        try {
+            return Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(id) is Imcodec.ObjectProperty.TypeCache.GameObjectTemplate item
+                ? item.m_sIcon.ToString() ?? "" : "";
+        }
+        catch (Exception) {
+            return "";
+        }
     }
 
     /// <summary>Every treasure card the wizard owns: the treasure book's and the deck's together, most first.</summary>

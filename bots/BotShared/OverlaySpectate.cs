@@ -348,7 +348,9 @@ internal static class OverlaySpectate {
         try {
             foreach (var p in OnlinePlayerCollection.GetCachedOnlinePlayers().Where(p => p.CharacterId != 0)) {
                 var seat = Ultimus.UltimusSeat.OfCharacter(p.CharacterId);
-                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is { IsKitharas: true } ? "Kitharas Family" : seat is not null ? "TCO7"
+                // True Form, Zoom and Savitar are bots of their own, not TCO7 (Niduus, 2026-11-22: "True Form is NOT part of TCO7").
+                var kind = seat is { IsUltimus: true } ? "Ultimus" : seat is { IsTrueForm: true } ? "True Form" : seat is { IsZoom: true } ? "Zoom"
+                    : seat is { IsSavitar: true } ? "Savitar" : seat is { IsKitharas: true } ? "Kitharas Family" : seat is not null ? "TCO7"
                     : QuestTeam.QuestTeamRoster.IsMember(p.CharacterId) ? "Quest Team" : "Player";
                 var name = PlayerCheats.LiveName(p.CharacterId) is { Length: > 0 } live ? live : p.WizardName ?? "?";
                 list.Add(new Someone(p.CharacterId, name, kind, seat?.Role ?? p.School ?? ""));
@@ -358,7 +360,9 @@ internal static class OverlaySpectate {
             // The list changed while read: read again next time.
         }
 
-        static int Order(Someone s) => s.Kind switch { "Ultimus" => 0, "TCO7" => 1, "Kitharas Family" => 2, "Quest Team" => 3, _ => 4 };
+        static int Order(Someone s) => s.Kind switch {
+            "Ultimus" => 0, "Zoom" => 1, "Savitar" => 1, "True Form" => 1, "TCO7" => 2, "Kitharas Family" => 3, "Quest Team" => 4, _ => 5,
+        };
         return [.. list.DistinctBy(s => s.Id).OrderBy(Order).ThenBy(s => Ultimus.UltimusSeat.OfCharacter(s.Id)?.Index ?? 0).ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)];
     }
 
