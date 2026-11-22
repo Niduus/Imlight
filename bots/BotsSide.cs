@@ -54,6 +54,9 @@ internal sealed class BotsSide : BotSide {
         // The signed Hive Mind file is checked and its result logged (stage 1: nothing about play changes yet).
         _ = BotShared.BotHive.Valid;
 
+        // The Ahziael signal is listened for and logged (phase 1: nothing about play changes yet).
+        BotShared.BotAhziaelSignal.StartListening();
+
         // Zoom's and True Form's leftovers in the shared books go first (Hive Mind audit, 2026-11-22).
         BotShared.BotMistakes.ForgetKeptApart();
         BotBodies.Start(system);
