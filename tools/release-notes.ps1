@@ -132,6 +132,14 @@ foreach ($record in ($log -split [char]0x1e)) {
     if ($Bots -and $botFiles.Count -eq 0 -and -not $botNotesOnly) { continue }
     if (-not $Bots -and $botOnly) { continue }
 
+    # Kept out of the app's notes (Niduus, 2026-11-22: "DO NOT MENTION ANY OF THESE CHANGES IN THE CHANGE LOG TO AHZIAEL.
+    # ESPECIALLY THE DEPRECATION/KILLSWITCH"): Hellhound, the bots' own app (src/Hellhound, with the build files that only
+    # build it), and any change whose message has a "No app notes" line.
+    $notApp = @($code | Where-Object { -not $_.StartsWith('src/Hellhound/') -and -not $_.StartsWith('bots/') -and
+        $_ -ne 'src/Imlight.sln' -and -not $_.StartsWith('.github/') })
+    $hellhound = @($code | Where-Object { $_.StartsWith('src/Hellhound/') }).Count -gt 0
+    if (-not $Bots -and (($hellhound -and $notApp.Count -eq 0) -or $body -match '(?im)^\s*No app notes\s*$')) { continue }
+
     if ($added.ContainsKey($hash)) {
         foreach ($file in $added[$hash]) {
             # The note as it reads now when the file is still there, so a note rewritten later reads that way for its
