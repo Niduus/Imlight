@@ -31,7 +31,7 @@ using Imlight.CoreLib.WizardData.Models.Player;
 namespace Imlight.CoreLib.Game.Ultimus;
 
 /// <summary>
-/// True Form's seat (TrueForm.cs): he never quests. Alone he stands at his spot in The Commons, by the carousel; any player
+/// True Form's seat (TrueForm.cs): he never quests. Alone he wanders Wizard City's busy areas (TrueFormWander); any player
 /// may call him (".trueform", "True Form, join me"), and in a group he goes along with its head as Ultimus does in party
 /// mode (UltimusDirector.Party.cs): their battles, their sigils, to them in another area. When the group ends, or he is
 /// told to leave, he goes back to his spot (Recall to the mark he keeps there, else the Commons button) and waits.
@@ -138,7 +138,7 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        var target = PartyTarget(me) ?? TrueFormHome(me);
+        var target = PartyTarget(me) ?? TrueFormWander(me) ?? TrueFormHome(me);
         var with = _partyMate != 0 ? _partyMateName : "";
         if (with != _tfLastWith) {
             _tfLastWith = with;
@@ -167,9 +167,26 @@ internal sealed partial class UltimusDirectorActor {
             return;
         }
 
-        var reach = target.Kind == UltimusPlanner.FIGHT ? 40f : 25f;
+        var reach = target.Kind switch {
+            UltimusPlanner.FIGHT => 40f,
+            UltimusPlanner.DOOR => 140f,
+            _ when target.Key?.StartsWith(TRUE_FORM_KEY + "wander", StringComparison.Ordinal) == true => 45f,
+            _ => 25f,
+        };
         if (UltimusPlanner.Far(me.X, me.Y, target.X, target.Y) > reach) {
             WalkTo(0, target);
+        }
+        else if (target.Kind == UltimusPlanner.EXIT) {
+            // His wander from one area to the next (TrueFormWander): into the way out, as Ultimus goes.
+            IntoExit(me, target);
+        }
+        else if (target.Kind == UltimusPlanner.DOOR) {
+            if (me.Options.ContainsKey(target.GlobalId)) {
+                ClickOnce(0, target, ["Interact"], "opens the door " + target.What);
+            }
+            else {
+                DoorWithoutOptions(me, target);
+            }
         }
         else if (target.Kind == UltimusPlanner.FIGHT) {
             WalkTo(0, target with { X = target.X + 1 });
@@ -177,6 +194,102 @@ internal sealed partial class UltimusDirectorActor {
         else {
             StopWalking(0);
         }
+    }
+
+    // ---------------------------------------------------------------------
+    // Wandering (Niduus, 2026-11-22: "have him wander around The Commons, Golem Court, Shopping District, Library, Ravenwood,
+    // and Pet Pavilion. This way, he feels more lively")
+    // ---------------------------------------------------------------------
+
+    /// <summary>The Wizard City areas he wanders through when nobody has called him.</summary>
+    private static readonly (string Zone, string Name)[] s_tfWanderAreas = [
+        ("WizardCity/WC_Hub", "The Commons"),
+        ("WizardCity/WC_Golem_Tower", "Golem Court"),
+        ("WizardCity/WC_Shop_Area", "the Shopping District"),
+        ("WizardCity/Interiors/WC_Library", "the Library"),
+        ("WizardCity/WC_Ravenwood", "Ravenwood"),
+        ("WizardCity/WC_Streets/Interiors/WC_PET_Park", "the Pet Pavilion"),
+    ];
+
+    private (string Zone, string Name) _tfWanderArea;
+    private DateTime _tfWanderUntil = DateTime.MinValue;
+    private DateTime _tfWanderRestUntil = DateTime.MinValue;
+    private UltimusPlanner.Target _tfWanderSpot;
+    private DateTime _tfWanderSpotSince = DateTime.MinValue;
+    private readonly Random _tfRandom = new();
+
+    // Alone: a few minutes in one of his areas, strolling from one person or shop to the next with a short stop at each, then
+    // on to another area on foot. Null when he can't (no way there on foot): then he goes back to his spot as before.
+    private UltimusPlanner.Target TrueFormWander(UltimusMember.Status me) {
+        var zone = me.Zone ?? "";
+        var now = DateTime.UtcNow;
+        if (_tfWanderArea.Zone is null || now >= _tfWanderUntil) {
+            var choices = s_tfWanderAreas.Where(a => !OverlayQuestTracker.SameZone(zone, a.Zone)).ToList();
+            _tfWanderArea = choices[_tfRandom.Next(choices.Count)];
+            _tfWanderUntil = now.AddMinutes(4 + (_tfRandom.NextDouble() * 4));
+            _tfWanderSpot = null;
+            Note("Ultimus", $"True Form wanders over to {_tfWanderArea.Name}.");
+        }
+
+        if (!OverlayQuestTracker.SameZone(zone, _tfWanderArea.Zone)) {
+            // Somewhere off his rounds (a group took him away): Recall back to his spot in The Commons first.
+            if (!s_tfWanderAreas.Any(a => OverlayQuestTracker.SameZone(zone, a.Zone))) {
+                return null;
+            }
+
+            if (UltimusPlanner.Travel(me, _tfWanderArea.Zone, $"wandering over to {_tfWanderArea.Name}", TRUE_FORM_KEY + "wander|go") is { } walk) {
+                return walk with { What = $"wandering over to {_tfWanderArea.Name}: {walk.What}" };
+            }
+
+            // No way there on foot from here: he stays in this area for now.
+            var here = s_tfWanderAreas.First(a => OverlayQuestTracker.SameZone(zone, a.Zone));
+            Note("Ultimus", $"True Form finds no way on foot from {here.Name} to {_tfWanderArea.Name}; he strolls around {here.Name} instead.");
+            _tfWanderArea = here;
+        }
+
+        // At a stop: he stands a little, as a player looks at a shop or talks.
+        if (now < _tfWanderRestUntil) {
+            return new UltimusPlanner.Target(UltimusPlanner.WAIT, me.X, me.Y, $"looking around {_tfWanderArea.Name}", Key: TRUE_FORM_KEY + "wait");
+        }
+
+        var arrived = _tfWanderSpot is { } spot && UltimusPlanner.Far(me.X, me.Y, spot.X, spot.Y) <= 45;
+        if (arrived) {
+            _tfWanderSpot = null;
+            _tfWanderRestUntil = now.AddSeconds(8 + _tfRandom.Next(25));
+            return new UltimusPlanner.Target(UltimusPlanner.WAIT, me.X, me.Y, $"looking around {_tfWanderArea.Name}", Key: TRUE_FORM_KEY + "wait");
+        }
+
+        // A walk that takes too long (a wall, a crowd): another spot.
+        if (_tfWanderSpot is not null && now - _tfWanderSpotSince > TimeSpan.FromSeconds(75)) {
+            _tfWanderSpot = null;
+        }
+
+        if (_tfWanderSpot is null) {
+            var people = MinimapIndex.In(me.ZoneActor)
+                .Where(m => m.Kind == MinimapIndex.NPC && m.Object is not null)
+                .Select(m => (m.Name, X: m.Object.m_location.X, Y: m.Object.m_location.Y, Z: m.Object.m_location.Z))
+                .Where(m => UltimusPlanner.Far(me.X, me.Y, m.X, m.Y) > 150 && !UltimusPlanner.CantReach(zone, me, m.X, m.Y))
+                .ToList();
+            if (people.Count == 0) {
+                // Nobody to stroll to here: stand a while, then on to the next area.
+                _tfWanderUntil = now;
+                _tfWanderRestUntil = now.AddSeconds(20);
+                return new UltimusPlanner.Target(UltimusPlanner.WAIT, me.X, me.Y, $"looking around {_tfWanderArea.Name}", Key: TRUE_FORM_KEY + "wait");
+            }
+
+            var pick = people[_tfRandom.Next(people.Count)];
+            // Not onto them: a few steps short, on his side.
+            var dx = me.X - pick.X;
+            var dy = me.Y - pick.Y;
+            var len = Math.Max(1f, MathF.Sqrt((dx * dx) + (dy * dy)));
+            var x = pick.X + (dx / len * 70f);
+            var y = pick.Y + (dy / len * 70f);
+            _tfWanderSpot = new UltimusPlanner.Target(UltimusPlanner.SPOT, x, y, $"strolling over to {pick.Name} in {_tfWanderArea.Name}",
+                Key: TRUE_FORM_KEY + "wander|" + pick.Name, Z: pick.Z);
+            _tfWanderSpotSince = now;
+        }
+
+        return _tfWanderSpot;
     }
 
     // Alone: back to his spot and wait there.

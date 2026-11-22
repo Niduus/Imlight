@@ -888,7 +888,7 @@ internal static class UltimusPlanner {
     }
 
     // An exit with no floor anywhere near it, or on ground cut off from where he stands (false when the ground is not known).
-    private static bool CantReach(string zone, UltimusMember.Status leader, float x, float y)
+    internal static bool CantReach(string zone, UltimusMember.Status leader, float x, float y)
         => OverlayQuestPath.NearestFloor(zone, x, y) is null && OverlayQuestPath.IslandOf(zone, x, y) < 0 && OverlayQuestPath.IslandOf(zone, leader.X, leader.Y) >= 0
            || OverlayQuestPath.Apart(zone, leader.X, leader.Y, x, y);
 
