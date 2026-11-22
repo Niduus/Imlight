@@ -95,8 +95,13 @@ internal static class TrueFormPool {
 
             if (Interlocked.Exchange(ref s_building, 1) == 0) {
                 _ = Task.Run(() => {
+                    // The list kept from last time first, so he is ready at once (reading every spell takes about five
+                    // minutes, and after each bot update a school switch waited that long: Niduus, 2026-11-22, "he takes
+                    // a long time"); then read again, which replaces it.
+                    LoadSaved();
                     try {
                         Build();
+                        Save();
                     }
                     catch (Exception e) {
                         Logger.Warning("True Form: his spells could not be read: {0}", Logger.Args(e.Message));
@@ -191,6 +196,80 @@ internal static class TrueFormPool {
 
     // One-shot effects a dev card may carry: an instant kill, or a hit of a share of max health.
     private static readonly HashSet<kSpellEffects> s_oneShotEffects = [kSpellEffects.kInstantKill, kSpellEffects.kKillCreature, kSpellEffects.kMaxHealthDamage];
+
+    private const string SAVED_FILE = "spell-pool.json";
+
+    private sealed record Saved(int TopRealDamage, int DevOneShots, List<uint> Rejected, List<SavedEntry> Entries);
+
+    // Kind: "real" (in a family), "dev", "oneshot".
+    private sealed record SavedEntry(uint Id, string Family, string Shown, int Level, string School, bool Treasure, int Tier, string Kind);
+
+    private static string SavedPath => System.IO.Path.Combine(UltimusSeat.TrueForm.Folder, SAVED_FILE);
+
+    private static void Save() {
+        try {
+            var entries = s_families.Values.SelectMany(v => v).Select(e => new SavedEntry(e.Id, e.Family, e.Shown, e.Level, e.School, e.Treasure, e.Tier, "real"))
+                .Concat(s_dev.Select(e => new SavedEntry(e.Id, e.Family, e.Shown, e.Level, e.School, e.Treasure, e.Tier, "dev")))
+                .Concat(s_devOneShots.Select(e => new SavedEntry(e.Id, e.Family, e.Shown, e.Level, e.School, e.Treasure, e.Tier, "oneshot")))
+                .ToList();
+            System.IO.Directory.CreateDirectory(UltimusSeat.TrueForm.Folder);
+            System.IO.File.WriteAllText(SavedPath, System.Text.Json.JsonSerializer.Serialize(new Saved(TopRealDamage, DevOneShots, [.. s_rejected], entries)));
+        }
+        catch (Exception e) {
+            Logger.Debug("True Form: could not keep his spell list: {0}", Logger.Args(e.Message));
+        }
+    }
+
+    // The list kept from last time, each spell's card read again from the game files (fast, one by one).
+    private static void LoadSaved() {
+        try {
+            if (!System.IO.File.Exists(SavedPath)) {
+                return;
+            }
+
+            var started = DateTime.UtcNow;
+            var saved = System.Text.Json.JsonSerializer.Deserialize<Saved>(System.IO.File.ReadAllText(SavedPath));
+            if (saved?.Entries is not { Count: > 0 }) {
+                return;
+            }
+
+            var real = new List<Entry>();
+            var dev = new List<Entry>();
+            var oneShots = new List<Entry>();
+            foreach (var e in saved.Entries) {
+                if (RewrittenAI.ReadTemplate(e.Id) is not { } card) {
+                    continue;
+                }
+
+                var entry = new Entry(e.Id, e.Family, e.Shown, e.Level, e.School, e.Treasure, e.Kind != "real", e.Tier, card);
+                (e.Kind == "real" ? real : e.Kind == "dev" ? dev : oneShots).Add(entry);
+            }
+
+            if (real.Count == 0 || s_families is not null) {
+                return;
+            }
+
+            var byId = new Dictionary<uint, Entry>();
+            foreach (var entry in real.Concat(dev).Concat(oneShots)) {
+                byId.TryAdd(entry.Id, entry);
+            }
+
+            s_byId = byId;
+            s_rejected = [.. saved.Rejected ?? []];
+            s_dev = dev;
+            s_devOneShots = oneShots;
+            s_devOneShotIds = [.. oneShots.Select(e => e.Id)];
+            DevOneShots = saved.DevOneShots;
+            TopRealDamage = Math.Max(1, saved.TopRealDamage);
+            // Saved best first in each family, so the order is kept.
+            s_families = real.GroupBy(e => e.Family, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+            Logger.Information("True Form: {0} spells from his kept list, in {1:0.0} s (read again in the background).",
+                Logger.Args(s_families.Count, (DateTime.UtcNow - started).TotalSeconds));
+        }
+        catch (Exception e) {
+            Logger.Debug("True Form: his kept spell list could not be read: {0}", Logger.Args(e.Message));
+        }
+    }
 
     private static void Build() {
         var started = DateTime.UtcNow;

@@ -73,6 +73,8 @@ internal static class TrueFormMaker {
             return;
         }
 
+        TrueFormKiosk.Withdraw(wizard);
+
         try {
             // Myth, or the school his group asked for (TrueForm.School; back to Myth when the group ends).
             var school = TrueForm.School;
@@ -149,7 +151,6 @@ internal static class TrueFormMaker {
             }
             TrueFormSpells.Give(wizard, top, school.ToString(), style);
             TrueForm.CardPush = true;
-            TrueFormKiosk.Offer(wizard);
         }
         catch (Exception e) {
             Logger.Warning("True Form: could not make him ready: {0}", Logger.Args(e));
