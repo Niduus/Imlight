@@ -44,8 +44,8 @@ internal static class ZoomBattle {
 
     private const int HAND = TrueFormBattle.HAND;
 
-    /// <summary>His two clearing spells, best first (Niduus, 2026-11-22).</summary>
-    private static readonly string[] s_clearers = ["Tempest", "Glowbug Squall"];
+    /// <summary>His two clearing spells, best first (Niduus, 2026-11-22; per scout's school, ZoomSpells.Clearers).</summary>
+    private static IReadOnlyList<string> s_clearers => ZoomSpells.Clearers;
 
     private const string EPIC = "Epic";
 
@@ -129,7 +129,7 @@ internal static class ZoomBattle {
             shown.Add(TrueFormPool.Of(id)?.Shown ?? RewrittenAI.ReadTemplate(id)?.Shown ?? id.ToString());
         }
 
-        return $"Zoom is dealt his {(studying ? "cheat study" : "clearing")} hand ({pips} pips): {string.Join(", ", shown)}";
+        return $"{UltimusSeat.Current.Name} is dealt his {(studying ? "cheat study" : "clearing")} hand ({pips} pips): {string.Join(", ", shown)}";
     }
 
     /// <summary>
@@ -184,13 +184,13 @@ internal static class ZoomBattle {
         var hits = hand.Where(h => h.Card.Hit).ToList();
         var wide = enemies.Count > 1 ? hits.Where(h => h.Card.HitsAll).OrderByDescending(h => h.Card.BaseDamage).FirstOrDefault() : null;
         if (wide is not null) {
-            return new(UltimusTactics.Move.Cast, wide.Index, -1, $"no pips for Tempest or Glowbug Squall yet: hits every enemy with {wide.Card.Shown}");
+            return new(UltimusTactics.Move.Cast, wide.Index, -1, $"no pips for {string.Join(" or ", s_clearers)} yet: hits every enemy with {wide.Card.Shown}");
         }
 
         var big = hits.OrderByDescending(h => h.Card.BaseDamage).FirstOrDefault();
         if (big is not null) {
             return new(UltimusTactics.Move.Cast, big.Index, big.Card.HitsAll ? -1 : target.SlotIndex,
-                $"no pips for Tempest or Glowbug Squall yet: hits {(big.Card.HitsAll ? "every enemy" : UltimusTactics.Name(target))} with {big.Card.Shown}");
+                $"no pips for {string.Join(" or ", s_clearers)} yet: hits {(big.Card.HitsAll ? "every enemy" : UltimusTactics.Name(target))} with {big.Card.Shown}");
         }
 
         return new(UltimusTactics.Move.Pass, 0, -1, "builds pips for Tempest + Epic");

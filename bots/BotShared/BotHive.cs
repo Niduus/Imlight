@@ -18,6 +18,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -76,7 +78,15 @@ internal static class BotHive {
     }
 
     /// <summary>Checks a Hive Mind file: Niduus's signature over its manifest, and every brain file against its SHA-256.</summary>
-    internal static bool Check(string path, out string what) {
+    internal static bool Check(string path, out string what) => Open(path, out what, out _, out _);
+
+    /// <summary>
+    /// Checks a Hive Mind file like <see cref="Check"/> and, when it is valid, hands back every signed file (by its path in the
+    /// manifest) and when it was signed (UTC). Nothing comes back from a file that is not signed by Niduus or was changed.
+    /// </summary>
+    internal static bool Open(string path, out string what, out Dictionary<string, byte[]> signed, out DateTime made) {
+        signed = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+        made = DateTime.MinValue;
         try {
             if (!File.Exists(path)) {
                 what = $"no signed Hive Mind file ({path})";
@@ -104,6 +114,7 @@ internal static class BotHive {
                 return false;
             }
 
+            var found = new Dictionary<string, byte[]>(StringComparer.Ordinal);
             foreach (var entry in files) {
                 var name = (string) entry?["path"];
                 var data = name is null ? null : Read(zip, "brain/" + name);
@@ -111,9 +122,17 @@ internal static class BotHive {
                     what = $"the Hive Mind file was changed after it was signed ({name})";
                     return false;
                 }
+
+                found[name] = data;
             }
 
-            what = $"signed Hive Mind file by {(string) info["by"]}, made {(string) info["made"]}, {files.Count} brain file(s)";
+            if (DateTime.TryParse((string) info["made"], CultureInfo.InvariantCulture,
+                    DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var when)) {
+                made = when;
+            }
+
+            signed = found;
+            what = $"signed Hive Mind file by {(string) info["by"]}, made {(string) info["made"]}, {files.Count} file(s)";
             return true;
         }
         catch (Exception ex) {

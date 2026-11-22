@@ -93,12 +93,21 @@ internal static class InstalledCommands {
 
         InstallWaitingServer(installFolder);
         using var gameFiles = StartGameDataServer(installFolder);
+        // The Ahziael signal: the bots run only while this Ahziael answers them on this PC (AhziaelSignal).
+        var signalPort = int.TryParse(IniFile.Get(ConfigFile(installFolder), "Bots", "AhziaelSignalPort"), out var signalSetting) && signalSetting > 0 ? signalSetting : AhziaelSignal.DEFAULT_PORT;
+        using var signal = AhziaelSignal.TryStart(signalPort);
+        if (signal is null) {
+            Console.WriteLine($"Port {signalPort} is taken, so the bots will not hear Ahziael's signal this run.");
+        }
 
         var startInfo = new ProcessStartInfo(serverExe) {
             WorkingDirectory = ServerFolder(installFolder),
             UseShellExecute = false,
         };
         // A server built for live patches is started so .NET lets fixes into it while it runs (Game/LivePatches).
+        if (signal is not null) {
+            startInfo.Environment[AhziaelSignal.TOKEN_VARIABLE] = signal.Token;
+        }
         if (LivePatchBuild(installFolder) == "patchable") {
             startInfo.Environment["DOTNET_MODIFIABLE_ASSEMBLIES"] = "debug";
         }

@@ -44,7 +44,7 @@ internal static class TrueFormJewels {
     private const string JEWELS_FILE = "jewels.txt";
 
     // Zoom is filled the same way (ZoomMaker), so the log names whose sockets these are.
-    private static string Who => UltimusSeat.Current.IsZoom ? "Zoom" : "True Form";
+    private static string Who => UltimusSeat.Current.IsScout ? UltimusSeat.Current.Name : "True Form";
 
     internal static void Fill(Wizard wizard, string school, BotStyle style) {
         try {

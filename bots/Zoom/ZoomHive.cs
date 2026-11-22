@@ -75,26 +75,31 @@ internal static class ZoomHive {
     }
 
     private static readonly object s_lock = new();
-    private static Book s_book;
+    private static readonly Dictionary<string, Book> s_books = [];
 
-    internal static string Folder => Path.Combine(UltimusSeat.Zoom.Folder, HIVE);
+    // Each scout has his own hive (Zoom: logs/zoom/hive; Savitar: logs/savitar/hive).
+    private static UltimusSeat Me => UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.Zoom;
+
+    internal static string Folder => Path.Combine(Me.Folder, HIVE);
 
     private static Book Load() {
-        if (s_book is not null) {
-            return s_book;
+        if (s_books.TryGetValue(Folder, out var known)) {
+            return known;
         }
 
+        Book book;
         try {
             var path = Path.Combine(Folder, CHEATS_JSON);
-            s_book = File.Exists(path) ? JsonSerializer.Deserialize<Book>(File.ReadAllText(path)) ?? new Book() : new Book();
+            book = File.Exists(path) ? JsonSerializer.Deserialize<Book>(File.ReadAllText(path)) ?? new Book() : new Book();
         }
         catch (Exception e) {
-            Logger.Warning("Zoom: his hive's cheat book could not be read ({0}); a new one is started.", Logger.Args(e.Message));
-            s_book = new Book();
+            Logger.Warning("{0}: his hive's cheat book could not be read ({1}); a new one is started.", Logger.Args(Me.Name, e.Message));
+            book = new Book();
         }
 
-        s_book.Cheats ??= [];
-        return s_book;
+        book.Cheats ??= [];
+        s_books[Folder] = book;
+        return book;
     }
 
     private static Cheat Get(Book book, string boss, ulong template, int index, string when, string rule, int chance) {
@@ -223,7 +228,7 @@ internal static class ZoomHive {
     private static List<string> Words(Book book, bool full) {
         var all = book.Cheats;
         var lines = new List<string> {
-            $"BOSS CHEATS (Zoom Hive Mind): {all.Count} cheat(s) of {all.Select(c => c.Template).Distinct().Count()} boss(es). " +
+            $"BOSS CHEATS ({Me.Name} Hive Mind): {all.Count} cheat(s) of {all.Select(c => c.Template).Distinct().Count()} boss(es). " +
             $"{all.Count(c => c.Verdict == WORKS || c.Verdict == FIRED)} work, {all.Count(c => c.Verdict == BROKEN)} did not fire, " +
             $"{all.Count(c => c.Verdict == SOMETIMES)} sometimes miss, {all.Count(c => c.Verdict == UNTESTED)} not tested yet.",
         };

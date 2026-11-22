@@ -51,6 +51,14 @@ internal sealed class BotsSide : BotSide {
             return;
         }
 
+        // The kill switch (killswitch.txt in Niduus/ahziael-bots, signed into the Hive Mind file) beats everything: on, or not
+        // readable from a fresh signed file, means no bot plays.
+        if (!BotShared.BotKillSwitch.AllowsPlay()) {
+            return;
+        }
+
+        BotShared.BotKillSwitch.StartWatching();
+
         // The signed Hive Mind file is checked and its result logged (stage 1: nothing about play changes yet).
         _ = BotShared.BotHive.Valid;
 
@@ -63,7 +71,7 @@ internal sealed class BotsSide : BotSide {
     }
 
     internal override void GameServerReady(IActorRef server, ActorSystem system, string realmName) {
-        if (!BotShared.BotHomeGuard.Home) {
+        if (!BotShared.BotHomeGuard.Home || BotShared.BotKillSwitch.On) {
             return;
         }
 
@@ -71,7 +79,7 @@ internal sealed class BotsSide : BotSide {
     }
 
     internal override void StartWatching() {
-        if (!BotShared.BotHomeGuard.Home) {
+        if (!BotShared.BotHomeGuard.Home || BotShared.BotKillSwitch.On) {
             return;
         }
 
@@ -85,7 +93,7 @@ internal sealed class BotsSide : BotSide {
 
     internal override bool RunMiniServer(string[] args) {
         // A bots mini server outside Imlight's own server does nothing and ends (it still counts as handled).
-        if (Array.Exists(args, a => a is "--bots" or "--questteam" or "--ultimus") && !BotShared.BotHomeGuard.Home) {
+        if (Array.Exists(args, a => a is "--bots" or "--questteam" or "--ultimus") && (!BotShared.BotHomeGuard.Home || !BotShared.BotKillSwitch.AllowsPlay())) {
             return true;
         }
 

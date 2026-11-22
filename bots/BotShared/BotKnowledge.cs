@@ -179,10 +179,10 @@ internal static class BotKnowledge {
     /// Zoom, the quest scout, and True Form keep their own data: they never write to the shared brain (this book, the
     /// mistakes book, RouteMemory), so nothing they do at max level, by teleport or by one-shot is taken as a questing bot's.
     /// </summary>
-    internal static bool KeptApart(Ultimus.UltimusSeat seat) => seat is { IsZoom: true } or { IsTrueForm: true };
+    internal static bool KeptApart(Ultimus.UltimusSeat seat) => seat is { IsScout: true } or { IsTrueForm: true };
 
     internal static bool KeptApart(string bot) =>
-        !string.IsNullOrEmpty(bot) && (bot == Ultimus.UltimusSeat.Zoom.Key || bot == Ultimus.UltimusSeat.TrueForm.Key);
+        !string.IsNullOrEmpty(bot) && (bot == Ultimus.UltimusSeat.Zoom.Key || bot == Ultimus.UltimusSeat.Savitar.Key || bot == Ultimus.UltimusSeat.TrueForm.Key);
 
     /// <summary>Whether a battle circle is a server-run wizard (Ultimus, a Quest Team wizard or a Bot Player).</summary>
     internal static bool IsServerBot(CombatDuelSubCircle circle) {

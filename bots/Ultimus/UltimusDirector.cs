@@ -360,10 +360,14 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             }
 
             // Zoom (ZoomMaker): made as True Form is, top level, the best gear and every spell, before he logs in.
-            if (members is not null && UltimusSeat.Current.IsZoom) {
+            if (members is not null && UltimusSeat.Current.IsScout) {
                 _ = TrueFormPool.Ready;
                 foreach (var member in members) {
                     ZoomMaker.Prepare(member.CharId);
+                    // Savitar starts where Ultimus is in the story (once; SavitarStart).
+                    if (UltimusSeat.Current.IsSavitar) {
+                        SavitarStart.FromUltimus(member.CharId);
+                    }
                 }
             }
 
@@ -560,7 +564,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         }
 
         // Zoom, the quest scout: teleports to his step, and writes up and pushes past a broken one (UltimusDirector.Zoom.cs).
-        if (_seat.IsZoom && ZoomTick(_team[0])) {
+        if (_seat.IsScout && ZoomTick(_team[0])) {
             return;
         }
 
@@ -1023,7 +1027,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
         // for Imp, side trips were closed in there, so the story walked him straight out again, twice, and the trip bounce
         // set training aside for an hour).
         // Zoom never trains: his spellbook is given (ZoomSpells).
-        if (!_seat.IsZoom && (SideTripsOpen || PlannedTrainingReady(group) || InTrainerRoom(group)) && SideTrip(TrainingTarget(group), "training") is { } training) {
+        if (!_seat.IsScout && (SideTripsOpen || PlannedTrainingReady(group) || InTrainerRoom(group)) && SideTrip(TrainingTarget(group), "training") is { } training) {
             MarkBeforeTrip(leader, training);
             return Source("training", training);
         }
@@ -2072,7 +2076,7 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             CheckArrival(leader);
             // The landing the zone transfer book says, and backing out of a wrong area (UltimusDirector.Bounds.cs). Never for
             // Zoom: his teleports are no doors, and nothing of them goes into the book.
-            if (!_seat.IsZoom) {
+            if (!_seat.IsScout) {
                 CheckLanding(_leaderZone, _leaderLastX, _leaderLastY, leader, meant);
             }
 
@@ -3229,8 +3233,13 @@ internal sealed partial class UltimusDirectorActor : ReceiveActor, IWithTimers {
             else if (DateTime.UtcNow - _fightWalkSince > TimeSpan.FromSeconds(20)) {
                 Odd($"nobattle|{fight.Key}|{fight.GlobalId}", $"stood on the creature for \"{fight.What}\" ({TemplateName(fight.Template)}) for 20 seconds and no battle started; a player walking into it starts one.");
                 // Left alone for a while, so the next look picks another (BotShared.DudCreatures).
-                if (!BotShared.DudCreatures.IsDud(fight.GlobalId)) {
+                if (!BotShared.DudCreatures.IsDud(fight.GlobalId) && !DudStep(fight)) {
                     BotShared.DudCreatures.Mark(fight.GlobalId);
+                    // The step itself too: a step that points at a spot with no live creature (GlobalId 0) or picks a
+                    // different copy of it each look would otherwise never count as left alone (UltimusDirector.Smart.cs).
+                    if (!string.IsNullOrEmpty(fight.Quest)) {
+                        _dudSteps[StepKey(fight)] = DateTime.UtcNow + BotShared.DudCreatures.LeaveFor;
+                    }
                     // His own step's creature in a dungeon copy that starts no battle: that copy can't give the step.
                     if (!string.IsNullOrEmpty(fight.Quest) && me.Wizard?.ZoneIsInstance == true && !fight.Key.StartsWith("floor|", StringComparison.Ordinal)) {
                         _dudStepAt = (me.Zone ?? "", DateTime.UtcNow, StepKey(fight));

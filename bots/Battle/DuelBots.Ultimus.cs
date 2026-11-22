@@ -454,7 +454,7 @@ internal sealed partial class DuelBots {
             // True Form's hand is dealt from every spell each round (TrueFormBattle): no draws, digs or discards.
             var trueForm = UltimusSeat.Current.IsTrueForm;
             // Zoom, the quest scout, is dealt his hand too (ZoomBattle): one-shots and his biggest hits.
-            var zoom = UltimusSeat.Current.IsZoom;
+            var zoom = UltimusSeat.Current.IsScout;
             var dealt = trueForm || zoom;
 
             // The card thrown away to make room for a treasure card is not out of his hand yet: he picks once it is, on the
@@ -594,12 +594,12 @@ internal sealed partial class DuelBots {
     private void TrueFormDeal(CombatDuelSubCircle circle) {
         try {
             var who = UltimusSeat.OfGlobal(circle?.ParticipantObject?.m_globalID.Full ?? 0);
-            if (who is not ({ IsTrueForm: true } or { IsZoom: true })) {
+            if (who is not ({ IsTrueForm: true } or { IsScout: true })) {
                 return;
             }
 
             using var seat = UltimusSeatOf(circle);
-            var hand = who.IsZoom
+            var hand = who.IsScout
                 ? ZoomBattle.Deal(circle, D.ActiveSubCircles.ToList(), D.Duel.m_roundNum, D.CombatResolver, D.Duel.m_duelID.Full)
                 : TrueFormBattle.Deal(circle, D.ActiveSubCircles.ToList(), D.Duel.m_roundNum);
             if (hand is { } dealt) {

@@ -441,6 +441,63 @@ internal sealed partial class UltimusDirectorActor {
     /// <summary>The quest and goal a target belongs to, so a dud creature counts only for its own step.</summary>
     private static string StepKey(UltimusPlanner.Target target) => target is null ? "" : $"{target.Quest}|{target.Goal}";
 
+    // Fight steps whose creature was stood on with no battle, by step (quest|goal), until when they are left alone. The
+    // creature's own mark (BotShared.DudCreatures) misses a step whose target has no live creature (GlobalId 0) or a new
+    // one each look: Idunn, Shirataki Temple (2026-11-22 03:34-03:46, v160) set Shoji aside, then "another quest right
+    // here" picked "Defeat and Collect Shoji" again every 5 seconds, back and forth with the way out, about 140 times.
+    private readonly Dictionary<string, DateTime> _dudSteps = new(StringComparer.OrdinalIgnoreCase);
+
+    private bool DudStep(UltimusPlanner.Target step) {
+        if (step is null || string.IsNullOrEmpty(step.Quest) || !_dudSteps.TryGetValue(StepKey(step), out var until)) {
+            return false;
+        }
+
+        if (DateTime.UtcNow < until) {
+            return true;
+        }
+
+        _dudSteps.Remove(StepKey(step));
+        return false;
+    }
+
+    // How long the walk out of a side dungeon may go on (with no real story progress) before he presses the Commons button.
+    private static readonly TimeSpan s_sideWalkMost = TimeSpan.FromMinutes(10);
+    private (string Zone, DateTime At, DateTime Last)? _sideSince;
+    private DateTime _sidePressedAt = DateTime.MinValue;
+
+    /// <summary>
+    /// The walk out of a side dungeon has gone on for minutes and he is still in it: the way out on foot is shut or never
+    /// fires (Big Ben is a climb of one-way floor teleporters). A player presses the Commons button there, and it leads to
+    /// this world's hub, so he does too, at most once every 5 minutes. Unlike a trip for potions, his spot is not marked:
+    /// Recall would only bring him back into the dungeon he is leaving. Kitharas Rock (2026-11-22 00:00-03:31, Marleybone
+    /// finished, next step in Wizard City) walked "to Regent's Square (leaving Big Ben)" for three and a half hours: the
+    /// map showed no way, the guided run took the floor teleporter back up, and the Commons button was only pressed when
+    /// no walk was found. Moon (since 02:15) and Hart did the same. True when pressed (or just pressed).
+    /// </summary>
+    private bool SideByButton(UltimusMember.Status leader, string zone, TimeSpan walked) {
+        var now = DateTime.UtcNow;
+        if (now - _sidePressedAt < TimeSpan.FromMinutes(5)) {
+            return now - _sidePressedAt < TimeSpan.FromSeconds(30);
+        }
+
+        if (leader.Wizard is not { } wizard || CombatDuelComponent.IsInBattle(leader.GlobalId) || (wizard.MagicSchoolBehavior?.Level ?? 1) < 2
+            || now - _hubPressedAt < TimeSpan.FromSeconds(20)) {
+            return false;
+        }
+
+        _sidePressedAt = now;
+        _hubPressedAt = now;
+        _buttonFromZone = leader.Zone;
+        StopWalking(0);
+        Note("Ultimus", $"ABNORMAL: {leader.Name} has been walking out of {UltimusText.Zone(zone)} (a side dungeon) for {walked.TotalMinutes:0} minutes " +
+                        "and is still in it: presses the Commons button, as a player does, to get back to the story.", UltimusLink.ABNORMAL);
+        Think($"I have tried to walk out of {UltimusText.Zone(zone)} for {walked.TotalMinutes:0} minutes and I am still here. A player presses " +
+              "the Commons button, so I do that and go on with my story from the hub.", "sidebutton|" + zone);
+        Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(1.5), _actors[0], new UltimusMember.PressCommons(), Self);
+
+        return true;
+    }
+
     /// <summary>Out of a side dungeon: on foot toward his story step, as a player walks back out of the wrong dungeon.</summary>
     private UltimusPlanner.Target LeaveSideDungeon(UltimusMember.Status leader, string zone) {
         var quest = _team[0].Wizard?.QuestBehavior?.CurrentQuestInstances?.Where(q => q is not null).Select(q => q.QuestName)
@@ -459,6 +516,17 @@ internal sealed partial class UltimusDirectorActor {
             BotMistakes.Record(UltimusSeat.Current.Key, BotMistakes.OFF_STORY, zone, leader.X, leader.Y, quest ?? "",
                 $"Was in {UltimusText.Zone(zone)}, a side dungeon his story step is not in.", _lastReasoning,
                 "Never go into a dungeon the story step is not in (not for wisps, not for potions).", "walk out");
+        }
+
+        var now = DateTime.UtcNow;
+        if (_sideSince is not { } since || !OverlayQuestTracker.SameZone(since.Zone, zone) || now - since.Last > TimeSpan.FromMinutes(8)) {
+            since = (zone, now, now);
+        }
+
+        _sideSince = (zone, since.At, now);
+        if (now - since.At > s_sideWalkMost && now - _realProgressAt > s_sideWalkMost && SideByButton(leader, zone, now - since.At)) {
+            return new UltimusPlanner.Target(UltimusPlanner.WAIT, leader.X, leader.Y, $"leaving {UltimusText.Zone(zone)} by the Commons button (a side dungeon)",
+                Key: "sidedungeon|button");
         }
 
         if (UltimusPlanner.Travel(leader, to, $"leaving {UltimusText.Zone(zone)}: a side dungeon, my story is in {UltimusText.Zone(to)}", "sidedungeon") is { } walk) {

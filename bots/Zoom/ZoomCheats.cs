@@ -44,9 +44,9 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal static class ZoomCheats {
 
-    internal static bool On => ConfigurationManager.GetValue("Zoom.CheatStudy", true);
+    internal static bool On => ConfigurationManager.GetValue((UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.Zoom).Section + ".CheatStudy", true);
 
-    private static int MostRounds => Math.Clamp(ConfigurationManager.GetValue("Zoom.CheatStudyRounds", 15), 1, 60);
+    private static int MostRounds => Math.Clamp(ConfigurationManager.GetValue((UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.Zoom).Section + ".CheatStudyRounds", 15), 1, 60);
 
     // Under this share of his health he stops studying and clears.
     private const float SAFE = 0.5f;
@@ -151,7 +151,7 @@ internal static class ZoomCheats {
                 var boss = new Boss { Circle = c, Template = template, Name = BossCheats.NameOf(template) ?? "", Cheats = [.. cheats], FirstRound = round };
                 study.Bosses[c.SlotIndex] = boss;
                 ZoomHive.Met(boss.Name, template, cheats.Select((x, i) => (i, x.When ?? "", Words(x), Chance(x), Untestable(x, cheats))).ToList());
-                UltimusLink.Note(UltimusSeat.Zoom.Name, $"round {round}: {boss.Name} has {cheats.Count} cheat(s); I set them off before I clear.");
+                UltimusLink.Note(UltimusSeat.Current.Name, $"round {round}: {boss.Name} has {cheats.Count} cheat(s); I set them off before I clear.");
             }
 
             foreach (var boss in study.Bosses.Values) {
@@ -238,7 +238,7 @@ internal static class ZoomCheats {
             }
 
             if (study.Over && study.OverWhy.Length > 0) {
-                UltimusLink.Note(UltimusSeat.Zoom.Name, $"round {round}: done studying cheats ({study.OverWhy}); now I clear.");
+                UltimusLink.Note(UltimusSeat.Current.Name, $"round {round}: done studying cheats ({study.OverWhy}); now I clear.");
                 study.OverWhy = "";
             }
         }
@@ -314,7 +314,7 @@ internal static class ZoomCheats {
         }
 
         study.Over = true;
-        UltimusLink.Note(UltimusSeat.Zoom.Name, $"round {round}: every cheat I can set off here was tried; now I clear.");
+        UltimusLink.Note(UltimusSeat.Current.Name, $"round {round}: every cheat I can set off here was tried; now I clear.");
         return null;
     }
 

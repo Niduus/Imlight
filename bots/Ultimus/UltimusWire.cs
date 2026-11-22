@@ -120,9 +120,9 @@ internal static class UltimusWire {
     /// (teleports to them as a group mate does, joins their battles, does the quest steps they both have) until the group
     /// ends; then back to his story. Off: every invitation is turned down, as before.
     /// </summary>
-    internal static bool PartyMode => UltimusSeat.Current.IsZoom
-        // Zoom scouts alone: no groups unless [Zoom] PartyMode is turned on.
-        ? ConfigurationManager.GetValue("Zoom.PartyMode", false)
+    internal static bool PartyMode => UltimusSeat.Current.IsScout
+        // The scouts (Zoom, Savitar) go alone: no groups unless [Zoom] / [Savitar] PartyMode is turned on.
+        ? ConfigurationManager.GetValue(UltimusSeat.Current.Section + ".PartyMode", false)
         : UltimusSeat.Current.Setting("PartyMode", true);
 
     /// <summary>Emotes (Niduus, 2026-11-14, approved): he waves at players who greet him, cheers after a tough win, sits when idle.</summary>

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Behaviors;
 using Imlight.CoreLib.Game.BotShared;
 using Imlight.CoreLib.Game.Combat;
 using Imlight.CoreLib.Game.Spells;
@@ -44,15 +45,50 @@ namespace Imlight.CoreLib.Game.Ultimus;
 internal static class ZoomSpells {
 
     internal const string EPIC = "Epic";
-    internal static readonly string[] Clearers = ["Tempest", "Glowbug Squall"];
+    private static readonly string[] s_stormClearers = ["Tempest", "Glowbug Squall"];
+    private static readonly Dictionary<MagicSchool, string[]> s_clearers = [];
 
-    internal static string DeckWords => "his tactic: Epic on Tempest or Glowbug Squall to clear";
+    /// <summary>
+    /// The scout's two clearing spells, best first. Zoom (Storm): Tempest and Glowbug Squall (Niduus, 2026-11-22). Any other
+    /// school's scout (Savitar, Fire): the two hardest-hitting all-enemy spells of his school a player can train.
+    /// </summary>
+    internal static IReadOnlyList<string> Clearers {
+        get {
+            var school = UltimusSeat.Current.School;
+            if (school == MagicSchool.Storm) {
+                return s_stormClearers;
+            }
+
+            lock (s_clearers) {
+                if (s_clearers.TryGetValue(school, out var known)) {
+                    return known;
+                }
+
+                if (!TrueFormPool.Ready) {
+                    return [];
+                }
+
+                var picked = Wanted().Where(e => Mine(e) && e.Card is { Hit: true, HitsAll: true, PerPip: 0 })
+                                     .OrderByDescending(Damage).ThenByDescending(e => e.Level).Take(2).Select(e => e.Shown.Trim()).ToArray();
+                if (picked.Length > 0) {
+                    s_clearers[school] = picked;
+                }
+
+                return picked;
+            }
+        }
+    }
+
+    internal static string DeckWords => $"his tactic: Epic on {string.Join(" or ", Clearers.DefaultIfEmpty("his biggest all-enemy hit"))} to clear";
 
     private static int Top => Math.Clamp(MagicLevelsConfig.MaxLevel, 1, 255);
 
     private static bool IsEnchant(uint id) => CoreObjectFactory.GetCoreTemplate(id) is SpellTemplate t && CombatEnchantments.IsEnchantment(t);
 
-    private static bool Storm(TrueFormPool.Entry e) => e.School.Equals(UltimusSeat.Zoom.School.ToString(), StringComparison.OrdinalIgnoreCase);
+    // A spell of the scout's own school (Zoom: Storm; Savitar: Fire).
+    private static bool Mine(TrueFormPool.Entry e) => e.School.Equals(UltimusSeat.Current.School.ToString(), StringComparison.OrdinalIgnoreCase);
+
+    private static bool Storm(TrueFormPool.Entry e) => Mine(e);
 
     // His spells: every Storm spell and every enchantment a player can train at the top level.
     private static List<TrueFormPool.Entry> Wanted()
@@ -139,14 +175,15 @@ internal static class ZoomSpells {
 
             WriteDeck(wizard, wanted, cards);
             var found = (string name) => wanted.Concat(cards).Any(e => e.Shown.Equals(name, StringComparison.OrdinalIgnoreCase)) ? "in" : "NOT FOUND";
-            Logger.Information("Zoom: his spellbook is {0} Storm spells and {1} enchantments, nothing else ({2} added, {3} other spells taken out); "
-                               + "treasure cards: {4} enchantment and Storm cards ({5} others taken out); Tempest {6}, Glowbug Squall {7}, Epic {8}.",
+            Logger.Information("{9}: his spellbook is {0} {10} spells and {1} enchantments, nothing else ({2} added, {3} other spells taken out); "
+                               + "treasure cards: {4} enchantment and {10} cards ({5} others taken out); clearers {11} {6} / {7}, Epic {8}.",
                 Logger.Args(wanted.Count(Storm), wanted.Count(e => IsEnchant(e.Id)), add.Count, drop.Count, cards.Count, dropCards.Count,
-                    found("Tempest"), found("Glowbug Squall"), found(EPIC)));
+                    found(Clearers.ElementAtOrDefault(0) ?? "-"), found(Clearers.ElementAtOrDefault(1) ?? "-"), found(EPIC),
+                    UltimusSeat.Current.Name, UltimusSeat.Current.School, string.Join(", ", Clearers)));
             return true;
         }
         catch (Exception e) {
-            Logger.Warning("Zoom: could not fill his spellbook: {0}", Logger.Args(e.Message));
+            Logger.Warning("{0}: could not fill his spellbook: {1}", Logger.Args(UltimusSeat.Current.Name, e.Message));
             return false;
         }
     }

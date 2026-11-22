@@ -300,6 +300,12 @@ internal static class UltimusRoster {
         return false;
     }
 
+    /// <summary>Another seat's wizard (its team.json), or 0 when it has none yet. Savitar reads Ultimus's to start where he is.</summary>
+    internal static ulong CharOf(UltimusSeat seat) {
+        using var scope = UltimusSeat.Use(seat);
+        return Read()?.Members?.FirstOrDefault()?.CharId ?? 0;
+    }
+
     private static Saved Read() {
         try {
             return File.Exists(FilePath) ? UltimusWire.Read<Saved>(File.ReadAllText(FilePath)) : null;

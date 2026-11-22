@@ -18,12 +18,14 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Imlight.CoreLib.Game.Tools;
 using Imlight.CoreLib.Game.World;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Collections;
+using Imlight.CoreLib.WizardData.Models.Player;
 using Imlight.Common;
 
 namespace Imlight.CoreLib.Game.Ultimus;
@@ -62,7 +64,7 @@ internal sealed partial class UltimusDirectorActor {
     private int _zoomQuestHops;
     private int _zoomQuestBroken;
 
-    private static TimeSpan ZoomStepLimit => TimeSpan.FromMinutes(Math.Clamp(ConfigurationManager.GetValue("Zoom.StepMinutes", 10), 2, 120));
+    private static TimeSpan ZoomStepLimit => TimeSpan.FromMinutes(Math.Clamp(ConfigurationManager.GetValue(UltimusSeat.Current.Section + ".StepMinutes", 10), 2, 120));
 
     private DateTime _zoomNoQuestSince = DateTime.MaxValue;
     private string _zoomLastDone;
@@ -87,6 +89,11 @@ internal sealed partial class UltimusDirectorActor {
 
         if (me.Wizard?.QuestBehavior?.CurrentQuestInstances is not { } instances || me.Session is null) {
             return false;
+        }
+
+        // Savitar: parked once Zoom has caught up with him (SavitarStart).
+        if (_seat.IsSavitar && SavitarHandedOff(me, instances)) {
+            return true;
         }
 
         var now = DateTime.UtcNow;
@@ -119,7 +126,7 @@ internal sealed partial class UltimusDirectorActor {
         var key = quest + "|" + goalName;
         if (key != _zoomKey) {
             if (_zoomKey is not null && _zoomSince != DateTime.MinValue) {
-                Note("Ultimus", $"Zoom: step done in {(now - _zoomSince).TotalSeconds:0} s; next \"{QuestGuide.StepText(goal)}\" of {QuestGuide.QuestTitle(template)}.");
+                Note("Ultimus", $"{_seat.Name}: step done in {(now - _zoomSince).TotalSeconds:0} s; next \"{QuestGuide.StepText(goal)}\" of {QuestGuide.QuestTitle(template)}.");
             }
 
             _zoomKey = key;
@@ -184,7 +191,7 @@ internal sealed partial class UltimusDirectorActor {
         _buttonFromZone = here;
         _doing = "teleporting to his quest step";
         _lastProgress = now;
-        Note("Ultimus", $"Zoom teleports to \"{QuestGuide.StepText(goal)}\" of {QuestGuide.QuestTitle(template)}: {UltimusText.Zone(zone)}" +
+        Note("Ultimus", $"{_seat.Name} teleports to \"{QuestGuide.StepText(goal)}\" of {QuestGuide.QuestTitle(template)}: {UltimusText.Zone(zone)}" +
                         $"{(location == "Start" ? "" : $" ({spot.How})")} (teleport {_zoomHops} of {ZOOM_HOPS_PER_STEP} for this step).");
         me.Session.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
             DestinationZone = zone,
@@ -234,8 +241,8 @@ internal sealed partial class UltimusDirectorActor {
         ZoomBook.Add(new ZoomBook.Broken(DateTime.UtcNow, ZoomBook.STEP, quest, title, step, stepText, UltimusText.Zone(me.Zone),
             why, string.IsNullOrEmpty(_doing) ? "?" : _doing));
         _zoomQuestBroken++;
-        Issue("quest", quest, $"Zoom (quest scout) marked a broken step in {title}, step {step}: {why}", key: "zoom|" + quest + "|" + goalName);
-        Note("Ultimus", $"Zoom: \"{stepText}\" of {title} looks broken; marked down in his mind file. He keeps trying it.", UltimusLink.NOTABLE);
+        Issue("quest", quest, $"{_seat.Name} (quest scout) marked a broken step in {title}, step {step}: {why}", key: _seat.Key.ToLowerInvariant() + "|" + quest + "|" + goalName);
+        Note("Ultimus", $"{_seat.Name}: \"{stepText}\" of {title} looks broken; marked down in his mind file. He keeps trying it.", UltimusLink.NOTABLE);
     }
 
     // No main quest in his book: after a quest he finished, the next one never coming is a broken quest.
@@ -255,8 +262,41 @@ internal sealed partial class UltimusDirectorActor {
                   "while Ultimus's brain looked for its giver.";
         ZoomBook.Add(new ZoomBook.Broken(DateTime.UtcNow, ZoomBook.QUEST, _zoomLastDone, title, 0, "next", UltimusText.Zone(me.Zone),
             why, string.IsNullOrEmpty(_doing) ? "?" : _doing));
-        Issue("quest", _zoomLastDone, $"Zoom (quest scout) marked a broken quest: {why}", key: "zoom|next|" + _zoomLastDone);
-        Note("Ultimus", $"Zoom: the next main quest after {title} never came; marked down in his mind file.", UltimusLink.NOTABLE);
+        Issue("quest", _zoomLastDone, $"{_seat.Name} (quest scout) marked a broken quest: {why}", key: _seat.Key.ToLowerInvariant() + "|next|" + _zoomLastDone);
+        Note("Ultimus", $"{_seat.Name}: the next main quest after {title} never came; marked down in his mind file.", UltimusLink.NOTABLE);
+    }
+
+    private DateTime _savitarCheckAt = DateTime.MinValue;
+    private bool _savitarParked;
+
+    // Savitar (Niduus, 2026-11-22: "quest ahead of Ultimus to do exactly what zoom does until Zoom catches up"): once a minute,
+    // whether Zoom holds or has finished the main quest Savitar is on. Then Savitar stops where he is, for good (his
+    // handoff.txt says when and where; deleting it starts him again).
+    private bool SavitarHandedOff(UltimusMember.Status me, List<QuestInstance> instances) {
+        if (_savitarParked) {
+            _doing = "parked: Zoom caught up with him";
+            _lastProgress = DateTime.UtcNow;
+            return true;
+        }
+
+        if (DateTime.UtcNow < _savitarCheckAt) {
+            return false;
+        }
+
+        _savitarCheckAt = DateTime.UtcNow.AddMinutes(1);
+        var main = instances.FirstOrDefault(q => q is not null && q.QuestName == _currentQuest && q.QuestName.Contains("-MAIN-", StringComparison.OrdinalIgnoreCase))
+                   ?? instances.FirstOrDefault(q => q is not null && (q.QuestName ?? "").Contains("-MAIN-", StringComparison.OrdinalIgnoreCase));
+        var why = SavitarStart.CaughtUp(main?.QuestName);
+        if (why is null) {
+            return false;
+        }
+
+        _savitarParked = true;
+        StopWalking(0);
+        _doing = "parked: Zoom caught up with him";
+        _lastProgress = DateTime.UtcNow;
+        Note("Ultimus", $"Savitar: {why}. Zoom has caught up, so Savitar stops here (logs/savitar/handoff.txt).", UltimusLink.NOTABLE);
+        return true;
     }
 
 }

@@ -344,7 +344,7 @@ internal sealed partial class UltimusDirectorActor {
 
         // Zoom's deck is his tactic, not Ultimus's learned mix (Niduus, 2026-11-22): Epic, Tempest, Glowbug Squall, then his
         // biggest Storm hits (ZoomSpells).
-        if (_seat.IsZoom) {
+        if (_seat.IsScout) {
             PrepareZoomDeck(index, member, wizard, book, force);
             return;
         }

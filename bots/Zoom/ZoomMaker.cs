@@ -41,30 +41,32 @@ internal static class ZoomMaker {
     internal const string TITLE = "Quest Scout";
 
     /// <summary>Zoom's school (his seat's).</summary>
-    internal static MagicSchool School => UltimusSeat.Zoom.School;
+    internal static MagicSchool School => (UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.Zoom).School;
 
     /// <summary>Makes him ready (he must be logged out); writes what it did to the server log.</summary>
     internal static void Prepare(ulong charId) {
+        // Zoom or Savitar: the scout seat this team is (StartTeam runs inside it).
+        var me = UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.Zoom;
         var wizard = WizardCollection.GetCharacter(charId);
         if (wizard is null) {
-            Logger.Warning("Zoom: his wizard {0} was not found to make ready.", Logger.Args(charId));
+            Logger.Warning(me.Name + ": his wizard {0} was not found to make ready.", Logger.Args(charId));
             return;
         }
 
         lock (TrueFormMaker.Gate) {
             // The gear and spell files are written to his own folder (TrueFormMaker.MakerFolder reads the seat).
-            using var seat = UltimusSeat.Use(UltimusSeat.Zoom);
+            using var seat = UltimusSeat.Use(me);
             try {
                 if (wizard.MagicSchoolBehavior.MagicSchool != School) {
                     wizard.SetSchool(School);
-                    Logger.Information("Zoom: now a {0} wizard.", Logger.Args(School));
+                    Logger.Information(me.Name + ": now a {0} wizard.", Logger.Args(School));
                 }
 
                 var top = (byte) Math.Clamp(MagicLevelsConfig.MaxLevel, 1, 255);
                 if (wizard.MagicSchoolBehavior.Level != top) {
                     wizard.SetLevel(top);
                     wizard.FitExperienceToLevel();
-                    Logger.Information("Zoom: made level {0}.", Logger.Args(top));
+                    Logger.Information(me.Name + ": made level {0}.", Logger.Args(top));
                 }
 
                 if (wizard.GameStats is { } stats) {
@@ -88,11 +90,11 @@ internal static class ZoomMaker {
                 // Every Storm spell and enchantment (ZoomSpells); when the game's spells are still being read, his director
                 // gives them as soon as they are (never the wait-and-give-up of True Form's maker).
                 ZoomSpells.Ensure(wizard);
-                Directory.CreateDirectory(UltimusSeat.Zoom.Folder);
-                Logger.Information("Zoom: ready as a level {0} {1} quest scout.", Logger.Args(top, School));
+                Directory.CreateDirectory(me.Folder);
+                Logger.Information(me.Name + ": ready as a level {0} {1} quest scout.", Logger.Args(top, School));
             }
             catch (Exception e) {
-                Logger.Warning("Zoom: could not make him ready: {0}", Logger.Args(e));
+                Logger.Warning(me.Name + ": could not make him ready: {0}", Logger.Args(e));
             }
         }
     }

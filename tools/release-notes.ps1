@@ -159,4 +159,10 @@ foreach ($record in ($log -split [char]0x1e)) {
     if ($title) { $result += ($title.Trim() -replace '\s*\(#\d+\)\s*$', '') }
 }
 
-$result
+# Private changes never appear in any notes Ahziael shows (Niduus, 2026-11-22: "DO NOT MENTION ANY OF THESE CHANGES IN THE
+# CHANGE LOG TO AHZIAEL. ESPECIALLY THE DEPRECATION/KILLSWITCH"): the bot lock, Ahziael's signal, the signed Hive Mind,
+# the kill switches, Hellhound and the deprecation. Their notes stay in the repository; they are only left out here.
+$privateTopics = '(?i)kill ?switch|killswitch|signed hive mind|hive mind file|hive-mind\.ahzhive|hive-mind-check|hive mind (ok|not valid)|' +
+    'ahziael''?s signal|ahziael signal|ahziael-signal|home-guard|homeguard|bots locked|bot lock|lock the bots|lock out|' +
+    'only ever play on your own|official game|hellhound|deprecat'
+$result | Where-Object { $_ -notmatch $privateTopics }

@@ -35,8 +35,10 @@ namespace Imlight.CoreLib.Game.Ultimus;
 /// </summary>
 internal static class ZoomBook {
 
-    internal const string MIND_JSON = "zoom-mind.json";
-    internal const string MIND_TXT = "zoom-mind.txt";
+    // Each scout has his own (Zoom: logs/zoom/zoom-mind.json; Savitar: logs/savitar/savitar-mind.json).
+    private static UltimusSeat Me => UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.Zoom;
+    internal static string MIND_JSON => $"{Me.Key.ToLowerInvariant()}-mind.json";
+    internal static string MIND_TXT => $"{Me.Key.ToLowerInvariant()}-mind.txt";
 
     /// <summary>A broken step of a quest.</summary>
     internal const string STEP = "step";
@@ -57,27 +59,29 @@ internal static class ZoomBook {
     }
 
     private static readonly object s_lock = new();
-    private static Mind s_mind;
+    private static readonly Dictionary<string, Mind> s_minds = [];
 
-    private static string Folder => UltimusSeat.Zoom.Folder;
+    private static string Folder => Me.Folder;
 
     private static Mind Load() {
-        if (s_mind is not null) {
-            return s_mind;
+        if (s_minds.TryGetValue(Folder, out var known)) {
+            return known;
         }
 
+        Mind mind;
         try {
             var path = Path.Combine(Folder, MIND_JSON);
-            s_mind = File.Exists(path) ? JsonSerializer.Deserialize<Mind>(File.ReadAllText(path)) ?? new Mind() : new Mind();
+            mind = File.Exists(path) ? JsonSerializer.Deserialize<Mind>(File.ReadAllText(path)) ?? new Mind() : new Mind();
         }
         catch (Exception e) {
-            Logger.Warning("Zoom: his mind file could not be read ({0}); a new one is started.", Logger.Args(e.Message));
-            s_mind = new Mind();
+            Logger.Warning("{0}: his mind file could not be read ({1}); a new one is started.", Logger.Args(Me.Name, e.Message));
+            mind = new Mind();
         }
 
-        s_mind.Broken ??= [];
-        s_mind.Scouted ??= [];
-        return s_mind;
+        mind.Broken ??= [];
+        mind.Scouted ??= [];
+        s_minds[Folder] = mind;
+        return mind;
     }
 
     /// <summary>Whether this quest's step (or, for a broken quest, what came after it) is already marked down.</summary>
@@ -122,7 +126,7 @@ internal static class ZoomBook {
             File.WriteAllText(Path.Combine(Folder, MIND_JSON), JsonSerializer.Serialize(mind, new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-            Logger.Warning("Zoom: could not write his mind file: {0}", Logger.Args(e.Message));
+            Logger.Warning("{0}: could not write his mind file: {1}", Logger.Args(Me.Name, e.Message));
         }
 
         WriteText(mind);
@@ -133,7 +137,7 @@ internal static class ZoomBook {
         try {
             Directory.CreateDirectory(Folder);
             var lines = new List<string> {
-                $"Zoom's mind: {mind.Broken.Count(b => b.Kind == QUEST)} broken quest(s) and {mind.Broken.Count(b => b.Kind == STEP)} broken quest step(s) " +
+                $"{Me.Name}'s mind: {mind.Broken.Count(b => b.Kind == QUEST)} broken quest(s) and {mind.Broken.Count(b => b.Kind == STEP)} broken quest step(s) " +
                 $"found ahead of Ultimus and the teams, {mind.Scouted.Count} main quest(s) scouted. Newest first.",
                 "",
                 "BROKEN",
@@ -160,7 +164,7 @@ internal static class ZoomBook {
             File.WriteAllLines(Path.Combine(Folder, MIND_TXT), lines);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) {
-            Logger.Warning("Zoom: could not write his mind file: {0}", Logger.Args(e.Message));
+            Logger.Warning("{0}: could not write his mind file: {1}", Logger.Args(Me.Name, e.Message));
         }
     }
 

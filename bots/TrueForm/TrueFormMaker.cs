@@ -57,7 +57,7 @@ internal static class TrueFormMaker {
     internal static readonly object Gate = new();
 
     // The folder of the bot being dressed now: Zoom's when it is his turn (ZoomMaker), else True Form's.
-    internal static string MakerFolder => (UltimusSeat.Current.IsZoom ? UltimusSeat.Zoom : UltimusSeat.TrueForm).Folder;
+    internal static string MakerFolder => (UltimusSeat.Current.IsScout ? UltimusSeat.Current : UltimusSeat.TrueForm).Folder;
 
     /// <summary>Makes him ready (he must be logged out); writes what it did to the server log.</summary>
     internal static void Prepare(ulong charId) {
