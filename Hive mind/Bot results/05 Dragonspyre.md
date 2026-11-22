@@ -6,9 +6,9 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Loathsome Creeper: won 104 time(s) (96 Solo, 8 Team), lost 0. Fastest: Ra in 2 rounds, deck for any fight (many of my fights lately had 2+ enemies), hit with Judgement.
 - Petrov Gloomstrider: won 71 time(s) (69 Solo, 2 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hit with Judgement, Gearhead Destroyer, Minor Crusade.
 - Sea Lord: won 2 time(s) (2 Solo, 0 Team), lost 39. Fastest: Ultimus in 9 rounds, plan "stack up", deck for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
+- Wandering Wizard: won 12 time(s) (12 Solo, 0 Team), lost 0. Fastest: Kurrent in 3 rounds, plan "hit now", hit with Kraken, Storm Shark.
 - Zarathax: won 7 time(s) (7 Solo, 0 Team), lost 4. Fastest: Ra in 4 rounds, plan "hit now", deck for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement, Sandstorm, Minor Crusade.
 - Sysiphan: won 5 time(s) (5 Solo, 0 Team), lost 5. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies), hit with Gearhead Destroyer, Judgement.
-- Wandering Wizard: won 10 time(s) (10 Solo, 0 Team), lost 0. Fastest: Kurrent in 3 rounds, plan "hit now", hit with Kraken, Storm Shark.
 - Earth Elemental: won 3 time(s) (3 Solo, 0 Team), lost 4. Fastest: Ra in 18 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement, Spectral Blast.
 - Vasek Ashweaver: won 4 time(s) (4 Solo, 0 Team), lost 3. Fastest: Ra in 5 rounds, deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
 - Mavra Flamewing: won 3 time(s) (3 Solo, 0 Team), lost 3. Fastest: Ultimus in 15 rounds, deck for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies), hit with Sandstorm, Vampire, Minor Crusade.
@@ -21,6 +21,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Clockwork Defender: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hit with Minor Crusade.
 - Fire Avenger: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies), hit with Sandstorm, Judgement, Locust Swarm.
 - Sandor Spearcaller: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ra in 6 rounds, deck for a boss (Ice), hitting with Ice, Balance, Death; alone, so single hits only; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hit with Locust Swarm.
+- Manascale Sorcerer: won 3 time(s) (3 Solo, 0 Team), lost 0. Fastest: Ra in 4 rounds, plan "hit now", deck for Death enemies, hitting with Death, Ice, Storm; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement, Sandstorm, Minor Crusade.
 - Ash Spider: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement, Sandstorm.
 - Erratic Servator: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
 - The Collector: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 14 rounds, plan "stack up", deck for a boss (Balance), hitting with Balance, Ice, Death; alone, so single hits only; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies), hit with Spectral Blast, Heck Hound, Heck Hound at full pips.
@@ -28,12 +29,13 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Orin Grimcaster: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 14 rounds, plan "stack up", deck for a boss (Death), hitting with Death, Ice, Storm; alone, so single hits only; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement.
 - Crystal Crawler: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "hit now", deck for any fight; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies), hit with Spectral Blast, Minor Crusade, Locust Swarm.
 - General Firetusk: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Fire), hitting with Fire, Myth; alone, so single hits only; my own fights say about 64% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement.
-- Manascale Sorcerer: won 2 time(s) (2 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, plan "hit now", deck for Death enemies, hitting with Death, Ice, Storm; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement, Sandstorm, Minor Crusade, Locust Swarm.
 - Beghastion Fieldburner: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 6 rounds, deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hit with Sandstorm, Locust Swarm, Minor Crusade.
 - Fleshrot Retriever: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 11 rounds, plan "hit now", deck for Death enemies, hitting with Death, Ice, Storm; my own fights say about 75% hits in my main deck (many of my fights lately had 2+ enemies), hit with Sandstorm, Gearhead Destroyer, Judgement, Spectral Blast.
 - Vile Apparition: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 5 rounds, plan "hit now", deck for Death enemies, hitting with Death, Ice, Storm; my own fights say about 75% hits in my main deck (many of my fights lately had 2+ enemies), hit with Judgement, Sandstorm, Locust Swarm.
 - Valerik Brightsword: never beaten yet, lost 1 time(s). Most common reason: I went in at 74% health, its biggest hit took 68% of my health.
+- Rurik Flamesoul: never beaten yet, lost 1 time(s). Most common reason: I went in at 50% health.
 - Cyrus Drake: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Kurrent in 3 rounds, plan "hit now", deck for a boss (Myth), hitting with Myth, Storm, Fire; alone, so single hits only; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Kraken, Storm Shark.
+- Restless Soldier: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Kurrent in 5 rounds, plan "hit now", deck for Storm enemies, hitting with Storm, Fire, Death; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies), hit with Storm Shark, Minor Surge, Vampire.
 - Iona Pyrelance: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 13 rounds, plan "stack up", deck for a boss (Myth), hitting with Myth, Ice, Storm; alone, so single hits only; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies), hit with Judgement.
 - Tamauji: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Kurrent in 7 rounds, deck for a boss (Myth), hitting with Myth, Death, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (many of my fights lately had 2+ enemies), hit with Thermic Golem.
 
@@ -219,6 +221,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## No Weaklings Allowed
 - Finished by Ultimus (34 min).
 - Finished by Ra (10 min).
+- Finished by Garm (19 min).
 - Won by Ra (Solo) against Earth Elemental (rank 7, 5,600 health, Life) on 2026-11-22 at 00:57:37.
   It took 18 rounds, about 9 minutes.
   Deck made for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
@@ -391,6 +394,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Rein It In
 - Finished by Ultimus (15 min).
+- Finished by Ra (17 min).
 - Won by Ultimus (Solo) against The Collector (rank 7, 2,640 health, Balance) on 2026-11-22 at 03:06:14.
   It took 14 rounds, about 7 minutes.
   Deck made for a boss (Balance), hitting with Balance, Ice, Death; alone, so single hits only; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies).
@@ -461,8 +465,15 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   - The Crucible near (-300, 4800) while to The Necropolis (the Bazaar, for treasure cards): stuck 1 time(s) (Ultimus).
 
 ## It's an Honor
+- Finished by Ultimus (8 min).
 - Avoid, fights lost:
   - Valerik Brightsword: lost 1 time(s) (Ultimus). Why: I went in at 74% health, its biggest hit took 68% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+
+## Feeling Defensive?
+- Avoid, fights lost:
+  - Rurik Flamesoul: lost 1 time(s) (Ultimus). Why: I went in at 50% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+- Avoid, places bots got stuck:
+  - The Crucible near (-300, 4800) while to The Necropolis (to pick up health wisps): stuck 1 time(s) (Ultimus).
 
 ## The Towering Crystal
 - Finished by Ultimus (16 min).
@@ -556,7 +567,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Finished by Ultimus (17 min).
 - Finished by Ra (19 min).
 - Finished by Garm (26 min).
-- Wandering Wizard: won 10 times (10 Solo, 0 Team) by Garm, Kurrent, Ra, Ultimus. The 3 fastest:
+- Wandering Wizard: won 12 times (12 Solo, 0 Team) by Garm, Kurrent, Ra, Ultimus. The 3 fastest:
 - Won by Kurrent (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-22 at 04:20:56.
   It took 3 rounds, about 2 minutes.
   Plan: "hit now" (2 enemies, even).
@@ -566,11 +577,18 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Deck made for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
   Hits that landed: Locust Swarm x3, Scarab.
-- Won by Garm (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-21 at 21:25:56.
-  It took 6 rounds, about 4 minutes.
-  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+- Won by Kurrent (Solo) against Wandering Wizard (rank 7, 760 health, Life) on 2026-11-22 at 04:45:34.
+  It took 4 rounds, about 2 minutes.
+  Deck made for Life enemies, hitting with Life, Fire, Storm; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
+  Hits that landed: Kraken x2, Minor Surge.
+- Won by Kurrent (Solo) against Restless Soldier (rank 7, 810 health, Storm) on 2026-11-22 at 04:35:29.
+  It took 5 rounds, about 2 minutes.
+  Deck made for Storm enemies, hitting with Storm, Fire, Death; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 59% hits in my main deck (most of my fights lately had 2+ enemies).
   Plan: "hit now" (2 enemies, even).
-  Hits that landed: Minor Dark Blow x2, Poison, Dark Sprite, Banshee.
+  Hits that landed: Storm Shark, Minor Surge, Vampire.
+- Won by Cyndr (Solo) against the step's creature on 2026-11-22 at 04:45:34.
+  It took 4 rounds, about 2 minutes.
+  Hits that landed: Heck Hound.
 
 ## Key to Trust
 - Finished by Ultimus (65 s).
@@ -637,6 +655,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## Fighting With Dishonor
 - Finished by Ultimus (59 s).
 - Finished by Ra (59 s).
+- Finished by Garm (59 s).
 
 ## Going Portal
 - Finished by Ultimus (3 s).
@@ -763,18 +782,27 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Rein Check
 - Finished by Ultimus (7 s).
+- Finished by Ra (6 s).
 
 ## Feels So Good
 - Finished by Ultimus (80 s).
+- Finished by Ra (82 s).
 
 ## Passing Out
 - Finished by Ultimus (22 s).
+- Finished by Ra (22 s).
 
 ## A Strenuous Course
 - Finished by Ultimus (19 s).
+- Finished by Ra (20 s).
 
 ## Back in Session
 - Finished by Ultimus (9 min).
+- Won by Ra (Solo) against Manascale Sorcerer (rank 7, 760 health, Death) on 2026-11-22 at 04:46:19.
+  It took 4 rounds, about 2 minutes.
+  Deck made for Death enemies, hitting with Death, Ice, Storm; my own fights say about 64% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (2 enemies, even).
+  Hits that landed: Judgement x2, Sandstorm, Minor Crusade.
 - Won by Ultimus (Solo) against Manascale Sorcerer (rank 7, 760 health, Death) on 2026-11-22 at 03:18:06.
   It took 6 rounds, about 3 minutes.
   Deck made for Death enemies, hitting with Death, Ice, Storm; my own fights say about 75% hits in my main deck (most of my fights lately had 2+ enemies).
