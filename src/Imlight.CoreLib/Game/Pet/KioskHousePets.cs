@@ -81,6 +81,13 @@ internal static class KioskHousePets {
     // Raise when the builds change, so every server makes a new pet.kiosk.
     private const int VERSION = 4;
 
+    // A talent search that finds fewer pets than this makes more on the spot (Niduus, 2026-11-22: "there will always be
+    // at least 3+ pets in the kiosk that have what you're looking for").
+    internal const int FEWEST_FOUND = 3;
+
+    // How many pets a search with too few finds is topped up to.
+    private const int TOPPED_UP_TO = 5;
+
     private const int MEGA = 6;
     private const int ADULT = 3;
     private const int GENES = 10;
@@ -99,6 +106,10 @@ internal static class KioskHousePets {
     private static readonly Lock s_lock = new();
     private static List<HatchmakingListing> s_listings;
     private static Dictionary<ulong, HatchmakingListing> s_byId = [];
+    private static KioskHouseFile s_file;
+    private static List<(uint Id, PetItemBehaviorTemplate Template)> s_kinds;
+    private static bool s_saving;
+    private static bool s_saveAgain;
     private static int s_madeForAge = -1;
     private static bool s_making;
 
@@ -173,6 +184,7 @@ internal static class KioskHousePets {
                 s_listings = listings;
                 s_byId = listings.GroupBy(l => l.Parent.ItemId).ToDictionary(g => g.Key, g => g.First());
                 s_madeForAge = age;
+                s_file = file;
             }
 
             Logger.Information("Kiosk: {0} of the kiosk's own pets are up ({1} kinds of pet).",
@@ -218,20 +230,12 @@ internal static class KioskHousePets {
     /// Makes the kiosk's own pets from the game files and saves them in pet.kiosk.
     /// </summary>
     internal static KioskHouseFile Make(int age) {
-        _ = PetFactory.Instance;
-        _ = PetTalentRegistry.Instance;
-        _ = CoreObjectFactory.Instance;
-        _ = WizardNameBank.Instance;
-        _ = Locale.Instance;
         var started = DateTime.UtcNow;
         var file = new KioskHouseFile { Version = VERSION, MinAge = age, MadeAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
         var random = new Random(20261121);
         var builds = Builds();
         var mixes = new Mixes();
-        var kinds = PetFactory.AllPetTemplates.Keys.OrderBy(id => id)
-            .Select(id => (Id: id, Template: PetFactory.GetPetItemBehaviorTemplate(id)))
-            .Where(k => k.Template is { m_talents.Count: > 0 } && MaxLevel(k.Template) >= ADULT && !IsDevPet(k.Id) && HasName(k.Id))
-            .ToList();
+        var kinds = Kinds();
 
         foreach (var (id, template) in kinds) {
             var own = OwnPool(template);
@@ -293,42 +297,185 @@ internal static class KioskHousePets {
         return file;
     }
 
+    // Every pet kind the kiosk's own pets can be: named, not a developer's, with talents, and able to grow to Adult.
+    private static List<(uint Id, PetItemBehaviorTemplate Template)> Kinds() {
+        _ = PetFactory.Instance;
+        _ = PetTalentRegistry.Instance;
+        _ = CoreObjectFactory.Instance;
+        _ = WizardNameBank.Instance;
+        _ = Locale.Instance;
+
+        return s_kinds ??= [.. PetFactory.AllPetTemplates.Keys.OrderBy(id => id)
+            .Select(id => (Id: id, Template: PetFactory.GetPetItemBehaviorTemplate(id)))
+            .Where(k => k.Template is { m_talents.Count: > 0 } && MaxLevel(k.Template) >= ADULT && !IsDevPet(k.Id) && HasName(k.Id))];
+    }
+
     private static void Add(KioskHouseFile file, uint templateId, PetItemBehaviorTemplate template, string build,
-                            List<uint> genes, int level, Random random, double statShare) {
-        var index = file.Pets.Count;
-        var item = MakePet(templateId, template, genes, level, random, statShare,
-            RandomGen.GenerateHash($"pet.kiosk|{templateId}|{index}|{build}"));
+                            List<uint> genes, int level, Random random, double statShare, List<uint> derbyGenes = null) {
+        if (MakeHousePet(templateId, template, build, genes, level, random, statShare, derbyGenes, file.MadeAt,
+                $"pet.kiosk|{templateId}|{file.Pets.Count}|{build}") is { } pet) {
+            file.Pets.Add(pet);
+        }
+    }
+
+    private static KioskHousePet MakeHousePet(uint templateId, PetItemBehaviorTemplate template, string build, List<uint> genes,
+                                              int level, Random random, double statShare, List<uint> derbyGenes, long listedAt, string idSeed) {
+        var item = MakePet(templateId, template, genes, level, random, statShare, RandomGen.GenerateHash(idSeed), derbyGenes);
         if (item is null) {
-            return;
+            return null;
         }
 
         var parent = PetHatching.Snapshot(item, 0);
         if (parent is null || !ItemSync.TrySerializeForKiosk(item, out var data)) {
-            return;
+            return null;
         }
 
         // Only pets the kiosk can send back to the game as it reads them (a few kinds' items cannot be read back).
         var itemData = Convert.ToBase64String(data);
         if (ItemSync.KioskPetBytes(itemData) is null) {
-            return;
+            return null;
         }
 
-        file.Pets.Add(new KioskHousePet {
+        return new KioskHousePet {
             Build = build,
             Listing = new HatchmakingListing {
                 Parent = parent,
                 NameKeys = CoreObjectFactory.FindBehaviorInstance<ClientPetNameBehavior>(item, out var name) ? name.m_nameKeys : 0,
-                ListedAt = file.MadeAt,
+                ListedAt = listedAt,
                 ItemData = itemData,
             },
-        });
+        };
+    }
+
+    /// <summary>
+    /// Makes kiosk pets that show the searched talents, for a talent search that found too few (Niduus, 2026-11-22:
+    /// the "no pets match" message should basically never show). A pet shows at most five talents, so with more picked
+    /// each new pet shows the first five of them. The new pets join the kiosk's own and are kept in pet.kiosk.
+    /// </summary>
+    /// <param name="wanted">The talents searched for, in the order the player picked them.</param>
+    /// <param name="have">How many pets the search found already.</param>
+    /// <returns>The new pets' listings; empty when the kiosk's own pets are off or not up yet.</returns>
+    internal static List<HatchmakingListing> MakeFor(List<uint> wanted, int have) {
+        if (!Enabled || wanted is not { Count: > 0 } || have >= FEWEST_FOUND) {
+            return [];
+        }
+
+        KioskHouseFile file;
+        lock (s_lock) {
+            if (s_listings is null || s_file is null || s_madeForAge != MinAge) {
+                return [];
+            }
+
+            file = s_file;
+        }
+
+        var talents = wanted.Where(id => id != 0 && PetTalentRegistry.TryGetById(id, out _) && !IsDevTalent(id)).Distinct().ToList();
+        var combat = talents.Where(id => PetTalentRegistry.TryGetById(id, out var t) && t.Kind != PetTalentKind.Derby)
+            .Take(PetHatching.MOST_REVEALED).ToList();
+        var derby = talents.Where(id => PetTalentRegistry.TryGetById(id, out var t) && t.Kind == PetTalentKind.Derby)
+            .Take(PetHatching.MOST_REVEALED).ToList();
+        if (combat.Count == 0 && derby.Count == 0) {
+            return [];
+        }
+
+        // A pet shows one more talent each age after Baby, so showing five takes a Mega pet.
+        var needed = Math.Max(combat.Count, derby.Count) + 1;
+        var names = new HashSet<string>(talents.Select(id => PetTalentRegistry.TryGetById(id, out var t) ? t.Name : ""));
+        var random = new Random(unchecked((int) (DateTime.UtcNow.Ticks ^ talents.Aggregate(17u, (h, id) => h * 31 + id))));
+        // Kinds that grow old enough, those whose own talents hold the most of the wanted ones first.
+        var kinds = Kinds().Where(k => MaxLevel(k.Template) >= needed)
+            .Select(k => (k.Id, k.Template, Fits: (k.Template.m_talents ?? []).Concat(k.Template.m_derbyTalents ?? [])
+                .Select(n => n.ToString()).Distinct().Count(names.Contains)))
+            .ToList();
+        if (kinds.Count == 0) {
+            return [];
+        }
+
+        var best = kinds.Max(k => k.Fits);
+        var pool = kinds.Where(k => k.Fits == best).OrderBy(_ => random.Next()).ToList();
+        var made = new List<KioskHousePet>();
+        var madeAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        for (var i = 0; made.Count < TOPPED_UP_TO - have && i < (TOPPED_UP_TO - have) * 3; i++) {
+            var (id, template, _) = pool[i % pool.Count];
+            var pet = MakeHousePet(id, template, "made for a search", [.. combat, .. Shuffled(OwnPool(template), random)],
+                random.Next(needed, MaxLevel(template) + 1), random, 0.7 + random.NextDouble() * 0.3,
+                derby.Count > 0 ? derby : null, madeAt, $"pet.kiosk|search|{id}|{madeAt}|{i}|{random.Next()}");
+            if (pet is not null) {
+                made.Add(pet);
+            }
+        }
+
+        if (made.Count == 0) {
+            return [];
+        }
+
+        lock (s_lock) {
+            if (s_file != file) {
+                return [];
+            }
+
+            file.Pets.AddRange(made);
+            // A new list, so a search or Browse Pets reading the old one is not disturbed.
+            s_listings = [.. s_listings, .. made.Select(p => p.Listing)];
+            foreach (var pet in made) {
+                s_byId[pet.Listing.Parent.ItemId] = pet.Listing;
+            }
+        }
+
+        Save();
+        Logger.Information("Kiosk: made {0} pets showing {1} for a search.",
+            Logger.Args(made.Count, string.Join(", ", combat.Concat(derby).Select(id => PetTalentRegistry.TryGetById(id, out var t) ? t.Name : id.ToString()))));
+
+        return [.. made.Select(p => p.Listing)];
+    }
+
+    // Writes pet.kiosk again on its own thread; saves asked for while one runs are done once it ends.
+    private static void Save() {
+        lock (s_lock) {
+            if (s_saving) {
+                s_saveAgain = true;
+
+                return;
+            }
+
+            s_saving = true;
+        }
+
+        new Thread(() => {
+            while (true) {
+                KioskHouseFile copy;
+                lock (s_lock) {
+                    s_saveAgain = false;
+                    copy = s_file is null ? null
+                        : new KioskHouseFile { Version = s_file.Version, MinAge = s_file.MinAge, MadeAt = s_file.MadeAt, Pets = [.. s_file.Pets] };
+                }
+
+                try {
+                    if (copy is not null) {
+                        File.WriteAllText(FILE + ".tmp", JsonSerializer.Serialize(copy));
+                        File.Move(FILE + ".tmp", FILE, overwrite: true);
+                    }
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+                    Logger.Warning("Kiosk: could not save {0}: {1}", Logger.Args(FILE, ex.Message));
+                }
+
+                lock (s_lock) {
+                    if (!s_saveAgain) {
+                        s_saving = false;
+
+                        return;
+                    }
+                }
+            }
+        }) { IsBackground = true, Name = "pet.kiosk save" }.Start();
     }
 
     /// <summary>
     /// A hatched pet item of one kind with these genes, age and stats. Nothing is saved for it anywhere.
     /// </summary>
     private static WizClientObjectItem MakePet(uint templateId, PetItemBehaviorTemplate template, List<uint> genes, int level,
-                                               Random random, double statShare, ulong itemId) {
+                                               Random random, double statShare, ulong itemId, List<uint> derbyGenes = null) {
         var behavior = new ClientPetItemBehavior {
             m_level = (byte) Math.Clamp(level, 1, Math.Max(1, MaxLevel(template))),
             m_XP = 0,
@@ -346,7 +493,8 @@ internal static class KioskHousePets {
         PetFactory.AlignBehaviorsToTemplate(pet);
 
         behavior.m_allTalents = [.. genes.Where(id => id != 0 && PetTalentRegistry.TryGetById(id, out _) && !IsDevTalent(id)).Distinct().Take(GENES)];
-        behavior.m_allDerbyTalents = [.. PetProgression.RollGenes(template.m_guaranteedDerbyTalents, template.m_derbyTalents, random).Where(id => !IsDevTalent(id))];
+        behavior.m_allDerbyTalents = [.. (derbyGenes ?? []).Concat(PetProgression.RollGenes(template.m_guaranteedDerbyTalents, template.m_derbyTalents, random))
+            .Where(id => id != 0 && !IsDevTalent(id)).Distinct().Take(GENES)];
         var revealed = Math.Min(behavior.m_level - 1, PetHatching.MOST_REVEALED);
         behavior.m_expressedTalents = [.. behavior.m_allTalents.Take(revealed)];
         behavior.m_expressedDerbyTalents = [.. behavior.m_allDerbyTalents.Take(revealed)];

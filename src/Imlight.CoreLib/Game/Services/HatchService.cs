@@ -1968,6 +1968,14 @@ internal class HatchService(SessionActor sessionActor) : MessageService(sessionA
                 .Take(KIOSK_MOST_SHOWN)
                 .Select(x => x.Listing)
                 .ToList();
+            // Too few finds: the kiosk makes pets that show the talents on the spot, so a search always finds some
+            // (Niduus, 2026-11-22). A pet shows at most five talents, so with more picked they show the first five.
+            var made = KioskHousePets.MakeFor(wanted, found.Count);
+            found.AddRange(made);
+            if (made.Count > 0 && everyOne && wanted.Count > PetHatching.MOST_REVEALED) {
+                InformGameClient($"A pet shows at most {PetHatching.MOST_REVEALED} talents, so these pets show the first {PetHatching.MOST_REVEALED} you picked.");
+            }
+
             Logger.Information("Hatching: talent search ({0} of {1}) found {2} of {3} pets at the kiosk.",
                 Logger.Args(everyOne ? "all" : "any", string.Join(", ", wanted.Select(TalentName)), found.Count, HatchmakingListings.All().Count));
             SendPetGIDs(found, message.InPerson);
