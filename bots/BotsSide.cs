@@ -45,7 +45,11 @@ internal sealed class BotsSide : BotSide {
 
     // ---------------------------------------------------------------- start and stop
 
-    internal override void Start(ActorSystem system) => BotBodies.Start(system);
+    internal override void Start(ActorSystem system) {
+        // Zoom's and True Form's leftovers in the shared books go first (Hive Mind audit, 2026-11-22).
+        BotShared.BotMistakes.ForgetKeptApart();
+        BotBodies.Start(system);
+    }
 
     internal override void GameServerReady(IActorRef server, ActorSystem system, string realmName)
         => QuestTeamHost.GameServerReady(server, system, realmName);

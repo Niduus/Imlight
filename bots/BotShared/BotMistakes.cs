@@ -160,6 +160,68 @@ internal static class BotMistakes {
             .OrderBy(m => Far(m.X, m.Y, x, y)).FirstOrDefault();
     }
 
+    /// <summary>
+    /// Takes out of the shared books what Zoom and True Form wrote before they were kept apart (Hive Mind audit, 2026-11-22):
+    /// their rows in this book, and the stuck spots at those rows in the shared walking memory (RouteMemory), which every
+    /// bot's way finder bends round (Zoom's teleport spots beside Firecat Alley's quest people). Runs at each bots start;
+    /// once nothing of theirs is left it does nothing.
+    /// </summary>
+    internal static void ForgetKeptApart() {
+        try {
+            List<Mistake> theirs;
+            lock (s_lock) {
+                var all = All();
+                theirs = all.Where(m => BotKnowledge.KeptApart(m.Bot)).ToList();
+                if (theirs.Count == 0) {
+                    return;
+                }
+
+                all.RemoveAll(m => BotKnowledge.KeptApart(m.Bot));
+                Save();
+            }
+
+            var spots = ForgetStuckSpots(theirs.Where(m => m.Kind is STUCK or NO_WAY or OUT_OF_BOUNDS).ToList());
+            Logger.Information("Bots: took {0} Zoom/True Form row(s) out of the mistakes book and {1} of their stuck spot(s) out of the " +
+                        "shared walking memory.", Logger.Args(theirs.Count, spots));
+        }
+        catch (Exception ex) {
+            Logger.Warning("Bots: Zoom/True Form leftovers could not be taken out of the shared books: {0}", Logger.Args(ex.Message));
+        }
+    }
+
+    // RouteMemory (core) keeps its streets to itself; read by reflection, so this works on a live server without a restart.
+    private static int ForgetStuckSpots(List<Mistake> rows) {
+        if (rows.Count == 0) {
+            return 0;
+        }
+
+        const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static;
+        var type = typeof(Imlight.CoreLib.Game.Tools.RouteMemory);
+        if (type.GetField("s_lock", flags)?.GetValue(null) is not { } gate
+            || type.GetMethod("Streets", flags)?.Invoke(null, null) is not Dictionary<string, Imlight.CoreLib.Game.Tools.RouteMemory.Street> streets) {
+            return 0;
+        }
+
+        var removed = 0;
+        lock (gate) {
+            foreach (var row in rows) {
+                if (row.Zone.Length > 0 && streets.TryGetValue(row.Zone, out var street)) {
+                    removed += street.Stuck.RemoveAll(s => s is not null && Far(s.X, s.Y, row.X, row.Y) <= 150f);
+                }
+            }
+
+            if (removed > 0) {
+                type.GetField("s_dirty", flags)?.SetValue(null, true);
+            }
+        }
+
+        if (removed > 0) {
+            Imlight.CoreLib.Game.Tools.RouteMemory.Flush();
+        }
+
+        return removed;
+    }
+
     private static List<Mistake> All() {
         if (s_all is not null) {
             return s_all;
