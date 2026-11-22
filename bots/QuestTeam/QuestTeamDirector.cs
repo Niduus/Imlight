@@ -265,6 +265,7 @@ internal sealed partial class QuestTeamDirectorActor : ReceiveActor, IWithTimers
         _starting = false;
         // The NPC location book Ultimus reads, shared: built or read once, whichever bot starts first.
         Ultimus.UltimusNpcBook.BuildInBackground();
+        BotShared.BotCreatureAreas.BuildInBackground();
         if (loaded.Members is null) {
             Issue("team", null, "The Quest Team's wizards could not be made or loaded. The server log says why.");
             QuestTeamDirector.Failed(Self);

@@ -64,6 +64,8 @@ internal sealed partial class UltimusDirectorActor {
         UltimusNpcBook.BuildInBackground();
         // The Quest Atlas, made from both books once they are ready (UltimusAtlas).
         UltimusAtlas.BuildInBackground();
+        // Which areas each creature appears in, from every book area's spawn files (BotShared.BotCreatureAreas).
+        BotShared.BotCreatureAreas.BuildInBackground();
 
         // Who he plays with right now, on every lesson (solo data and team data never mix).
         var withPlayers = _target?.Key?.EndsWith("|join", StringComparison.Ordinal) == true

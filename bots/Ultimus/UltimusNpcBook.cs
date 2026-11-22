@@ -155,7 +155,7 @@ internal static class UltimusNpcBook {
         _ = Task.Run(async () => {
             try {
                 var path = Path.Combine(UltimusWire.SharedFolder, BOOK_FILE);
-                if (File.Exists(path) && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromDays(3)
+                if (BotShared.BotBookAreas.Fresh(path)
                     && UltimusWire.Read<Dictionary<string, Entry>>(await File.ReadAllTextAsync(path)) is { Count: > 0 } saved) {
                     foreach (var (id, entry) in saved) {
                         if (ulong.TryParse(id, out var template) && entry is not null) {
@@ -168,9 +168,10 @@ internal static class UltimusNpcBook {
                     return;
                 }
 
-                // Who the story names: each main-story quest's giver and each person its steps send you to talk to.
+                // Who the quests name: each quest's giver and each person its steps send you to talk to, in the main worlds
+                // and the side worlds alike (Niduus, 2026-11-22, "wider books": it was the main worlds' quests only).
                 var wanted = new HashSet<ulong>();
-                foreach (var (quest, giver) in QuestService.QuestFinderGivers().Where(g => UltimusPlanner.IsMainStoryWorld(g.Quest))) {
+                foreach (var (quest, giver) in QuestService.QuestFinderGivers().Where(g => g.Quest is not null)) {
                     if (giver != 0) {
                         wanted.Add(giver);
                     }
@@ -183,8 +184,7 @@ internal static class UltimusNpcBook {
                     }
                 }
 
-                var zones = SpiralDB.GetAllZoneData().Select(z => z?.ZoneName).Where(z => !string.IsNullOrWhiteSpace(z) && OverlayQuestRoute.OnStory(z))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                var zones = BotShared.BotBookAreas.All();
                 var found = new Dictionary<ulong, List<Place>>();
                 foreach (var zone in zones) {
                     foreach (var (template, spot) in QuestStepSpots.Zone(zone).Objects.Where(o => wanted.Contains(o.Template))) {
@@ -206,7 +206,8 @@ internal static class UltimusNpcBook {
                 Ready = true;
                 Directory.CreateDirectory(UltimusWire.SharedFolder);
                 await File.WriteAllTextAsync(path, UltimusWire.Write(s_book.OrderBy(p => p.Value.Name).ToDictionary(p => p.Key.ToString(), p => p.Value)));
-                Logger.Information("Ultimus: the NPC location book has {0} of the story's {1} NPCs ({2}).", Logger.Args(s_book.Count, wanted.Count, BOOK_FILE));
+                BotShared.BotBookAreas.Mark(path);
+                Logger.Information("Ultimus: the NPC location book has {0} of the quests' {1} NPCs ({2}).", Logger.Args(s_book.Count, wanted.Count, BOOK_FILE));
             }
             catch (Exception ex) {
                 Logger.Debug("Ultimus: the NPC location book could not be built: {0}", Logger.Args(ex.Message));

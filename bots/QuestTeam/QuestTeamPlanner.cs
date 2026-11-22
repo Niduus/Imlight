@@ -442,6 +442,14 @@ internal static class QuestTeamPlanner {
                         return new Target(SPOT, ax, ay, $"{step} (where they spawn)", questName, goalName, Key: key + "|spawns");
                     }
                 }
+                // None spawn in this street, the step names no area and has no quest arrow: the nearest area whose spawn
+                // files bring them out is where the step is (the creature-area book, Niduus, 2026-11-22). Never out of a
+                // dungeon copy.
+                else if (!anyWanted && stepZone.Length == 0 && arrowZones.Count == 0 && leader.Wizard?.ZoneIsInstance != true
+                         && BotShared.BotCreatureAreas.Nearest(zone, adjectives) is { Length: > 0 } spawnsIn) {
+                    stepZone = spawnsIn;
+                    step = $"{step} (the game's files say they appear in {Ultimus.UltimusText.Zone(spawnsIn)})";
+                }
 
                 break;
             }

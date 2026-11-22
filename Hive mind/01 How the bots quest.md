@@ -11,6 +11,7 @@ The rules every questing bot follows on a quest. Ultimus sets the example, and t
 - The quest arrow's spot is the goal. Inside a dungeon they go floor by floor: fight the battle that opens the next door, then walk through the opened door to the next teleporter.
 - A dungeon a person once led a bot through is remembered, and that way is used next time.
 - They walk round street creatures they do not need, and only fight creatures the quest names.
+- A "defeat" step that names no area and has no quest arrow is played where the game's own files say those creatures appear: the nearest such area, streets before dungeons (the creature-area book, read ahead for every area, side worlds too).
 
 ## When they get stuck
 - First they try a move that worked at that same spot before.

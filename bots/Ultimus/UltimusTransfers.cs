@@ -92,7 +92,7 @@ internal static class UltimusTransfers {
         _ = Task.Run(async () => {
             try {
                 var path = Path.Combine(UltimusWire.SharedFolder, BOOK_FILE);
-                if (File.Exists(path) && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) < TimeSpan.FromDays(3)
+                if (BotShared.BotBookAreas.Fresh(path)
                     && UltimusWire.Read<Dictionary<string, List<Transfer>>>(await File.ReadAllTextAsync(path)) is { Count: > 0 } saved) {
                     foreach (var (zone, list) in saved) {
                         s_book.TryAdd(zone, list ?? []);
@@ -101,8 +101,7 @@ internal static class UltimusTransfers {
                     return;
                 }
 
-                var zones = SpiralDB.GetAllZoneData().Select(z => z?.ZoneName).Where(z => !string.IsNullOrWhiteSpace(z) && OverlayQuestRoute.OnStory(z))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                var zones = BotShared.BotBookAreas.All();
                 foreach (var zone in zones) {
                     In(zone);
                     await Task.Delay(25);
@@ -111,6 +110,7 @@ internal static class UltimusTransfers {
                 Directory.CreateDirectory(UltimusWire.SharedFolder);
                 await File.WriteAllTextAsync(path, UltimusWire.Write(s_book.Where(p => p.Value.Count > 0).OrderBy(p => p.Key)
                     .ToDictionary(p => p.Key, p => p.Value)));
+                BotShared.BotBookAreas.Mark(path);
                 var (areas, transfers, landings) = Count();
                 Logger.Information("Ultimus: the zone transfer book has {0} areas, {1} exits, {2} with their landing spot ({3}).",
                     Logger.Args(areas, transfers, landings, BOOK_FILE));

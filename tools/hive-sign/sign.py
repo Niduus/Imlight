@@ -35,6 +35,7 @@ BRAIN = [
     "bots/use-guards.json", "bots/bot-puzzles.json",
     "ultimus/fight-styles.json", "ultimus/step-memory.json", "ultimus/stuck-solutions.json", "ultimus/quest-atlas.json",
     "ultimus/quest-tree.json", "ultimus/npc-book.json", "ultimus/zone-transfers.json", "ultimus/pads.json",
+    "ultimus/creature-areas.json",
     "ultimus/deck-mix.json", "ultimus/learned.jsonl", "ultimus/foes.json", "ultimus/drop-memory.json",
     "ultimus/abnormal-fixes.json", "ultimus/guided-runs.json", "ultimus/playbook.txt",
 ]

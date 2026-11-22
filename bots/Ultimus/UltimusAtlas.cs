@@ -117,8 +117,7 @@ internal static class UltimusAtlas {
                 // Dungeon sigils are a way in too: the zone file names where each pad sends a team. The book above holds only
                 // walk-in teleports, so every sigil dungeon (Zarathax's Tower, Castle Strigoi, ...) read as "no door in", and the
                 // look-ahead flagged 1480 steps of the 1628 quests ahead as likely stuck (readiness.txt, 2026-11-20 22:17).
-                foreach (var zone in SpiralDB.GetAllZoneData().Select(z => z?.ZoneName).Where(z => !string.IsNullOrWhiteSpace(z) && OverlayQuestRoute.OnStory(z))
-                             .Distinct(StringComparer.OrdinalIgnoreCase)) {
+                foreach (var zone in BotShared.BotBookAreas.All()) {
                     foreach (var to in SigilWaysIn(zone)) {
                         doorsIn[to] = doorsIn.GetValueOrDefault(to) + 1;
                     }
@@ -126,10 +125,14 @@ internal static class UltimusAtlas {
                     await Task.Delay(5);
                 }
 
-                var quests = QuestTemplateCollection.GetAllQuests().Where(q => q is not null && BotShared.BotStory.Plays(q)).ToList();
+                // The quests the bots play, and every side world quest too (Niduus, 2026-11-22, "wider books"): a side world
+                // step is placed the same way, for when a bot or Zoom takes one.
+                var quests = QuestTemplateCollection.GetAllQuests().Where(q => q is not null).ToList();
                 foreach (var quest in quests) {
+                    var plays = BotShared.BotStory.Plays(quest);
                     foreach (var goal in quest.m_goals?.Where(g => g is not null) ?? []) {
-                        if (Read(quest, goal, doorsIn) is { } step && BotShared.MainWorlds.QuestsIn(step.World)) {
+                        if ((plays || SideWorldQuest(quest, goal)) && Read(quest, goal, doorsIn) is { } step
+                            && ((plays && BotShared.MainWorlds.QuestsIn(step.World)) || BotShared.BotBookAreas.IsSideWorld(step.World))) {
                             s_steps[step.Quest + "|" + step.Goal] = step;
                         }
                     }
@@ -141,7 +144,7 @@ internal static class UltimusAtlas {
                 Write();
                 // The whole quest tree, with these steps in it (UltimusQuestTree).
                 UltimusQuestTree.Build();
-                Logger.Information("Ultimus: the Quest Atlas has {0} story steps ({1}).", Logger.Args(s_steps.Count, DATA));
+                Logger.Information("Ultimus: the Quest Atlas has {0} quest steps ({1}).", Logger.Args(s_steps.Count, DATA));
             }
             catch (Exception ex) {
                 Logger.Debug("Ultimus: the Quest Atlas could not be built: {0}", Logger.Args(ex.Message));
@@ -173,12 +176,15 @@ internal static class UltimusAtlas {
         var person = "";
         ulong template = 0;
         var personZones = new List<string>();
+        // A main world step looks among the main worlds' areas, as before; a side world quest's among the side worlds' too.
+        Func<string, bool> placed = !BotShared.BotStory.Plays(quest) && SideWorldQuest(quest, goal)
+            ? BotShared.BotBookAreas.Holds : OverlayQuestRoute.OnStory;
         if (goal is PersonaGoalTemplate talk) {
             person = talk.m_personaName;
             template = QuestMadlibs.SpeakerTemplateOf(talk.m_personaName, 0);
-            personZones = [.. UltimusNpcBook.Of(template).Select(p => p.Zone).Where(OverlayQuestRoute.OnStory).Distinct(StringComparer.OrdinalIgnoreCase)];
+            personZones = [.. UltimusNpcBook.Of(template).Select(p => p.Zone).Where(placed).Distinct(StringComparer.OrdinalIgnoreCase)];
             if (UltimusNpcBook.Find(person) is { } named && template != 0 && UltimusNpcBook.Of(template).Count == 0) {
-                personZones = [.. named.Places.Select(p => p.Zone).Where(OverlayQuestRoute.OnStory).Distinct(StringComparer.OrdinalIgnoreCase)];
+                personZones = [.. named.Places.Select(p => p.Zone).Where(placed).Distinct(StringComparer.OrdinalIgnoreCase)];
             }
         }
 
@@ -188,6 +194,16 @@ internal static class UltimusAtlas {
 
         return new Step(questName, QuestGuide.QuestTitle(quest), goalName, OverlayQuestTracker.StepTitle(goal), goal.m_goalType.ToString(), world,
             stepZone, real, person, template, personZones, target.Length == 0 ? -1 : doorsIn.GetValueOrDefault(target), why);
+    }
+
+    // A step of a side world quest: its area, else its giver's, is in a side world (Grizzleheim, Wysteria, ...).
+    private static bool SideWorldQuest(QuestTemplate quest, GoalTemplate goal) {
+        var zone = OverlayQuestTracker.StepZone(goal);
+        if (string.IsNullOrWhiteSpace(zone)) {
+            zone = QuestGuide.GiverZone(quest) ?? "";
+        }
+
+        return BotShared.BotBookAreas.IsSideWorld(zone);
     }
 
     private static void Write() {
@@ -204,7 +220,7 @@ internal static class UltimusAtlas {
 
     internal static string Report(IReadOnlyCollection<Step> steps, DateTime written) {
         var text = new StringBuilder();
-        text.AppendLine($"QUEST ATLAS (written {written:yyyy-MM-dd HH:mm}): {steps.Count} main story steps, read from the game's own files.");
+        text.AppendLine($"QUEST ATLAS (written {written:yyyy-MM-dd HH:mm}): {steps.Count} quest steps (the bots' quests and the side worlds' quests), read from the game's own files.");
         var moved = steps.Where(s => s.RealZone.Length > 0).ToList();
         var noDoor = steps.Where(s => s.DoorsIn == 0).ToList();
         var unplaced = steps.Where(s => s.PersonTemplate != 0 && s.PersonZones.Count == 0).ToList();

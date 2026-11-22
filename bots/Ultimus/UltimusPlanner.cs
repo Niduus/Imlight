@@ -565,6 +565,15 @@ internal static class UltimusPlanner {
                 else if (stepZone.Length == 0 && arrowZones.Count > 0 && !arrowZones.Any(z => OverlayQuestTracker.SameZone(z, zone))) {
                     stepZone = arrowZones[0];
                 }
+                // The step names no area, has no quest arrow and he never saw them, and this street's own creature paths
+                // don't bring them out: the nearest area whose spawn files do is where the step is (the creature-area book,
+                // Niduus, 2026-11-22). Never out of a dungeon copy (its rooms are BotRoomFoes's).
+                else if (stepZone.Length == 0 && arrowZones.Count == 0 && leader.Wizard?.ZoneIsInstance != true
+                         && Tools.RouteMobs.SeekFor(leader.ZoneActor, leader.X, leader.Y, adjectives) is null
+                         && BotShared.BotCreatureAreas.Nearest(zone, adjectives) is { Length: > 0 } spawnsIn) {
+                    stepZone = spawnsIn;
+                    step = $"{step} (the game's files say they appear in {UltimusText.Zone(spawnsIn)})";
+                }
 
                 // The Quest Team's creatures are left to it (Niduus, 2026-11-12: Ultimus "will never attempt to join QT and
                 // they will always attempt to avoid colliding"): a creature near a Quest Team wizard is not Ultimus's.
