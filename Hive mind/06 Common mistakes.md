@@ -4,7 +4,7 @@ Rebuilt every Bot Update round from the shared mistakes book (shared/now/mistake
 places the bots made it most, how often, what got them out, and the rule to prevent it. Every bot reads the
 same book, so a lesson here is a lesson for all of them.
 
-## stuck (8856 times, 405 places)
+## stuck (8859 times, 405 places)
 
 - **1258x** a few steps back from the puzzle piece "DynaTrigger_MB_Plaque_Sun instance" (now Off, needs On) (it offers its pull agai (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T08:33, KitharasAndromeda, solo)
   - What worked: walk well away and come back another way
@@ -42,7 +42,7 @@ same book, so a lesson here is a lesson for all of them.
   - What worked: walk well away and come back another way
   - Prevent it: Walk round this spot; the way finder bends round it now.
 
-## surprise (2838 times, 258 places)
+## surprise (2844 times, 258 places)
 
 - **467x** to Nightside (training) (WizardCity/WC_Hub; last 2026-11-22T08:46, Kurrent, solo)
   - Prevent it: This way goes to Merle Ambrose's Tower, not Nightside: plan from where it really goes.
@@ -56,9 +56,9 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: This way goes to Tree of Life, not Tree of Life: plan from where it really goes.
 - **60x** WizardCity/WC_Streets/WC_Triton (WizardCity/WC_Streets/WC_Triton; last 2026-11-20T16:59, KitharasHexation, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
-- **57x** Krokotopia/KT_Hub (Krokotopia/KT_Hub; last 2026-11-21T12:07, KitharasUmbella, solo)
+- **59x** MooShu/MS_Hub (MooShu/MS_Hub; last 2026-11-22T10:00, Mythis, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
-- **57x** MooShu/MS_Hub (MooShu/MS_Hub; last 2026-11-22T09:40, Mythis, solo)
+- **57x** Krokotopia/KT_Hub (Krokotopia/KT_Hub; last 2026-11-21T12:07, KitharasUmbella, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
 - **55x** Gearhead, the creatures of the room's battle circle "InitiateCombat-Room3" (the floor's fight comes before the teleporte (Marleybone/MB_BigBen/MB_BigBen; last 2026-11-22T09:27, KitharasDevourer, solo)
   - Prevent it: Gearhead is stronger than it looks: go in at full health with a deck made for it, or level up first.
@@ -69,13 +69,13 @@ same book, so a lesson here is a lesson for all of them.
 - **45x** Krokotopia/KT_Tomb/KT_WellOfSpirits (Krokotopia/KT_Tomb/KT_WellOfSpirits; last 2026-11-21T23:37, KitharasWasSilenced, solo)
   - Prevent it: The book's landing spot or the game's needs a look.
 
-## no way on the map (2515 times, 148 places)
+## no way on the map (2518 times, 148 places)
 
 - **576x** going along with Kitharas Lamia (my group) (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T03:36, CrimesAgainstKitharas, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 - **309x** to the puzzle piece "DynaTrigger_MB_Plaque_Bird instance" (now Off, needs On) (Marleybone/MB_ScotlandYard/MB_KatzLab; last 2026-11-22T08:33, KitharasAndromeda, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
-- **245x** walks out of the exit and in again through another part of it (WizardCity/WC_Ravenwood_Teleporter; last 2026-11-22T09:27, KitharasDevourer, solo)
+- **246x** walks out of the exit and in again through another part of it (WizardCity/WC_Ravenwood_Teleporter; last 2026-11-22T09:47, Ra, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 - **228x** walks out of the exit and in again through another part of it (WizardCity/WC_Hub; last 2026-11-22T03:17, Kurrent, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
@@ -83,7 +83,7 @@ same book, so a lesson here is a lesson for all of them.
   - Prevent it: The way finder or the step's spot needs a look here.
 - **91x** walks through the doorway to Krokosphinx (leaving The Oasis: a side dungeon, my story is in Krokosphinx) (Krokotopia/KT_HubFlyingShip_ToIsland; last 2026-11-21T19:55, KitharasJackle, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
-- **63x** walks out of the exit and in again through another part of it (WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse; last 2026-11-22T09:39, Cyndr, solo)
+- **64x** walks out of the exit and in again through another part of it (WizardCity/WC_Streets/Interiors/WC_OldeTown_AuctionHouse; last 2026-11-22T09:49, CrimesAgainstKitharas, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
 - **60x** to Scotland Yard Roof (Talk to Watson) (Marleybone/Interiors/MB_ScotlandYard; last 2026-11-21T23:14, KitharasMordiael, solo)
   - Prevent it: The way finder or the step's spot needs a look here.
@@ -123,7 +123,7 @@ same book, so a lesson here is a lesson for all of them.
 - **7x** Use Lever here (WizardCity/WC_Streets/WC_Triton; last 2026-11-20T12:49, LumeriaOfKitharas, solo)
   - Prevent it: Every walk is checked against the floor; this spot's walk data or the step's spot needs a look.
 
-## lost fight (829 times, 49 places)
+## lost fight (834 times, 49 places)
 
 - **152x** Bellows (Marleybone/MB_Hub; last 2026-11-22T09:00, KitharasDevourer, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
@@ -150,7 +150,7 @@ same book, so a lesson here is a lesson for all of them.
 - **24x** Maito (MooShu/MS_Hub; last 2026-11-22T07:56, KitharasRock, solo)
   - Prevent it: Go in at full health and mana with a deck made for it; if it still wins, wait for a player or level up first.
 
-## off the main story (699 times, 76 places)
+## off the main story (700 times, 76 places)
 
 - **194x** KT-CRYHub-C01-004 (Krokotopia/KT_HubFlyingShip_ToIsland; last 2026-11-21T20:27, KitharasSentence, solo)
   - Prevent it: Never go into a dungeon the story step is not in (not for wisps, not for potions).
