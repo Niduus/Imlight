@@ -10,8 +10,8 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
 - Clockwork Warrior: won 49 time(s) (47 Solo, 2 Team), lost 24. Fastest: Cyndr in 1 rounds, deck for Balance enemies, hitting with Balance, Storm, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Sunbird.
 - Filcher: won 49 time(s) (42 Solo, 7 Team), lost 17. Fastest: Tulkar in 2 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Death (most of my fights lately had 2+ enemies), hits with Minor Nova, Banshee.
 - Meowiarty: won 45 time(s) (17 Solo, 28 Team), lost 16. Fastest: Cyndr in 2 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Fire Cat, Immolate.
+- Gear Spinner: won 30 time(s) (26 Solo, 4 Team), lost 17. Fastest: Kurrent in 1 rounds, deck for a boss (Myth), hitting with Myth, Fire, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Storm Shark.
 - O'Leary Napper: won 39 time(s) (20 Solo, 19 Team), lost 6. Fastest: Ra in 1 rounds, deck for any fight (many of my fights lately had 2+ enemies), hits with Gearhead Destroyer.
-- Gear Spinner: won 30 time(s) (26 Solo, 4 Team), lost 15. Fastest: Kurrent in 1 rounds, deck for a boss (Myth), hitting with Myth, Fire, Ice; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Storm Shark.
 - Firegut: won 31 time(s) (25 Solo, 6 Team), lost 11. Fastest: Kurrent in 2 rounds, plan "hit now", deck for a boss (Fire), hitting with Fire, Death, Life; a rival that outlasts me, so more hits and blades to end it sooner (most of my fights lately had 2+ enemies), hits with Storm Shark, Thunder Snake.
 - Kettlehead: won 30 time(s) (28 Solo, 2 Team), lost 10. Fastest: Kurrent in 1 rounds, deck for a boss (Balance), hitting with Balance, Storm, Myth (most of my fights lately had 2+ enemies), hits with Storm Shark.
 - Clanker: won 35 time(s) (24 Solo, 11 Team), lost 5. Fastest: Kurrent in 1 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Storm Shark.
@@ -4153,6 +4153,8 @@ What the bots did in Marleybone, from the server log: every quest finished, ever
   - Brown Recluse: lost 1 time(s) (Idunn). Why: I went in at 31% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Kettlehead: lost 1 time(s) (Idunn). Why: I went in at 59% health, its biggest hit took 67% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Shrieker: lost 1 time(s) (Idunn). Why: its biggest hit took 68% of my health, the fight ran 8 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+  - Gear Spinner: lost 1 time(s) (Idunn). Why: the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+  - Gear Spinner: lost 1 time(s) (Idunn). Why: its biggest hit took 61% of my health, the fight ran 5 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
 - Avoid, places bots got stuck:
   - Big Ben near (-4200, 10600) while Defeat 1 creatures ("The Last Meow"): stuck 38 time(s) (Idunn); one bot tried every fix there.
   - Big Ben near (-9600, 21000) while Defeat 1 creatures ("The Last Meow"): stuck 34 time(s) (Ra); one bot tried every fix there.
