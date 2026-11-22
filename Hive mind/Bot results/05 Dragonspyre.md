@@ -4,8 +4,8 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Best way to beat each creature
 - Loathsome Creeper: won 102 time(s) (71 Solo, 31 Team), lost 0. Fastest: Ra in 1 rounds, deck for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-- Petrov Gloomstrider: won 52 time(s) (52 Solo, 0 Team), lost 1. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
-- Sea Lord: never beaten yet, lost 34 time(s). Most common reason: its biggest hit took 90% of my health, the fight ran 6 minutes, so I ran out of good cards.
+- Petrov Gloomstrider: won 56 time(s) (52 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
+- Sea Lord: never beaten yet, lost 35 time(s). Most common reason: its biggest hit took 90% of my health, the fight ran 6 minutes, so I ran out of good cards.
 - Wandering Wizard: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
 - Earth Elemental: won 1 time(s) (1 Solo, 0 Team), lost 4. Fastest: Ultimus in 31 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Elemental Shield, Fairy.
 - Zarathax: won 1 time(s) (1 Solo, 0 Team), lost 3. Fastest: Ultimus in 24 rounds, deck for a boss (Balance), hitting with Balance, Fire, Death; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Balance, Elemental Shield, Fairy, Helping Hands.
@@ -19,12 +19,30 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Wizard and Crystal
 - Finished by Ultimus (19 min).
+- Finished by Garm (6 min).
+- Finished by Ra (21 min).
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 08:25:38.
   It took 13 rounds, about 7 minutes.
   Deck made for a boss (Ice), hitting with Ice, Death, Myth (most of my fights lately had 2+ enemies).
   Spells that landed the hits: Elemental Shield x2, Helping Hands x2, Sandstorm, Locust Swarm, Spirit Shield.
+- Won by Garm (Team with Ra) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:50:45.
+  It took 10 rounds, about 5 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (mine and every other bot's).
+  Spells that landed the hits: Skeletal Pirate, Poison, Spirit Armor, Minor Dark Blow.
+- Won by Ra (Team with Garm) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:50:47.
+  It took 15 rounds, about 3 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (2 enemies, stronger).
+  Spells that landed the hits: Spectral Blast x2, Fairy, Elemental Shield, Locust Swarm.
+- Won by Ra (Team with Garm) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:55:35.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Fairy, Locust Swarm, Spectral Blast.
 - Avoid, fights lost:
   - Petrov Gloomstrider: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 6 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+  - Petrov Gloomstrider: lost 1 time(s) (Ra). Why: its biggest hit took 68% of my health, the fight ran 8 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 
 ## Portal Combat
 - Finished by Ultimus (45 min).
@@ -363,12 +381,14 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health, the fight ran 8 minutes, so I ran out of good cards. Do instead: look for better gear in this world's shops and the Bazaar, then try again.
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health, the fight ran 12 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
+  - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health, the fight ran 10 minutes, so I ran out of good cards. Do instead: look for better gear in this world's shops and the Bazaar, then try again.
 - Avoid, places bots got stuck:
   - Plaza of Conquests near (-1300, 4500) while stuck: Defeat Sea Lord: no creature for this step is in the area: stuck 8 time(s) (Ultimus); one bot tried every fix there.
   - Plaza of Conquests near (-1300, 4500) while a short break before trying "Defeat Sea Lord" again: stuck 2 time(s) (Ultimus).
   - The Basilica near (200, -500) while a short break before trying "Defeat Sea Lord" again: stuck 2 time(s) (Ultimus).
   - Plaza of Conquests near (-1200, 4400) while stuck: Defeat Sea Lord: no creature for this step is in the area: stuck 1 time(s) (Ultimus).
   - Plaza of Conquests near (-8000, -9800) while resting while "Defeat Sea Lord (where they spawn)" waits: stuck 1 time(s) (Ultimus).
+  - Plaza of Conquests near (1900, 12600) while to The Atheneum (to pick up health wisps): stuck 1 time(s) (Ultimus).
 
 ## The Towering Crystal
 - Finished by Ultimus (16 min).
@@ -936,14 +956,21 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## The Last Key
 - Finished by Ultimus (5 min).
+- Finished by Garm (5 min).
 - Won by Ultimus (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-20 at 08:35:32.
   It took 5 rounds, about 3 minutes.
   Deck made for a boss (Ice), hitting with Ice, Death, Myth (most of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Sandstorm x2, Scarab.
+- Won by Garm (Team with Ra) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 21:55:35.
+  It took 6 rounds, about 3 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Death, Myth; my own fights say about 60% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Poison.
 
 ## The Dragon's Claw
 - Finished by Ultimus (53 s).
+- Finished by Garm (53 s).
 
 ## Warkeeper
 - Finished by Ultimus (17 s).
