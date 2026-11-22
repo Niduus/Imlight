@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -9,12 +10,12 @@ namespace Hellhound;
 /// <summary>
 /// Hellhound: the bots' own app, which takes the bots out of Ahziael step by step over several updates (Niduus, 2026-11-22:
 /// "this one will just be called Hellhound. Everything bot related goes in this"). It runs a tiny web page on this PC only
-/// (127.0.0.1, a free port) and opens it in the browser.
+/// (127.0.0.1, a free port) and opens it in a window of its own (<see cref="AppWindow"/>).
 /// <para>
 /// Hellhound.exe                      opens the page
 /// Hellhound.exe --server "D:\Server" a server folder other than %LOCALAPPDATA%\ImlightManager\Server
 /// Hellhound.exe --once               prints the bots' state as JSON once and exits (no page)
-/// Hellhound.exe --no-browser         serves the page without opening the browser
+/// Hellhound.exe --no-browser         serves the page without opening its window
 /// </para>
 /// </summary>
 internal static class Program {
@@ -43,21 +44,40 @@ internal static class Program {
             return 0;
         }
 
+        // One Hellhound at a time: a second start just opens the window again.
+        using var single = new Mutex(true, "Local\\Hellhound", out var first);
+        var portFile = Path.Combine(AppWindow.DataFolder, "port.txt");
+        if (!first) {
+            if (File.Exists(portFile) && int.TryParse(File.ReadAllText(portFile).Trim(), out var running)) {
+                AppWindow.Open($"http://127.0.0.1:{running}/")?.Dispose();
+            }
+
+            return 0;
+        }
+
         var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
         var port = ((IPEndPoint) listener.LocalEndpoint).Port;
         var url = $"http://127.0.0.1:{port}/";
-        Console.WriteLine($"Hellhound is running at {url}");
-        Console.WriteLine($"Server folder: {files.Folder}");
-        Console.WriteLine("Close this window to stop it.");
+        AppWindow.Log($"Hellhound is running at {url} for the server in {files.Folder}.");
+        try {
+            Directory.CreateDirectory(AppWindow.DataFolder);
+            File.WriteAllText(portFile, port.ToString(CultureInfo.InvariantCulture));
+        }
+        catch (Exception) {
+        }
 
-        if (openBrowser) {
-            try {
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true })?.Dispose();
-            }
-            catch (Exception) {
-                Console.WriteLine("Could not open the browser by itself: open the address above.");
-            }
+        if (openBrowser && AppWindow.Open(url) is { } window) {
+            // Closing Hellhound's window closes Hellhound.
+            // (When an old Hellhound window is still open, Edge hands the new one to it and its first process quits at
+            // once: Hellhound then keeps running.)
+            var opened = DateTime.UtcNow;
+            _ = Task.Run(() => {
+                window.WaitForExit();
+                if (DateTime.UtcNow - opened > TimeSpan.FromSeconds(5)) {
+                    Environment.Exit(0);
+                }
+            });
         }
 
         var page = ReadPage();
