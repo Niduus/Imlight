@@ -5,8 +5,8 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 ## Best way to beat each creature
 - Loathsome Creeper: won 102 time(s) (71 Solo, 31 Team), lost 0. Fastest: Ra in 1 rounds, deck for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
 - Petrov Gloomstrider: won 71 time(s) (67 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
-- Sea Lord: won 1 time(s) (1 Solo, 0 Team), lost 36. Fastest: Ultimus in 9 rounds, plan "stack up", deck for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Volcanic Shield, Judgement.
-- Zarathax: won 5 time(s) (5 Solo, 0 Team), lost 3. Fastest: Ra in 4 rounds, plan "hit now", deck for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Sandstorm, Minor Crusade.
+- Sea Lord: won 1 time(s) (1 Solo, 0 Team), lost 37. Fastest: Ultimus in 9 rounds, plan "stack up", deck for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Volcanic Shield, Judgement.
+- Zarathax: won 6 time(s) (6 Solo, 0 Team), lost 4. Fastest: Ra in 4 rounds, plan "hit now", deck for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Sandstorm, Minor Crusade.
 - Wandering Wizard: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
 - Earth Elemental: won 2 time(s) (2 Solo, 0 Team), lost 4. Fastest: Ra in 18 rounds, plan "stack up", deck for a boss (Life), hitting with Life, Fire, Storm; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Helping Hands, Spectral Blast.
 - Sysiphan: won 4 time(s) (4 Solo, 0 Team), lost 1. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Judgement.
@@ -382,10 +382,16 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Dark Sprite x3, Poison x2, Minor Dark Blow.
+- Won by Garm (Solo) against Zarathax (rank 7, 2,800 health, Balance) on 2026-11-22 at 01:27:59.
+  It took 15 rounds, about 7 minutes.
+  Deck made for a boss (Balance), hitting with Balance, Fire, Death; alone, so single hits only; my own fights say about 58% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (mine and every other bot's).
+  Spells that landed the hits: Satyr x3, Poison x2, Dark Sprite x2, Seraph.
 - Avoid, fights lost:
   - Zarathax: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 17 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Zarathax: lost 1 time(s) (Ultimus). Why: I went in at 69% health, its biggest hit took 54% of my health, the fight ran 12 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Zarathax: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: fight other creatures for XP first, up to the quest's level.
+  - Zarathax: lost 1 time(s) (Garm). Why: its biggest hit took 54% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
   - The Tower Archives near (12300, -7200) while Go to Dragonspyre,The Tower Archives ("Portal Combat"): stuck 50 time(s) (Ultimus); one bot tried every fix there.
   - The Tower Archives near (13000, -11500) while Go to Dragonspyre,The Tower Archives ("Portal Combat"): stuck 32 time(s) (Ultimus); one bot tried every fix there.
@@ -515,7 +521,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health, the fight ran 12 minutes, so I ran out of good cards. Do instead: train the spells my fights call for (a heal or shield of my own) and bring treasure cards made for it.
   - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health, the fight ran 10 minutes, so I ran out of good cards. Do instead: look for better gear in this world's shops and the Bazaar, then try again.
-  - Sea Lord: lost 1 time(s) (Ultimus). Why: its biggest hit took 100% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+  - Sea Lord: lost 2 time(s) (Ra, Ultimus). Why: its biggest hit took 100% of my health, the fight ran 7 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 - Avoid, places bots got stuck:
   - Plaza of Conquests near (-1300, 4500) while stuck: Defeat Sea Lord: no creature for this step is in the area: stuck 8 time(s) (Ultimus); one bot tried every fix there.
   - Plaza of Conquests near (-1300, 4500) while a short break before trying "Defeat Sea Lord" again: stuck 2 time(s) (Ultimus).
@@ -569,6 +575,7 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Trapper Keeper
 - Finished by Ultimus (18 min).
+- Finished by Ra (5 min).
 - Won by Ultimus (Solo) against Sandor Spearcaller (rank 7, 1,600 health, Ice) on 2026-11-21 at 12:22:32.
   It took 17 rounds, about 10 minutes.
   Deck made for a boss (Ice), hitting with Ice, Balance, Death (many of my fights lately had 2+ enemies).
