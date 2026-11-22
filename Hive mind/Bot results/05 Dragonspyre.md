@@ -4,11 +4,12 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Best way to beat each creature
 - Loathsome Creeper: won 102 time(s) (71 Solo, 31 Team), lost 0. Fastest: Ra in 1 rounds, deck for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
-- Petrov Gloomstrider: won 61 time(s) (57 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
+- Petrov Gloomstrider: won 64 time(s) (60 Solo, 4 Team), lost 2. Fastest: Ultimus in 5 rounds, plan "hit now", deck for any fight (many of my fights lately had 2+ enemies), hits with Judgement, Elemental Shield, Gearhead Destroyer, Minor Crusade.
 - Sea Lord: won 1 time(s) (1 Solo, 0 Team), lost 36. Fastest: Ultimus in 9 rounds, plan "stack up", deck for a boss (Storm), hitting with Storm, Fire, Death; alone, so single hits only; a rival that outlasts me, so more hits and blades to end it sooner; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Volcanic Shield, Judgement.
 - Zarathax: won 5 time(s) (5 Solo, 0 Team), lost 3. Fastest: Ra in 4 rounds, plan "hit now", deck for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement, Sandstorm, Minor Crusade.
 - Wandering Wizard: won 8 time(s) (6 Solo, 2 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Life enemies, hitting with Life, Fire, Storm (most of my fights lately had 2+ enemies).
 - Earth Elemental: won 1 time(s) (1 Solo, 0 Team), lost 4. Fastest: Ultimus in 31 rounds, deck for a boss (Life), hitting with Life, Fire, Storm; a rival that outlasts me, so more hits and blades to end it sooner (many of my fights lately had 2+ enemies), hits with Helping Hands, Spirit Shield, Elemental Shield, Fairy.
+- Sysiphan: won 2 time(s) (2 Solo, 0 Team), lost 1. Fastest: Ra in 6 rounds, plan "stack up", deck for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Judgement.
 - Silver Servant: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 6 rounds, deck for Balance enemies, hitting with Balance, Myth, Death (most of my fights lately had 2+ enemies), hits with Balance, Banshee.
 - Mavra Flamewing: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 15 rounds, deck for a boss (Storm), hitting with Storm, Fire, Ice (many of my fights lately had 2+ enemies), hits with Balance, Helping Hands, Sandstorm, Vampire.
 - Clockwork Defender: won 1 time(s) (1 Solo, 0 Team), lost 1. Fastest: Ultimus in 4 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Minor Crusade.
@@ -18,7 +19,6 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 - Ash Spider: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 3 rounds, deck for Life enemies, hitting with Life, Fire, Storm; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Sandstorm.
 - Fire Avenger: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 8 rounds, plan "hit now", deck for Fire enemies, hitting with Fire, Myth; my own fights say about 73% hits in my main deck (most of my fights lately had 2+ enemies), hits with Judgement, Gearhead Destroyer, Locust Swarm.
 - Erratic Servator: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 2 rounds, deck for Storm enemies, hitting with Storm, Fire, Death; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Judgement.
-- Sysiphan: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 23 rounds, deck for a boss (Ice), hitting with Ice, Fire, Death (many of my fights lately had 2+ enemies), hits with Helping Hands, Scarab, Elemental Shield, Fairy.
 - Sandor Spearcaller: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 17 rounds, plan "hit now", deck for a boss (Ice), hitting with Ice, Balance, Death (many of my fights lately had 2+ enemies), hits with Gearhead Destroyer, Balance, Minor Crusade, Locust Swarm.
 - Crystal Crawler: won 1 time(s) (1 Solo, 0 Team), lost 0. Fastest: Ultimus in 12 rounds, plan "hit now", deck for Ice enemies, hitting with Ice, Death, Myth; my own fights say about 73% hits in my main deck (many of my fights lately had 2+ enemies), hits with Minor Crusade, Locust Swarm, Judgement, Glacial Shield.
 
@@ -331,6 +331,21 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Deck made for any fight; my own fights say about 61% hits in my main deck (many of my fights lately had 2+ enemies).
   Plan: "hit now" (mine and every other bot's).
   Spells that landed the hits: Judgement x2, Sandstorm, Minor Crusade.
+- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:15:43.
+  It took 13 rounds, about 7 minutes.
+  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "stack up" (2 enemies, weaker).
+  Spells that landed the hits: Poison x7, Skeletal Pirate x2, Minor Dark Blow, Fairy, Banshee, Satyr.
+- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:20:26.
+  It took 5 rounds, about 3 minutes.
+  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Banshee x2, Poison, Minor Dark Blow.
+- Won by Garm (Solo) against Petrov Gloomstrider (rank 7, 2,000 health, Ice) on 2026-11-21 at 23:26:23.
+  It took 9 rounds, about 5 minutes.
+  Deck made for any fight; my own fights say about 60% hits in my main deck (many of my fights lately had 2+ enemies).
+  Plan: "hit now" (mine and every other bot's).
+  Spells that landed the hits: Poison x2, Dark Sprite x2, Skeletal Pirate, Banshee.
 - Avoid, fights lost:
   - Zarathax: lost 1 time(s) (Ultimus). Why: its biggest hit took 54% of my health, the fight ran 17 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
   - Zarathax: lost 1 time(s) (Ultimus). Why: I went in at 69% health, its biggest hit took 54% of my health, the fight ran 12 minutes, so I ran out of good cards. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
@@ -462,6 +477,21 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
   Spells that landed the hits: Judgement.
 - Avoid, fights lost:
   - Clockwork Defender: lost 1 time(s) (Ultimus). Why: I went in at 38% health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
+
+## Battle On
+- Finished by Ultimus (15 min).
+- Finished by Ra (11 min).
+- Won by Ultimus (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 06:43:59.
+  It took 23 rounds, about 12 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Fire, Death (many of my fights lately had 2+ enemies).
+  Spells that landed the hits: Helping Hands x2, Scarab, Elemental Shield, Fairy, Minor Crusade.
+- Won by Ra (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 23:24:03.
+  It took 6 rounds, about 2 minutes.
+  Deck made for a boss (Ice), hitting with Ice, Fire, Death; alone, so single hits only; my own fights say about 61% hits in my main deck (most of my fights lately had 2+ enemies).
+  Plan: "stack up" (mine and every other bot's).
+  Spells that landed the hits: Gearhead Destroyer, Judgement.
+- Avoid, fights lost:
+  - Sysiphan: lost 1 time(s) (Ra). Why: its biggest hit took 54% of my health. Do instead: full health and mana first, a deck with more shields and heals for it, and its healers hit first.
 
 ## The Towering Crystal
 - Finished by Ultimus (16 min).
@@ -1053,19 +1083,15 @@ What the bots did in Dragonspyre, from the server log: every quest finished, eve
 
 ## Warkeeper
 - Finished by Ultimus (17 s).
+- Finished by Ra (17 s).
 
 ## General Recommendation
 - Finished by Ultimus (20 s).
-
-## Battle On
-- Finished by Ultimus (15 min).
-- Won by Ultimus (Solo) against Sysiphan (rank 7, 2,560 health, Ice) on 2026-11-21 at 06:43:59.
-  It took 23 rounds, about 12 minutes.
-  Deck made for a boss (Ice), hitting with Ice, Fire, Death (many of my fights lately had 2+ enemies).
-  Spells that landed the hits: Helping Hands x2, Scarab, Elemental Shield, Fairy, Minor Crusade.
+- Finished by Ra (20 s).
 
 ## Blood From a Stone
 - Finished by Ultimus (20 s).
+- Finished by Ra (20 s).
 
 ## Recommend This
 - Finished by Ultimus (6 s).
