@@ -1,0 +1,72 @@
+# Publish Hellhound (Niduus, 2026-11-22: "Make the EXE ... this one will just be called Hellhound. Everything bot related
+# goes in this"). Builds src/Hellhound as one native Windows exe (Native AOT, no .NET needed on the PC) and publishes it as
+# release hellhound-v<next number> with Hellhound.exe attached.
+#
+# Run by hand only, after Niduus says "go": Actions > Publish Hellhound > Run workflow (branch quality-assurance).
+# The release is never marked "latest", and its tag doesn't read as a version, so Ahziael's and the launcher's own update
+# checks never take it for an app update. Nothing about it goes in Ahziael's notes.
+name: Publish Hellhound
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'One plain-words line about this Hellhound version (optional)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hellhound-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Only from Niduus/Imlight
+        if: github.repository != 'Niduus/Imlight'
+        shell: pwsh
+        run: |
+          Write-Error "Hellhound is published from Niduus/Imlight only."
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Next number
+        id: number
+        shell: pwsh
+        run: |
+          $numbers = @(git tag --list 'hellhound-v*' | ForEach-Object { ($_ -replace '^hellhound-v', '') -as [int] } | Where-Object { $_ })
+          $next = if ($numbers.Count) { ($numbers | Measure-Object -Maximum).Maximum + 1 } else { 1 }
+          "number=$next" >> $env:GITHUB_OUTPUT
+
+      - name: Build Hellhound.exe
+        shell: pwsh
+        run: |
+          dotnet publish src/Hellhound/Hellhound.csproj -c Release -r win-x64 -o release -p:Version=1.0.${{ steps.number.outputs.number }}
+          if (-not (Test-Path release/Hellhound.exe)) { Write-Error "Hellhound.exe was not built."; exit 1 }
+          Get-ChildItem release | Where-Object { $_.Name -ne 'Hellhound.exe' } | Remove-Item -Recurse -Force
+
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "hellhound-v${{ steps.number.outputs.number }}"
+          $line = "${{ inputs.note }}".Trim()
+          $notes = "Hellhound ${{ steps.number.outputs.number }}: the bots' own app.`n`n" + $(if ($line) { "- $line`n`n" } else { "" }) +
+                   "Download Hellhound.exe and open it on the PC that runs the server. Its page opens in your browser."
+          $notesFile = Join-Path $env:RUNNER_TEMP 'hellhound-notes.md'
+          Set-Content -Path $notesFile -Value $notes -Encoding utf8NoBOM
+          gh release create $tag release/Hellhound.exe --title "Hellhound ${{ steps.number.outputs.number }}" `
+            --notes-file $notesFile --target "${{ github.sha }}" --latest=false
