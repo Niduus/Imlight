@@ -58,7 +58,10 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         var grouped = GroupRegistry.TryGetGroup(me.CharId, out var group);
-        var leader = grouped && group.LeaderCharId == heard.SpeakerCharId && group.LeaderCharId != me.CharId;
+        // When he leads the group himself (a player can make the bot its leader by mistake), anyone in it may give him orders
+        // (his log, 2026-11-20: "Could you please attack the golem?" got "I only take orders from my group leader, True Form").
+        var leader = grouped && ((group.LeaderCharId == heard.SpeakerCharId && group.LeaderCharId != me.CharId)
+                                 || (group.LeaderCharId == me.CharId && group.Members.Any(m => m.CharId == heard.SpeakerCharId)));
 
         // A short line read by what came before: the answer to his question, "again", "Walter too" (UltimusDirector.OrderContext.cs).
         if (leader && OrderInContext(heard, me, text, orders)) {

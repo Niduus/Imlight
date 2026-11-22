@@ -262,6 +262,13 @@ internal sealed partial class UltimusDirectorActor {
                 continue;
             }
 
+            // True Form never quests: the questing bots' answers to an ask ("Okay, I'll get on with my quest.", "My potions are
+            // already full") are not his (his log, 2026-11-20).
+            if (_seat.IsTrueForm && reply.Intent == BotSocial.ORDER) {
+                Note("Ultimus", $"{heard.SpeakerName} {how}: \"{heard.Text}\"; True Form lets it pass (not an ask he knows).");
+                continue;
+            }
+
             Think($"{heard.SpeakerName} {how} \"{UltimusText.Short(heard.Text, 80)}\" ({reply.Intent}). {reply.Why}", "social|" + heard.SpeakerCharId + "|" + heard.Text);
             // A hello from a player near him: a wave back from the emote wheel (UltimusDirector.Emotes.cs).
             if (reply.Intent == BotSocial.GREETING && !heard.Whisper) {

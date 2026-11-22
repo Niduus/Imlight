@@ -579,6 +579,15 @@ internal sealed partial class UltimusDirectorActor {
             return false;
         }
 
+        // Talk about him or the game, not an ask ("I already have cosmically overpowered spells, but I won't spoil the fun",
+        // "Yeah, he's not casting anything", "I wonder, if I leave the group, will the bot follow you?"): no order is read
+        // from it and nothing is changed (his log, 2026-11-20: the first rebuilt his deck, the second made him pass a round,
+        // the third got "Okay, I'll get on with my quest.").
+        if (TrueFormChatter(order)) {
+            Note("Ultimus", $"True Form: {heard.SpeakerName} said \"{UltimusText.Short(heard.Text, 60)}\": talk, not an ask; nothing changed.");
+            return true;
+        }
+
         // Questions about him, grouped or not: his deck, treasure cards, school, what he can do, whether he needs a heal
         // (Niduus, 2026-11-19: "TF interactions need to be looked at and fixed"; "What is in your deck?" got his fishing
         // cantrips, "What all options do you have?" got Ultimus's questing answer, "Do you need healing?" set him to support).
@@ -717,6 +726,13 @@ internal sealed partial class UltimusDirectorActor {
                 return true;
             }
 
+            // Sent home already ("dismissed" said twice): no "I only take orders from my leader".
+            if (order is "leave" or "go back" or "bye" or "goodbye" or "dismissed" or "done" or "leave us"
+                || Starts("go home", "you can go", "leave the group", "leave group", "go away", "you can leave")) {
+                SendReply(heard, "I'm already on my way back to my spot. Call me any time!", "true form");
+                return true;
+            }
+
             if (Has("join me", "join us", "join", "come with me", "group with me", "group up", "help me", "help us", "party with me",
                     "come here", "i need you", "invite me", "team up", "follow me", "come help")) {
                 TrueForm.Call(heard.SpeakerCharId, heard.SpeakerName);
@@ -766,6 +782,13 @@ internal sealed partial class UltimusDirectorActor {
             if (asked.Length > 0 && TrueFormPool.Find(asked, TrueForm.SpellLevel(), TrueForm.DevSpellsNow) is { } spell) {
                 TrueForm.Request(spell.Id);
                 Note("Ultimus", $"True Form: {heard.SpeakerName} asks for {spell.Shown}.");
+                // In a battle it is cast too, as soon as his pips allow, not only kept in his hand (his log, 2026-11-20: "Use
+                // Dragonblade" twice, then "Use Feint", and he went on saving his pips for three rounds).
+                if (me.Wizard is not null && CombatDuelComponent.IsInBattle(me.GlobalId)) {
+                    ApplyOrders(heard, me, [new UltimusOrders.Order(UltimusOrders.Kind.Cast, spell.Shown)], "true form");
+                    return true;
+                }
+
                 SendReply(heard, $"Got it, I'll keep {spell.Shown} in my hand from the next round.", "true form");
                 return true;
             }
@@ -808,6 +831,24 @@ internal sealed partial class UltimusDirectorActor {
         }
 
         return false;
+    }
+
+    // A line that talks about him, the game or the speaker, not an ask of him: it starts with the speaker or someone else as the
+    // one doing something ("I already...", "he's...", "when I DMed it...", "yeah..."). "I need", "I want" and the like are asks.
+    private static bool TrueFormChatter(string order) {
+        var o = order.Trim().ToLowerInvariant();
+        if (System.Text.RegularExpressions.Regex.IsMatch(o, @"^(i|we)\s+(need|want|would like|wanna|'d like|d like)\b|^(i'd|id)\s+like\b")) {
+            return false;
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(o,
+                @"^(i|i'm|im|i've|ive|i'll|ill|i'd|id|we|we're|were|he|he's|hes|she|they|it|it's|its|that|thats|that's|this|yeah|yea|yep|lol|lmao|haha|oh|ooh|nice|cool|wow|trying|when i|if i|maybe)\b")) {
+            return false;
+        }
+
+        // Plainly about the speaker ("I wonder...", "I already..."), or with no ask in it at all.
+        return System.Text.RegularExpressions.Regex.IsMatch(o, @"^i\s+(wonder|think|guess|bet|already|have|had|was|don't|dont|can't|cant|forgot|may|might|just|got|see|saw|like|love|hate)\b")
+               || !System.Text.RegularExpressions.Regex.IsMatch(o, @"\b(go|be|become|switch|change|use|cast|add|remove|only|join|leave|heal|shield|blade|attack|defend|play|focus|get|put|give|make|stop|keep|bring|follow|come)\b");
     }
 
     private readonly System.Collections.Generic.Dictionary<ulong, DateTime> _tfOfferedAt = [];

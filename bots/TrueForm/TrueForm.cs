@@ -321,7 +321,7 @@ internal static class TrueForm {
 
     /// <summary>"Universal Immunity", "uni immunity", "go immune", "immunity setup": 100% resist to every school.</summary>
     internal static bool ImmunityFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
-        @"\b(uni|universal|full|total|all)\s+immun(e|ity)\b|\bimmun(e|ity)\s+(set|setup|set up|build|loadout|gear|mode)\b|\bgo\s+(\w+\s+)?immun(e|ity)\b");
+        @"\b(uni|universal|full|total|all)\s+immun(e|ity)\b|^(go\s+|be\s+|switch to\s+)?(uni|universal)\s+resist(ance|s)?$|\bimmun(e|ity)\s+(set|setup|set up|build|loadout|gear|mode)\b|\bgo\s+(\w+\s+)?immun(e|ity)\b");
 
     /// <summary>"Go defensive", "defensive set(up)", "defensive variant", "go ice defensive": the defensive setup asked for.</summary>
     internal static bool DefensiveFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
@@ -337,7 +337,7 @@ internal static class TrueForm {
 
     /// <summary>"Full glass", "glass cannon", "go all out damage": the full glass setup asked for (damage only).</summary>
     internal static bool FullGlassFrom(string words) => System.Text.RegularExpressions.Regex.IsMatch((words ?? "").ToLowerInvariant(),
-        @"\b(full|max(ed)?|all)\s+glass\b|\bglass\s*cannon\b|\bglass\s+(set|setup|set up|build|loadout|gear)\b|\ball\s+out\s+(damage|dmg)\b|\bfull\s+(damage|dmg)\b");
+        @"\b(full|max(ed)?|all)\s+glass\b|\bglass\s*cannon\b|\bglass\s+(set|setup|set up|build|loadout|gear)\b|\ball\s+out\s+(damage|dmg)\b|\bfull\s+(damage|dmg)\b|\b(all|full|max(ed)?)\s+(pierce|piercing|crit|critical)\b");
 
     /// <summary>The schools for a setup, best first (healing: Life, Death...; tank: Ice, Balance...).</summary>
     internal static MagicSchool[] BestSchoolsFor(Setup kind) => kind switch {
@@ -365,7 +365,7 @@ internal static class TrueForm {
     internal static Setup? BuildFrom(string words) {
         var w = (words ?? "").Trim().ToLowerInvariant();
         bool Is(string pattern) => System.Text.RegularExpressions.Regex.IsMatch(w, pattern);
-        if (FullGlassFrom(w) || Is(@"\b(damage|dmg|glass|offensive|offense|offence|attack)\b")) {
+        if (FullGlassFrom(w) || Is(@"\b(damage|dmg|glass|offensive|offense|offence|attack|pierce|piercing|crit|critical)\b")) {
             return Setup.FullGlass;
         }
 
