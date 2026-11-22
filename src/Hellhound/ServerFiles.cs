@@ -3,33 +3,37 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Ahziael.Bots;
+namespace Hellhound;
 
 /// <summary>
 /// Everything the app knows about the bots, read from the files beside the server, the same files Ahziael's Bots pages read:
 /// Config\Imlight.ini (which bots are on), logs\&lt;bot&gt;\status.json and paused.txt (what each one is doing), bots\state.json
 /// (which bot update runs), and the lock checks the bots write in logs\bots (home-guard.txt, hive-mind-check.txt,
-/// ahziael-signal.txt, killswitch.txt). Read only: nothing here writes a file.
+/// ahziael-signal.txt, killswitch.txt). The few things it changes are in <see cref="Act"/>.
 /// </summary>
 internal sealed class ServerFiles(string serverFolder) {
 
     internal string Folder { get; } = Path.GetFullPath(serverFolder);
 
-    private string Logs => Path.Combine(Folder, "logs");
+    internal string Logs => Path.Combine(Folder, "logs");
+
+    internal string ConfigFile => Path.Combine(Folder, "Config", "Imlight.ini");
 
     /// <summary>The server folder Ahziael installs to on this PC (%LOCALAPPDATA%\ImlightManager\Server).</summary>
     internal static string DefaultFolder
         => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ImlightManager", "Server");
 
     // The bot families and their Imlight.ini sections, in the order Ahziael's side bar shows them.
-    private static readonly (string Name, string Section, string Folder)[] s_bots = [
-        ("Ultimus", "Ultimus", "ultimus"),
-        ("TCO7", "TCO7", "tco7"),
-        ("Kitharas Family", "Kitharas", "kitharas"),
-        ("Zoom", "Zoom", "zoom"),
-        ("True Form", "TrueForm", "trueform"),
-        ("Quest Team", "QuestTeam", "quest-team"),
-        ("Street Bot Players", "BotPlayers", "bot-players"),
+    // On: what the server takes when Imlight.ini has no Enabled line for it (Savitar's isn't written in the file).
+    internal static readonly (string Name, string Section, string Folder, bool On)[] Bots = [
+        ("Ultimus", "Ultimus", "ultimus", false),
+        ("TCO7", "TCO7", "tco7", false),
+        ("Kitharas Family", "Kitharas", "kitharas", false),
+        ("Zoom", "Zoom", "zoom", true),
+        ("Savitar", "Savitar", "savitar", true),
+        ("True Form", "TrueForm", "trueform", true),
+        ("Quest Team", "QuestTeam", "quest-team", false),
+        ("Street Bot Players", "BotPlayers", "bot-players", false),
     ];
 
     // The checks that decide whether the bots may play (written by the bots in logs\bots).
@@ -67,10 +71,10 @@ internal sealed class ServerFiles(string serverFolder) {
             json.WriteString("text", why);
             json.WriteEndObject();
 
-            var ini = Ini.Read(Path.Combine(Folder, "Config", "Imlight.ini"));
+            var ini = Ini.Read(ConfigFile);
             json.WriteStartArray("bots");
-            foreach (var (name, section, folder) in s_bots) {
-                WriteBot(json, ini, name, section, Path.Combine(Logs, folder));
+            foreach (var (name, section, folder, on) in Bots) {
+                WriteBot(json, ini, name, section, on, Path.Combine(Logs, folder), Logs);
             }
 
             json.WriteEndArray();
@@ -82,49 +86,59 @@ internal sealed class ServerFiles(string serverFolder) {
         return Encoding.UTF8.GetString(stream.ToArray());
     }
 
-    private static void WriteBot(Utf8JsonWriter json, Ini ini, string name, string section, string folder) {
+    private static void WriteBot(Utf8JsonWriter json, Ini ini, string name, string section, bool onByDefault, string folder, string logs) {
         json.WriteStartObject();
         json.WriteString("name", name);
-        json.WriteString("on", ini.Get(section, "Enabled") is { } on ? (on.Equals("true", StringComparison.OrdinalIgnoreCase) ? "on" : "off") : "unknown");
+        json.WriteString("section", section);
+        json.WriteString("on", (ini.Get(section, "Enabled") is { Length: > 0 } on ? on.Equals("true", StringComparison.OrdinalIgnoreCase) : onByDefault) ? "on" : "off");
         if (ini.Get(section, "Count") is { Length: > 0 } count) {
             json.WriteString("count", count);
         }
 
         // A family keeps one folder per member (logs\tco7\tulkar); a single bot keeps its files in its own folder.
         json.WriteStartArray("seats");
-        if (Directory.Exists(folder)) {
-            var seats = new List<string> { folder };
-            try {
-                seats.AddRange(Directory.GetDirectories(folder).Order(StringComparer.OrdinalIgnoreCase));
-            }
-            catch (IOException) {
-            }
-            catch (UnauthorizedAccessException) {
-            }
-
-            foreach (var seat in seats) {
-                WriteSeat(json, seat, seat == folder ? name : Path.GetFileName(seat));
-            }
+        foreach (var seat in Seats(folder)) {
+            WriteSeat(json, seat, seat == folder ? name : Path.GetFileName(seat), Path.GetRelativePath(logs, seat).Replace('\\', '/'));
         }
 
         json.WriteEndArray();
         json.WriteEndObject();
     }
 
-    private static void WriteSeat(Utf8JsonWriter json, string folder, string name) {
-        var statusFile = Path.Combine(folder, "status.json");
-        var pauseFile = Path.Combine(folder, "paused.txt");
-        if (!File.Exists(statusFile) && !File.Exists(pauseFile)) {
-            return;
+    /// <summary>A bot's seats: its own folder, then a family member's folders (logs\tco7\tulkar), each with a status or pause file.</summary>
+    internal static List<string> Seats(string folder) {
+        var seats = new List<string>();
+        if (!Directory.Exists(folder)) {
+            return seats;
         }
 
+        var all = new List<string> { folder };
+        try {
+            all.AddRange(Directory.GetDirectories(folder).Order(StringComparer.OrdinalIgnoreCase));
+        }
+        catch (IOException) {
+        }
+        catch (UnauthorizedAccessException) {
+        }
+
+        seats.AddRange(all.Where(seat => File.Exists(Path.Combine(seat, "status.json")) || File.Exists(Path.Combine(seat, "paused.txt"))));
+
+        return seats;
+    }
+
+    private static void WriteSeat(Utf8JsonWriter json, string folder, string name, string id) {
+        var statusFile = Path.Combine(folder, "status.json");
+        var pauseFile = Path.Combine(folder, "paused.txt");
         var status = ReadJson(statusFile);
         json.WriteStartObject();
+        json.WriteString("id", id);
         json.WriteString("name", name);
         json.WriteString("at", Text(status?["at"]));
         json.WriteString("quest", Text(status?["quest"]));
         json.WriteString("doing", Text(status?["doing"]) is { Length: > 0 } doing ? doing : Text(status?["progress"]));
         json.WriteString("paused", FirstLine(pauseFile) ?? "");
+        // Savitar parks once Zoom catches up with him (handoff.txt: when, and at which quest).
+        json.WriteString("note", FirstLine(Path.Combine(folder, "handoff.txt")) is { } handoff ? "handed over to Zoom: " + handoff : "");
 
         json.WriteStartArray("members");
         if (status?["members"] is JsonArray members) {
@@ -153,7 +167,7 @@ internal sealed class ServerFiles(string serverFolder) {
         json.WriteEndObject();
     }
 
-    private bool ServerRunning() {
+    internal bool ServerRunning() {
         var exe = Path.Combine(Folder, OperatingSystem.IsWindows() ? "Imlight.Director.exe" : "Imlight.Director");
         foreach (var process in Process.GetProcessesByName("Imlight.Director")) {
             try {
@@ -251,4 +265,48 @@ internal sealed class Ini {
     }
 
     internal string? Get(string section, string key) => _values.GetValueOrDefault($"{section}\n{key}");
+
+    /// <summary>Sets one key in the file's lines, keeping every other line and comment as it is (as Ahziael's IniFile.Set).</summary>
+    internal static void Set(List<string> lines, string section, string key, string value) {
+        var inSection = false;
+        var sectionEnd = -1;
+        for (var i = 0; i < lines.Count; i++) {
+            var trimmed = lines[i].Trim();
+            if (trimmed.StartsWith('[') && trimmed.EndsWith(']')) {
+                if (inSection) {
+                    break;
+                }
+
+                inSection = trimmed[1..^1].Trim().Equals(section, StringComparison.OrdinalIgnoreCase);
+                if (inSection) {
+                    sectionEnd = i + 1;
+                }
+
+                continue;
+            }
+
+            if (!inSection) {
+                continue;
+            }
+
+            if (trimmed.Length > 0) {
+                sectionEnd = i + 1;
+            }
+
+            var equals = trimmed.IndexOf('=');
+            if (!trimmed.StartsWith(';') && equals > 0 && trimmed[..equals].Trim().Equals(key, StringComparison.OrdinalIgnoreCase)) {
+                lines[i] = $"{key} = {value}";
+                return;
+            }
+        }
+
+        if (sectionEnd < 0) {
+            lines.Add("");
+            lines.Add($"[{section}]");
+            lines.Add($"{key} = {value}");
+        }
+        else {
+            lines.Insert(sectionEnd, $"{key} = {value}");
+        }
+    }
 }

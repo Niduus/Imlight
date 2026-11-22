@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imlight.Launcher", "Imlight
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Imlight.Setup", "Imlight.Setup\Imlight.Setup.csproj", "{F9EB4C65-41E8-4D94-890E-4FD7CF95ACDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ahziael.Bots", "Ahziael.Bots\Ahziael.Bots.csproj", "{950F9655-02C7-4142-AB00-48EA91F978BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hellhound", "Hellhound\Hellhound.csproj", "{950F9655-02C7-4142-AB00-48EA91F978BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

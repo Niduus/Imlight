@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 
-namespace Ahziael.Bots;
+namespace Hellhound;
 
 /// <summary>
 /// The bots' kill switch (Niduus, 2026-11-22: "if its on (= true) then the bots all won't work. Even with the key"; "the
