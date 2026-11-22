@@ -49,15 +49,20 @@ internal static class TrueFormSpells {
 
     private static readonly string[] s_astral = ["Sun", "Moon", "Star", "Shadow"];
 
-    internal static void Give(Wizard wizard, int level, string school, BotStyle style = BotStyle.Backup) {
+    /// <summary>
+    /// Gives his spells, waiting at most <paramref name="waitSeconds"/> for his spell list to be read. False when it was not
+    /// read yet: the caller sets <see cref="TrueForm.SpellsPending"/> and he tries again every 30 seconds once in the world
+    /// (Zoom's fix, PR #1635; before, he gave up for good after 2 minutes and kept an old or empty spellbook).
+    /// </summary>
+    internal static bool Give(Wizard wizard, int level, string school, BotStyle style = BotStyle.Backup, int waitSeconds = 120) {
         try {
-            for (var i = 0; i < 240 && !TrueFormPool.Ready; i++) {
+            for (var i = 0; i < waitSeconds * 2 && !TrueFormPool.Ready; i++) {
                 System.Threading.Thread.Sleep(500);
             }
 
             if (!TrueFormPool.Ready) {
-                Logger.Warning("True Form: his spells were not read in time; his spellbook stays as it is.");
-                return;
+                Logger.Information("True Form: his spell list is still being read; he tries again every 30 seconds.");
+                return false;
             }
 
             var pool = TrueFormPool.At(level, dev: false);
@@ -104,6 +109,7 @@ internal static class TrueFormSpells {
         catch (Exception e) {
             Logger.Warning("True Form: could not give him his spells: {0}", Logger.Args(e.Message));
         }
+        return true;
     }
 
     private static DeckBehavior DeckBehaviorOf(Wizard wizard)

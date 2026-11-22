@@ -161,6 +161,9 @@ internal static class TrueForm {
     /// <summary>Set when his deck should be built again (a deck order), done when he is out of battle.</summary>
     internal static volatile bool DeckRebuild;
 
+    /// <summary>Set when his spells could not be given yet (spell list still being read); retried every 30 s out of battle.</summary>
+    internal static volatile bool SpellsPending;
+
     /// <summary>Set when he was made ready anew: his character card is sent to every player once he is in the world.</summary>
     internal static volatile bool CardPush;
 

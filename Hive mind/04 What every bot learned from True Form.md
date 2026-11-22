@@ -50,3 +50,4 @@ Corrections Niduus made while testing True Form (November 19 and 20, 2026). Each
 - His weave school ("go ice weave fire") gets his school pips. Stat asks ("get more ice accuracy") weigh in every gear, jewel and pet pick.
 - He remembers each commander's last build and offers it again.
 - Other players see his new character card right after he changes.
+- If his spell list is not read yet, he does not give up after 2 minutes. He logs in and tries again every 30 seconds out of battle (same as Zoom).

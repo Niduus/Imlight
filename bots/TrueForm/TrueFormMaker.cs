@@ -149,7 +149,9 @@ internal static class TrueFormMaker {
                     : $"Immune to {(immune.Count == 0 ? "no school yet" : string.Join(", ", immune))}. Still short: {string.Join(", ", shortOf)}. That's the most my gear, sets, jewels, pins, pet talents and mount can reach.";
                 Logger.Information("True Form: Universal Immunity reached: {0}.", Logger.Args(string.Join(", ", final.Select(x => $"{x.Key} {x.Value:0}%"))));
             }
-            TrueFormSpells.Give(wizard, top, school.ToString(), style);
+            // A short wait only: his kept list makes this instant; if it is not read yet he logs in now and gets his
+            // spells from the 30-second retry in the world, instead of everyone waiting 2 minutes for nothing.
+            TrueForm.SpellsPending = !TrueFormSpells.Give(wizard, top, school.ToString(), style, waitSeconds: 15);
             TrueForm.CardPush = true;
         }
         catch (Exception e) {

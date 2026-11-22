@@ -58,11 +58,23 @@ internal sealed partial class UltimusDirectorActor {
         TrueFormBuildPickTick(me);
 
         // A deck order: his deck built again, out of battle.
+        // His spells, when they could not be given yet: tried again every 30 seconds out of battle (Zoom's fix, PR #1635).
+        if (TrueForm.SpellsPending && DateTime.UtcNow >= _tfSpellsTry && me.Wizard is { IsInDuel: false } spellWizard) {
+            _tfSpellsTry = DateTime.UtcNow.AddSeconds(30);
+            if (TrueFormSpells.Give(spellWizard, BotGear.LevelOf(spellWizard), TrueForm.School.ToString(), TrueForm.StyleNow(TrueForm.School), waitSeconds: 0)) {
+                TrueForm.SpellsPending = false;
+                TrueForm.CardPush = true;
+                Imlight.Common.Logger.Information("True Form: got his spells on a later try.");
+            }
+        }
+
         if (TrueForm.DeckRebuild && me.Wizard is { } deckWizard && !deckWizard.IsInDuel) {
             TrueForm.DeckRebuild = false;
-            TrueFormSpells.Give(deckWizard, BotGear.LevelOf(deckWizard), TrueForm.School.ToString(), TrueForm.StyleNow(TrueForm.School));
+            if (!TrueFormSpells.Give(deckWizard, BotGear.LevelOf(deckWizard), TrueForm.School.ToString(), TrueForm.StyleNow(TrueForm.School), waitSeconds: 0)) {
+                TrueForm.SpellsPending = true;
+            }
             // Whoever gave the deck order hears what is in it now, by kind (Niduus, 2026-11-20).
-            if (_tfDeckAsker is { } asker && DateTime.UtcNow - asker.At < TimeSpan.FromMinutes(10)) {
+            else if (_tfDeckAsker is { } asker && DateTime.UtcNow - asker.At < TimeSpan.FromMinutes(10)) {
                 _tfDeckAsker = null;
                 SendReply(asker.Heard, $"My deck now: {TrueFormDeckSummary(deckWizard)}.", "true form");
             }
@@ -859,6 +871,7 @@ internal sealed partial class UltimusDirectorActor {
     // each change his whole card is sent to every player online, as the game does for a wishlist change.
     private DateTime _tfNextStrip;
     private (UltimusVoice.Heard Heard, DateTime At)? _tfDeckAsker;
+    private DateTime _tfSpellsTry = DateTime.MinValue;
 
     // His deck by kind, and the spells named: "18 heals, 6 blades, 4 shields; Deathblade x2".
     private static string TrueFormDeckSummary(Wizard wizard) {
