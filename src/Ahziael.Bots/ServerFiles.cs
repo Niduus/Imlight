@@ -37,7 +37,7 @@ internal sealed class ServerFiles(string serverFolder) {
         ("Stays on this server", "home-guard.txt", "No check written yet."),
         ("Signed Hive Mind", "hive-mind-check.txt", "No check written yet."),
         ("Ahziael signal", "ahziael-signal.txt", "No check written yet."),
-        ("Killswitch (what the bots last read)", "killswitch.txt", "Not written yet (comes with the next bot update)."),
+        ("Kill switch (what the bots last saw)", "killswitch.txt", "Not written yet (comes with the next bot update)."),
     ];
 
     /// <summary>The whole picture as JSON, for the page.</summary>
@@ -61,10 +61,10 @@ internal sealed class ServerFiles(string serverFolder) {
             }
 
             json.WriteEndArray();
-            var (killOn, killText) = Killswitch.Read();
+            var (stop, why) = Killswitch.Read(Folder);
             json.WriteStartObject("killswitch");
-            json.WriteString("state", killOn switch { true => "on", false => "off", _ => "unknown" });
-            json.WriteString("text", killText);
+            json.WriteBoolean("stop", stop);
+            json.WriteString("text", why);
             json.WriteEndObject();
 
             var ini = Ini.Read(Path.Combine(Folder, "Config", "Imlight.ini"));

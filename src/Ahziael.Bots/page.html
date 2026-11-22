@@ -39,10 +39,10 @@
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const row = (name, html) => `<div class="row"><b>${esc(name)}</b><span>${html}</span></div>`;
 function lockClass(text) {
-  if (/on\s*=\s*true/i.test(text)) return "bad";
-  if (/on\s*=\s*false/i.test(text)) return "ok";
-  if (/LOCKED|NOT heard|invalid|missing|ON\b/i.test(text)) return "bad";
-  if (/OK|heard|valid|OFF\b|home/i.test(text)) return "ok";
+  if (/bots OFF/.test(text)) return "bad";
+  if (/may play/.test(text)) return "ok";
+  if (/LOCKED|NOT heard|NOT VALID|invalid|missing/i.test(text)) return "bad";
+  if (/OK|heard|home/i.test(text)) return "ok";
   return "warn";
 }
 async function refresh() {
@@ -55,8 +55,8 @@ async function refresh() {
     ` · read ${esc(s.readAt)}`;
   const k = s.killswitch;
   document.getElementById("locks").innerHTML =
-    row("Killswitch (on GitHub now)", `<span class="${k.state === "on" ? "bad" : k.state === "off" ? "ok" : "warn"}">${
-      k.state === "on" ? "ON: every bot is stopped" : k.state === "off" ? "off" : "could not read"} <span class="dim">${esc(k.text)}</span></span>`) +
+    row("Kill switch (signed file now)", `<span class="${k.stop ? "bad" : "ok"}">${
+      k.stop ? "Bots OFF" : "Bots may play"}</span> <span class="dim">${esc(k.text)}</span>`) +
     s.locks.map(l =>
     row(l.name, `<span class="${l.written ? lockClass(l.text) : "dim"}">${esc(l.text)}</span>`)).join("");
   document.getElementById("bots").innerHTML = s.bots.map(b => {
