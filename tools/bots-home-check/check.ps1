@@ -14,7 +14,7 @@
 #   - a network line that leaves this PC: ConnectAsync / TcpClient.Connect to anything but 127.0.0.1, a TcpListener not
 #     on IPAddress.Loopback, raw sockets, UDP, web sockets, DNS look-ups;
 #   - a web client (HttpClient, WebRequest) outside Ultimus's chat AI, which only talks to this PC or the home network
-#     (UltimusLocalAI.Local), and the kill switch, which only reads bots-killswitch.txt from Niduus/Imlight (BotKillSwitch);
+#     (UltimusLocalAI.Local);
 #   - BotHomeGuard taken out of the bots' start (BotsSide) or out of the bots' way into the game (QuestTeamHost.OpenSession).
 
 param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..' '..')).Path)
@@ -25,7 +25,7 @@ $problems = New-Object System.Collections.Generic.List[string]
 # The guard itself names the official addresses so it can refuse them.
 $guardFile = 'BotShared/BotHomeGuard.cs'
 # The only file that may hold a web client: Ultimus's chat AI (this PC or the home network only).
-$webAllowed = @('Ultimus/UltimusLocalAI.cs', 'BotShared/BotKillSwitch.cs')
+$webAllowed = @('Ultimus/UltimusLocalAI.cs')
 
 $rules = @(
     @{ Name = "names the official game's address"; Pattern = '(?i)wizard101\.com|kingsisle\.com|gameforge\.com'; Skip = @($guardFile) },

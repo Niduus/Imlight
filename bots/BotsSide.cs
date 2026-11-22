@@ -51,7 +51,8 @@ internal sealed class BotsSide : BotSide {
             return;
         }
 
-        // The kill switch (bots-killswitch.txt in Niduus/Imlight) beats everything: on means no bot plays.
+        // The kill switch (killswitch.txt in Niduus/ahziael-bots, signed into the Hive Mind file) beats everything: on, or not
+        // readable from a fresh signed file, means no bot plays.
         if (!BotShared.BotKillSwitch.AllowsPlay()) {
             return;
         }

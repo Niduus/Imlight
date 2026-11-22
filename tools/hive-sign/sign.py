@@ -5,7 +5,10 @@ Builds hive-mind.ahzhive from a folder laid out like the server's logs folder (b
 files below go in. The file is a zip with:
   manifest.json  what it is, who made it, when, and the SHA-256 of every brain file
   signature.bin  an ECDSA P-256 / SHA-256 signature (DER) over the exact bytes of manifest.json
-  brain/<path>   the brain files themselves
+  brain/<path>   the brain files themselves, and brain/killswitch.txt
+The bots' kill switch (Niduus: "the killswitch goes to the bots repo") is killswitch.txt at the top of the source folder
+(at the top of Niduus/ahziael-bots with --repo). It is required: the bots only play when the signed file holds it and it
+says "on = false" (bots/BotShared/BotKillSwitch.cs).
 The bots check it with the public key built into them (bots/BotShared/BotHive.cs). The private key is Niduus's and is never
 put in any repository: it lives in the project's private files (.keys/hive-signing-key.pem).
 
@@ -41,6 +44,9 @@ BRAIN = [
 ]
 
 
+KILLSWITCH = "killswitch.txt"
+
+
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -74,6 +80,16 @@ def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
         print(f"No brain files found under {source}.", file=sys.stderr)
         return 1
 
+    switch = os.path.join(source, KILLSWITCH)
+    if not os.path.isfile(switch):
+        print(f"No {KILLSWITCH} at the top of {source}: the bots would not play. Add it (on = false) and sign again.",
+              file=sys.stderr)
+        return 1
+    with open(switch, "rb") as f:
+        data = f.read()
+    blobs[KILLSWITCH] = data
+    files.append({"path": KILLSWITCH, "size": len(data), "sha256": sha256(data)})
+
     manifest = json.dumps({
         "format": FORMAT,
         "purpose": PURPOSE,
@@ -90,8 +106,20 @@ def build(source: str, key_path: str, out: str, repo: bool = False) -> int:
         for rel, data in blobs.items():
             z.writestr("brain/" + rel, data)
     os.replace(tmp, out)
-    print(f"Signed {len(files)} brain file(s) into {out}.")
+    print(f"Signed {len(files) - 1} brain file(s) and the kill switch into {out}.")
     return 0
+
+
+def switch_on(text: str) -> bool:
+    """Same rule as BotKillSwitch.Parse: the first "...on = x" line that is not a # comment."""
+    for raw in text.split("\n"):
+        line = raw.strip()
+        if line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        if key.strip().lower().endswith("on"):
+            return value.strip().lower() == "true"
+    return False
 
 
 def verify(pack: str, public_path: str) -> int:
@@ -113,7 +141,9 @@ def verify(pack: str, public_path: str) -> int:
             if sha256(z.read("brain/" + entry["path"])) != entry["sha256"]:
                 print(f"NOT VALID: {entry['path']} was changed after signing.")
                 return 1
-    print(f"Valid: signed by {info['by']} at {info['made']}, {len(info['files'])} brain file(s).")
+        switch = "missing" if not any(e["path"] == KILLSWITCH for e in info["files"]) else (
+            "ON" if switch_on(z.read("brain/" + KILLSWITCH).decode("utf-8", "replace")) else "off")
+    print(f"Valid: signed by {info['by']} at {info['made']}, {len(info['files'])} file(s), kill switch {switch}.")
     return 0
 
 

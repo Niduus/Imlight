@@ -1,5 +1,0 @@
-# The bots' kill switch (Niduus, 2026-11-22).
-# on = true : every bot on every server stops and none starts, even with the signed Hive Mind file and Ahziael's signal.
-# on = false: the bots may play. After turning it back to false, they come back at the next bot update or server start.
-# Servers read this file at start and every 5 minutes.
-on = false
