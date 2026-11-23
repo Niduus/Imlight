@@ -942,15 +942,25 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         }
 
         var changed = false;
-        var exits = results.Select(r => {
+        var exits = results.SelectMany(r => {
             if (r is not ResTeleport teleport
-                || !Zone.Extras.TryGetExit(trigger.m_triggerName, teleport.m_destinationZone, out var zone, out var loc)) {
-                return r;
+                || !Zone.Extras.TryGetExit(trigger.m_triggerName, teleport.m_destinationZone, out var zone, out var loc,
+                                           out var quest)) {
+                return new[] { r };
             }
 
             changed = true;
+            var exit = teleport with { m_destinationZone = zone, m_destinationLoc = loc };
+            if (string.IsNullOrEmpty(quest)) {
+                return new Result[] { exit };
+            }
 
-            return teleport with { m_destinationZone = zone, m_destinationLoc = loc };
+            // One doorway, two trips: the exit while the player has the quest, the game's own teleport otherwise
+            // (Dragonspyre Academy: the Fire School for Forged in Fire, else the dragon flight to Dragon's Roost).
+            return new Result[] {
+                exit with { m_requirements = OnQuest(quest, not: false) },
+                teleport with { m_requirements = OnQuest(quest, not: true) },
+            };
         }).ToList();
 
         if (changed) {
@@ -959,5 +969,11 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
                 Logger.Args(Zone.ZonePath, trigger.m_triggerName));
         }
     }
+
+    private static RequirementList OnQuest(string quest, bool not)
+        => new() {
+            m_applyNOT = false, m_operator = Operator.ROP_AND,
+            m_requirements = [new ReqHasQuest { m_questName = quest, m_applyNOT = not, m_operator = Operator.ROP_AND }],
+        };
 
 }
