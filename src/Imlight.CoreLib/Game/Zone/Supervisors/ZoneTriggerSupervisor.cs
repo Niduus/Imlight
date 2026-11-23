@@ -930,6 +930,22 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             UseZoneObjectsExit(trigger);
         }
 
+        // A trip the live server starts on a zone event that no trigger in the zone files answers (ZoneObjects
+        // EventTeleports): the Young Battledrake's DS_BattleDrakeUse flies the wizard from the Dragonspyre Academy.
+        foreach (var trip in Zone.Extras.EventTeleports) {
+            var teleport = new ResTeleport { m_destinationZone = trip.Zone, m_destinationLoc = trip.Loc ?? "" };
+            if (!string.IsNullOrEmpty(trip.WhileOnQuest)) {
+                teleport = teleport with { m_requirements = OnQuest(trip.WhileOnQuest, trip.WhileOnGoal, not: false) };
+            }
+
+            triggers.Add(new Trigger {
+                m_triggerName = $"ZoneObjects {trip.Event} teleport",
+                m_fireEvents = [trip.Event],
+                m_results = new ResultList { m_results = [teleport] },
+            });
+            Logger.Information("Zone {0}: event {1} now teleports to {2}.", Logger.Args(Zone.ZonePath, trip.Event, trip.Zone));
+        }
+
         return triggers;
     }
 

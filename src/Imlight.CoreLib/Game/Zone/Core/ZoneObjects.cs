@@ -38,6 +38,9 @@
  *               Triggers names the teleports it changes (trigger or door names); empty for every one that leaves
  *               the zone. Doors are object template ids that become press-X doors to the exit in this copy, for an
  *               object the server has no teleport for (such as the warp portal a trigger puts up after a boss).
+ *   EventTeleports  zone events that send the wizard who posted them somewhere: Event (the event name, such as an
+ *               object's quest event), Zone and Loc. For a trip the live server starts with no trigger in the zone
+ *               files (the Young Battledrake's DS_BattleDrakeUse in the Dragonspyre Academy: the dragon flight).
  *               WhileOnQuest (a quest code) and WhileOnGoal (one of its steps) make the named triggers go to the
  *               exit only while the player is on that step; otherwise they keep the game's own teleport (one doorway
  *               used for two trips). Without WhileOnGoal the quest counts once taken, even after it is done.
@@ -121,7 +124,33 @@ internal static class ZoneObjects {
         public List<ZoneEncounter> Encounters { get; set; } = [];
         public Dictionary<string, int> ReplaceSpawns { get; set; } = [];
         public ZoneExit Exit { get; set; }
+        public List<ZoneEventTeleport> EventTeleports { get; set; }
     }
+
+    internal sealed class ZoneEventTeleport {
+        public string Event { get; set; }
+        public string Zone { get; set; }
+        public string Loc { get; set; }
+        public string WhileOnQuest { get; set; }
+        public string WhileOnGoal { get; set; }
+    }
+
+    /// <summary>
+    /// For the way finders, which read the zone files and not a loaded copy: where a trigger of the zone's plain copy
+    /// really goes when a file gives it an exit (null when none does), and the zone events the files make trips of.
+    /// </summary>
+    internal static string ExitZoneFor(string zonePath, string triggerName) {
+        var exit = FilesFor(zonePath, "").Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
+
+        return exit?.Triggers is { Count: > 0 } named && named.Contains(triggerName ?? "", StringComparer.OrdinalIgnoreCase)
+               && string.IsNullOrEmpty(exit.WhileOnQuest)
+            ? exit.Zone
+            : null;
+    }
+
+    internal static List<ZoneEventTeleport> EventTeleportsFor(string zonePath)
+        => [.. FilesFor(zonePath, "").SelectMany(f => f.EventTeleports ?? [])
+            .Where(t => !string.IsNullOrEmpty(t?.Event) && !string.IsNullOrEmpty(t.Zone))];
 
     internal sealed class ZoneObject {
         public string Name { get; set; } = "";
@@ -186,6 +215,11 @@ internal static class ZoneObjects {
         internal static readonly Applied None = new("", "");
 
         private List<ZoneObjectFile> Files => zonePath.Length == 0 ? [] : FilesFor(zonePath, variant);
+
+        /// <summary>The zone events that teleport the wizard who posted them (EventTeleports).</summary>
+        internal List<ZoneEventTeleport> EventTeleports
+            => [.. Files.SelectMany(f => f.EventTeleports ?? [])
+                .Where(t => !string.IsNullOrEmpty(t?.Event) && !string.IsNullOrEmpty(t.Zone))];
 
         /// <summary>
         /// The custom (Customs.cs) this copy of the zone spawns instead of a creature template, or 0: the Customs tab's

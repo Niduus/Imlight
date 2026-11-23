@@ -1,0 +1,4 @@
+Fixed: The dragon flight to Dragon's Roost now starts at the Young Battledrake
+The last two updates put the flight to Dragon's Roost on the doorway beside Ashley, but that doorway is only the way into the Fire School, and it now always takes you there again. The flight starts when you use the Young Battledrake on the Academy's top floor in The Final Countdown, and it lands you in Dragon's Roost, where The Great Spyre is. If you already used the drake but are still on the way to The Great Spyre, walking up to the drake flies you again.
+Where: Dragonspyre Academy, the Young Battledrake on the top floor, and the Fire School doorway beside Ashley.
+Test: on The Final Countdown, use the Young Battledrake and check that the dragon flies you to Dragon's Roost; then walk into the doorway beside Ashley and check that it takes you into the Fire School.

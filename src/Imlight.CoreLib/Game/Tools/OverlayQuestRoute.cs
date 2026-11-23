@@ -17,6 +17,7 @@
  */
 
 using System;
+using Imlight.CoreLib.Game.Zone.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -710,7 +711,9 @@ internal static class OverlayQuestRoute {
             var recorded = ZoneDataCollection.GetZoneData(zonePath)?.Teleports ?? [];
             foreach (var trigger in triggers) {
                 string name = trigger.m_triggerName;
-                string to = recorded.FirstOrDefault(t => t?.TriggerName == name)?.Teleport?.m_destinationZone;
+                // A spiraldb-extra/ZoneObjects exit wins over the capture (the Dragonspyre Academy's Fire School doorway).
+                string to = ZoneObjects.ExitZoneFor(zonePath, name)
+                            ?? recorded.FirstOrDefault(t => t?.TriggerName == name)?.Teleport?.m_destinationZone;
                 if (string.IsNullOrWhiteSpace(to)) {
                     to = trigger.m_results?.m_results?.OfType<ResTeleport>().Select(r => (string) r.m_destinationZone).FirstOrDefault(z => !string.IsNullOrWhiteSpace(z));
                 }
@@ -725,6 +728,15 @@ internal static class OverlayQuestRoute {
                         var reach = volume.m_radius > 0 ? volume.m_radius : MathF.Max(volume.m_length, volume.m_width) / 2;
                         exits.Add(OnItsFloor(zonePath, new Exit(volume.m_locationX, volume.m_locationY, to.Trim(), reach, volume.m_locationZ)));
                     }
+                }
+            }
+
+            // A walk-in trip the ZoneObjects files add (EventTeleports on a volume's enter event).
+            foreach (var trip in ZoneObjects.EventTeleportsFor(zonePath)) {
+                foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == trip.Event) == true
+                                                          || "Enter_" + (string) v.m_volumeName == trip.Event)) {
+                    var reach = volume.m_radius > 0 ? volume.m_radius : MathF.Max(volume.m_length, volume.m_width) / 2;
+                    exits.Add(OnItsFloor(zonePath, new Exit(volume.m_locationX, volume.m_locationY, trip.Zone.Trim(), reach, volume.m_locationZ)));
                 }
             }
         }
