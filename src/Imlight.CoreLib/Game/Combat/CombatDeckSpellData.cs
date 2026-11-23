@@ -32,5 +32,7 @@ internal class CombatDeckSpellData {
     public bool IsBattleCard { get; set; }
     public bool IsItemCard { get; set; }
     public bool IsTreasureCard { get; set; }
+    /// <summary>A Blood Moon card (Game/Spells/CustomCards.cs) shown as <see cref="TemplateId"/>, or 0.</summary>
+    public int CustomCard { get; set; }
 
 }
