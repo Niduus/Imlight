@@ -1,6 +1,6 @@
 {
   "Zone": "DragonSpire/DS_A3_Kings/DS_A3Hub_Academy",
-  "Notes": "The Fire School doorway (Forged in Fire, DS-ACAD-C01-003: Go to the Fire School, DS_School_Fire, and use the forge). The school's own doorway is the volume 'Teleport location 1' (at -3598, 3081, beside the FromFireSchool landing at -3386, 3077); SpiralDB's capture of the live game has that volume as the dragon flight to Dragon's Roost, and Niduus walked into it on 2026-11-22 18:38 CT and was flown away instead of going into the school. The Exit below sends that doorway into the Fire School's Start, and the school's own exit brings you back out here. An extra press-X door (DS_Door_Regular_01, template 126830) stood at -3430, 3078 from 2026-11-22 17:28 CT; it stood loose in the room (Niduus 2026-11-22 22:24 CT: 'weird walls'), and the doorway does the job by itself, so it was taken out. The doorway is also the game's only dragon flight to Dragon's Roost (SpiralDB: Teleport location 1 goes to DS_A3_FlightPath, whose ride lands in Dragon's Roost, the way into The Great Spyre for The Final Countdown). Sending it into the Fire School for everyone left The Great Spyre out of reach (Ultimus, 2026-11-23 00:27 CT: no way from the Academy to The Great Spyre), so WhileOnQuest keeps the school for wizards on Forged in Fire (DS-ACAD-C01-003) and the flight for everyone else.",
+  "Notes": "The Fire School doorway (Forged in Fire, DS-ACAD-C01-003: Go to the Fire School, DS_School_Fire, and use the forge). The school's own doorway is the volume 'Teleport location 1' (at -3598, 3081, beside the FromFireSchool landing at -3386, 3077); SpiralDB's capture of the live game has that volume as the dragon flight to Dragon's Roost, and Niduus walked into it on 2026-11-22 18:38 CT and was flown away instead of going into the school. The Exit below sends that doorway into the Fire School's Start, and the school's own exit brings you back out here. An extra press-X door (DS_Door_Regular_01, template 126830) stood at -3430, 3078 from 2026-11-22 17:28 CT; it stood loose in the room (Niduus 2026-11-22 22:24 CT: 'weird walls'), and the doorway does the job by itself, so it was taken out. The doorway is also the game's only dragon flight to Dragon's Roost (SpiralDB: Teleport location 1 goes to DS_A3_FlightPath, whose ride lands in Dragon's Roost, the way into The Great Spyre for The Final Countdown). Sending it into the Fire School for everyone left The Great Spyre out of reach (Ultimus, 2026-11-23 00:27 CT: no way from the Academy to The Great Spyre), so WhileOnQuest/WhileOnGoal keep the school for wizards on Forged in Fire's forge step (DS-ACAD-C01-003, Goal) and the flight for everyone else (with the quest alone, a wizard who had finished Forged in Fire was still sent into the school).",
   "Objects": [],
   "Exit": {
     "Zone": "DragonSpire/DS_A3_Kings/Interiors/DS_School_Fire",
@@ -8,6 +8,7 @@
     "Triggers": [
       "Teleport location 1"
     ],
-    "WhileOnQuest": "DS-ACAD-C01-003"
+    "WhileOnQuest": "DS-ACAD-C01-003",
+    "WhileOnGoal": "Goal"
   }
 }

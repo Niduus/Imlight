@@ -945,7 +945,7 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         var exits = results.SelectMany(r => {
             if (r is not ResTeleport teleport
                 || !Zone.Extras.TryGetExit(trigger.m_triggerName, teleport.m_destinationZone, out var zone, out var loc,
-                                           out var quest)) {
+                                           out var quest, out var goal)) {
                 return new[] { r };
             }
 
@@ -958,8 +958,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             // One doorway, two trips: the exit while the player has the quest, the game's own teleport otherwise
             // (Dragonspyre Academy: the Fire School for Forged in Fire, else the dragon flight to Dragon's Roost).
             return new Result[] {
-                exit with { m_requirements = OnQuest(quest, not: false) },
-                teleport with { m_requirements = OnQuest(quest, not: true) },
+                exit with { m_requirements = OnQuest(quest, goal, not: false) },
+                teleport with { m_requirements = OnQuest(quest, goal, not: true) },
             };
         }).ToList();
 
@@ -970,10 +970,19 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         }
     }
 
-    private static RequirementList OnQuest(string quest, bool not)
+    // On the step (ReqHasGoal, still to do), or with no step named the quest taken at all (ReqHasQuest counts a done
+    // quest too, so the Academy names its step: Ultimus, done with Forged in Fire, was still sent into the school).
+    private static RequirementList OnQuest(string quest, string goal, bool not)
         => new() {
             m_applyNOT = false, m_operator = Operator.ROP_AND,
-            m_requirements = [new ReqHasQuest { m_questName = quest, m_applyNOT = not, m_operator = Operator.ROP_AND }],
+            m_requirements = [
+                string.IsNullOrEmpty(goal)
+                    ? new ReqHasQuest { m_questName = quest, m_applyNOT = not, m_operator = Operator.ROP_AND }
+                    : new ReqHasGoal {
+                        m_questName = quest, m_goalName = goal, m_requiredStatus = GoalStatusRequirement.Incomplete,
+                        m_applyNOT = not, m_operator = Operator.ROP_AND,
+                    },
+            ],
         };
 
 }

@@ -38,8 +38,9 @@
  *               Triggers names the teleports it changes (trigger or door names); empty for every one that leaves
  *               the zone. Doors are object template ids that become press-X doors to the exit in this copy, for an
  *               object the server has no teleport for (such as the warp portal a trigger puts up after a boss).
- *               WhileOnQuest (a quest code) makes the named triggers go to the exit only while the player has that
- *               quest; without it they keep the game's own teleport (one doorway used for two trips).
+ *               WhileOnQuest (a quest code) and WhileOnGoal (one of its steps) make the named triggers go to the
+ *               exit only while the player is on that step; otherwise they keep the game's own teleport (one doorway
+ *               used for two trips). Without WhileOnGoal the quest counts once taken, even after it is done.
  *
  * Object and creature fields:
  *   Name        the object's zone tag. It must be unique in the file: the object's global id comes from the zone, the
@@ -173,6 +174,7 @@ internal static class ZoneObjects {
         public List<string> Triggers { get; set; } = [];
         public List<ulong> Doors { get; set; } = [];
         public string WhileOnQuest { get; set; }
+        public string WhileOnGoal { get; set; }
     }
 
     /// <summary>
@@ -232,15 +234,15 @@ internal static class ZoneObjects {
         /// and the destination it has now.
         /// </summary>
         internal bool TryGetExit(string teleportName, string destinationZone, out string zone, out string loc)
-            => TryGetExit(teleportName, destinationZone, out zone, out loc, out var quest) && string.IsNullOrEmpty(quest);
+            => TryGetExit(teleportName, destinationZone, out zone, out loc, out var quest, out _) && string.IsNullOrEmpty(quest);
 
         /// <summary>
-        /// The same, with the quest the exit is for (WhileOnQuest): when it is not empty the teleport goes to the
-        /// exit only while the player has that quest, and keeps its own destination otherwise.
+        /// The same, with the quest step the exit is for (WhileOnQuest, WhileOnGoal): when the quest is not empty the
+        /// teleport goes to the exit only while the player is on it, and keeps its own destination otherwise.
         /// </summary>
         internal bool TryGetExit(string teleportName, string destinationZone, out string zone, out string loc,
-                                 out string whileOnQuest) {
-            zone = loc = whileOnQuest = null;
+                                 out string whileOnQuest, out string whileOnGoal) {
+            zone = loc = whileOnQuest = whileOnGoal = null;
             var exit = Files.Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
             if (exit is null) {
                 return false;
@@ -256,6 +258,7 @@ internal static class ZoneObjects {
             zone = exit.Zone;
             loc = exit.Loc ?? "";
             whileOnQuest = exit.WhileOnQuest ?? "";
+            whileOnGoal = exit.WhileOnGoal ?? "";
 
             return true;
         }
