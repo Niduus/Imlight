@@ -63,6 +63,18 @@ internal sealed partial class ManagerWindow {
     private readonly Avalonia.Threading.DispatcherTimer _kinTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private bool _showingKin;
 
+    /// <summary>
+    /// The family's pages where they show: none in Ahziael (Niduus, 2026-11-23: "[Ahziael] remove QT and Family"), the
+    /// family's page and each member's page in the bots' own app.
+    /// </summary>
+    private IEnumerable<TabItem> FamilyTabs() {
+#if HELLHOUND
+        return KitharasTabs();
+#else
+        return [];
+#endif
+    }
+
     /// <summary>The family's page, then a page for each member (the same as a TCO7 member's).</summary>
     private IEnumerable<TabItem> KitharasTabs() {
         yield return Tab(KITHARAS_TAB, KitharasTab);

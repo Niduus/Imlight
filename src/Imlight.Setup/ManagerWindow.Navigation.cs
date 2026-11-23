@@ -91,8 +91,8 @@ internal sealed partial class ManagerWindow {
         // and the street Bot Players on one page of the side bar, each a part of its own there (s_groupParts).
         // Before: Niduus, 2026-11-12 (Quest Team, ManagerWindow.QuestTeam.cs; Ultimus, ManagerWindow.Ultimus.cs) and
         // 2026-11-16 (TCO7, ManagerWindow.Tco7.cs) had a page each.
-        (BOTS, "users", "Ultimus, TCO7, Quest Team, street bots",
-            "Every wizard the server plays by itself: Ultimus the Solo Quester, the seven of the TCO7, the four of the Quest Team, " +
+        (BOTS, "users", "Ultimus, TCO7, street bots",
+            "Every wizard the server plays by itself: Ultimus the Solo Quester, the seven of the TCO7, " +
             "and the Bot Players who fill the streets.",
             [.. BotParts.SelectMany(p => p.Tabs)]),
         // Niduus, 2026-11-19: "Create a new tab in Ahziael called "Hive mind" ... tells the user how the bots complete each
@@ -120,8 +120,11 @@ internal sealed partial class ManagerWindow {
         ("Ultimus", "user", [ULTIMUS_TAB, ULTIMUS_ISSUES_TAB, ULTIMUS_LOGS_TAB, ULTIMUS_AI_TAB]),
         ("TCO7", "users", Tco7TabNames),
         // Niduus, 2026-11-20: "a Sub Menu in Ahziael for them to do what I already do with Ahziael, True Form and TCO7".
+        // Niduus, 2026-11-23: "[Ahziael] remove QT and Family": the Kitharas Family and the Quest Team are out of Ahziael.
+#if HELLHOUND
         ("Kitharas Family", "users", KitharasTabNames),
         ("Quest Team", "users", [QUEST_TEAM_TAB, QUEST_TEAM_WIZARDS_TAB, QUEST_TEAM_ISSUES_TAB, QUEST_TEAM_LOGS_TAB]),
+#endif
         ("True Form", "user", [TRUE_FORM_TAB]),
         // Niduus, 2026-11-22: "Panel in the EXE, same as the other contenders in the exact same way" (ManagerWindow.Zoom.cs).
         ("Zoom", "user", ZoomTabNames),

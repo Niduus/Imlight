@@ -38,7 +38,11 @@ internal sealed partial class ManagerWindow {
 
     private Control UltimusAiTab() => Page(SpaceNotice("", "Notice: the local AI app (Ollama or LM Studio) and its model take up extra space on this computer (a few GB per model) " +
         "and use a lot of extra memory (RAM, or the graphics card's memory) and processor while they run. Ultimus also keeps his " +
-        "own logs and notes, which grow while he plays. Close the AI app when you don't need it."), UltimusAiFold(), UltimusAiSafetyFold(), QuestTeamAiChatFold(), UltimusAiLearnedFold());
+        "own logs and notes, which grow while he plays. Close the AI app when you don't need it."), UltimusAiFold(), UltimusAiSafetyFold(),
+#if HELLHOUND
+        QuestTeamAiChatFold(),
+#endif
+        UltimusAiLearnedFold());
 
     private Control UltimusAiFold() {
         _ultAi.IsCheckedChanged += (_, _) => {

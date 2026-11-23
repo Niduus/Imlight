@@ -447,10 +447,12 @@ internal sealed partial class ManagerWindow : Window {
             Tab("Remote", RemoteTab),
             Tab("Account Transfer", AccountTransferTab),
 #endif
+#if HELLHOUND
             Tab(QUEST_TEAM_TAB, QuestTeamTab),
             Tab(QUEST_TEAM_ISSUES_TAB, QuestTeamIssuesTab),
             Tab(QUEST_TEAM_LOGS_TAB, QuestTeamLogsTab),
             Tab(QUEST_TEAM_WIZARDS_TAB, QuestTeamWizardsTab),
+#endif
             // Ultimus's pages are kept where a TCO7 member's page can show them too (ManagerWindow.Tco7.cs).
             Tab(ULTIMUS_TAB, () => UltimusPart(0, UltimusTab)),
             Tab(ULTIMUS_ISSUES_TAB, () => UltimusPart(1, UltimusIssuesTab)),
@@ -460,7 +462,7 @@ internal sealed partial class ManagerWindow : Window {
             Tab(STREET_BOTS_TAB, StreetBotsTab),
             Tab(TRUE_FORM_TAB, TrueFormTab),
             Tab(HIVE_MIND_TAB, HiveMindTab),
-        }.Concat(Tco7Tabs()).Concat(KitharasTabs()).Concat(ZoomTabs()).ToDictionary(t => (string) t.Tag!);
+        }.Concat(Tco7Tabs()).Concat(FamilyTabs()).Concat(ZoomTabs()).ToDictionary(t => (string) t.Tag!);
         // The side bar's pages, with these tabs inside them (ManagerWindow.Navigation.cs).
         var nav = Navigation(tabs);
         AddHandler(KeyDownEvent, OnShortcutKey, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -500,8 +502,10 @@ internal sealed partial class ManagerWindow : Window {
                     Children = {
                         WithDock(header, Dock.Top),
                         WithDock(RemoteBanner() ?? new Panel(), Dock.Top),
+#if HELLHOUND
                         // "If a issue occures, it will announce it in Ahziael" (Niduus, 2026-11-12): the Quest Team's banner.
                         WithDock(QuestTeamBanner(), Dock.Top),
+#endif
                         WithDock(UltimusBanner(), Dock.Top),
                         WithDock(_messageBar, Dock.Bottom),
                         WithDock(_saveBar, Dock.Bottom),
@@ -1098,7 +1102,7 @@ internal sealed partial class ManagerWindow : Window {
             ? "Update restarts no longer wait for the server's bots: only for people playing and their battles."
             : "Update restarts wait again for the server's bots to leave dungeons (up to 2 hours) and finish their battles.");
 
-        var row = SwitchRow("Ignore bots for restarts", toggle, "On: an update restart waits only for people, not for Ultimus, the TCO7, the Kitharas Family or other server bots in a dungeon or a battle. The bots log back in by themselves after the restart.");
+        var row = SwitchRow("Ignore bots for restarts", toggle, "On: an update restart waits only for people, not for Ultimus, the TCO7 or other server bots in a dungeon or a battle. The bots log back in by themselves after the restart.");
         ToolTip.SetTip(row, "Off: a \"when nobody is playing\" restart also waits (up to 2 hours) for a bot to come out of a dungeon, " +
             "and a countdown restart waits for bots' battles to end too.");
 
