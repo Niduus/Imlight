@@ -324,6 +324,25 @@ public static class BotLoader {
         }
     }
 
+    // The battles that hold one of Ultimus's or the teams' wizards and a player who is not one of them.
+    private static System.Collections.Generic.HashSet<Zone.Components.CombatDuelComponent> BattlesWithPlayers() {
+        var side = BotDoor.Side;
+        if (side is null) {
+            return [];
+        }
+
+        try {
+            var held = Zone.Components.CombatDuelComponent.s_playerBattles
+                .Where(p => p.Key > 2 && p.Value.Battle is not null && p.Value.Battle.HoldsPlayer(p.Key)).ToList();
+            var withBots = held.Where(p => side.IsRosterWizard(p.Key - 2)).Select(p => p.Value.Battle).ToHashSet();
+
+            return held.Where(p => !side.IsRosterWizard(p.Key - 2) && withBots.Contains(p.Value.Battle)).Select(p => p.Value.Battle).ToHashSet();
+        }
+        catch (Exception) {
+            return [];
+        }
+    }
+
     /// <summary>
     /// Swaps the running bots for <paramref name="version"/>: it is built and loaded first (a failure keeps the bots as they
     /// are), then the bots wait for their battles to end (up to 15 minutes), save and log out, and the new ones come in.
@@ -366,6 +385,14 @@ public static class BotLoader {
                 BotUpdates.Note($"waiting to swap the bots: {stillRunning.Count} battle(s) begun before the wait ran out still going");
                 await Task.Delay(TimeSpan.FromSeconds(10));
                 stillRunning.IntersectWith(RosterBattles());
+            }
+
+            // A battle a player is fighting in beside a bot is never cut, whenever it began (up to the same 20 minutes): the
+            // bot would leave the player alone mid-fight. Ultimus's fight in The Forum began at 23:52:30, after the wait
+            // had run out, and the swap logged him out of it at 23:53:41 while Niduus was coming to help (2026-11-22).
+            while (BattlesWithPlayers().Count is var shared and > 0 && DateTime.UtcNow < lastUntil) {
+                BotUpdates.Note($"waiting to swap the bots: {shared} battle(s) with a player beside a bot still going");
+                await Task.Delay(TimeSpan.FromSeconds(10));
             }
 
             Logger.Information("Bots: swapping to {0} ({1}); the bots log out and come back, players stay in.", Logger.Args(Label(version), why));

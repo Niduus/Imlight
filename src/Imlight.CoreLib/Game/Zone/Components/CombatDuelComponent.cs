@@ -712,6 +712,11 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
         Logger.Debug("Duel {0} | New round {1} at {2}",
             Logger.Args(Duel.m_duelID.Full, Duel.m_roundNum, DateTime.Now.ToString("HH:mm:ss")));
 
+        LetGoOfGoneWizards();
+        if (!_isActive) {
+            return;
+        }
+
         _groupReservations.DropStale(ZoneActor, SubCircles);
         if (Duel.m_roundNum == 0) {
             ApplyFullGroupInitiative();
@@ -1458,6 +1463,31 @@ internal sealed partial class CombatDuelComponent(ZoneEntity entity)
 
         // Handle this as if it were the flee action, without its mana cost: the wizard did not flee.
         HandleFleeAction(subCircle, drainMana: false);
+    }
+
+    /// <summary>
+    /// A wizard whose session has ended (logged out, dropped, a bot logged out for its update) is let go of at the start
+    /// of the next round, as a logout: its circle is freed, its pips are kept for when it comes back, and it can walk
+    /// back in as a new participant. The session's own goodbye to the battle (MSG_CLIENT_DISCONNECT) does not always
+    /// arrive: Ultimus was logged out for bots-v186 in round 3 of a fight in The Forum (2026-11-22 23:53:41), the battle
+    /// never heard it and kept his circle on the gone session, and when he logged back in two minutes later every card he
+    /// picked came from a session the battle did not know, so it counted as a pass, even after Niduus revived him.
+    /// </summary>
+    private void LetGoOfGoneWizards() {
+        if (SubCircles is not { } circles) {
+            return;
+        }
+
+        foreach (var circle in circles.Where(c => c is not null && c.Occupied && c.IsHumanPlayer && !c.IsSummonedMinion
+                                                  && c.ParticipantActor is IInternalActorRef { IsTerminated: true }).ToList()) {
+            Logger.Information("Duel {0} | Slot {1} | its wizard's session has ended: let go of as a logout (it can walk back in).",
+                Logger.Args(Duel.m_duelID.Full, Array.IndexOf(circles, circle)));
+            _pvp?.MarkDisconnected(circle.ParticipantActor);
+            HandleFleeAction(circle, drainMana: false);
+            if (!_isActive) {
+                return;
+            }
+        }
     }
 
     [MessageHandler(typeof(GAME_5_PROTOCOL.MSG_QUERY_LOGOUT))]
