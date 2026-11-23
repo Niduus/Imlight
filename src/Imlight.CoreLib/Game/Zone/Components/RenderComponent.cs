@@ -101,6 +101,12 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private readonly Dictionary<IActorRef, (CoreObject Object, Wizard Wizard)> _lastSeen = [];
     // A trigger or animation took the object away from everyone (ZoneEntity.DespawnObject); the check leaves it away.
     private bool _removedByScript;
+    // The zone turned the object Off for everyone (a trigger, a quest or a puzzle, such as a wall or gate that opens).
+    // An Off object can keep its collision in the game, so a player could walk into a wall nobody could see, and anyone who
+    // came into the zone afterwards was sent the object whole, in its first state, solid and in the way. Now it is taken
+    // from every game and sent to nobody until the zone turns it on again (Niduus 2026-11-23: "Server is not properly
+    // destroying collision boxes when called to destroy them").
+    private bool _offForZone;
     private static double ShowCheckSeconds
         => System.Math.Clamp(ConfigurationManager.GetValue("World.EnemyShowCheckSeconds", 3.0), 0, 60);
     private static readonly System.TimeSpan DUEL_RESEND_DELAY = System.TimeSpan.FromSeconds(3);
@@ -146,8 +152,11 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // Trigger requirements on an object's state ("Snake obelisk is Idle_On") start from the state it is placed in.
         Entity.Zone.ScriptState.SeedObjectDefault(Entity.Info?.m_zoneTag, Entity.Info?.m_startState);
 
+        // Made again while the zone has it turned off (a trigger brought it back, or it moved): it stays away.
+        _offForZone = TurnedOffByZone();
+
         // Players already in the zone are sorted out on their first move (see OnPlayerMove).
-        if (!IsQuestOnly) {
+        if (!IsQuestOnly && !_offForZone) {
             CreateObjectForAllPlayers();
         }
 
@@ -160,6 +169,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
     public override void OnEnabled() {
         _removedByScript = false;
+        if (_offForZone) {
+            return;
+        }
+
         if (IsQuestOnly) {
             foreach (var player in _playersWithRequirementsMet.Values.Where(p => !_playerIgnoreBecauseDynamod.ContainsKey(p))) {
                 CreateObjectForPlayer(player);
@@ -310,7 +323,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
                 _playersWithRequirementsMet[playerWizard] = playerActor;
                 _playersInRange.Add(playerActor);
                 // OnStart sent it to everyone in the zone, this player too (unless the object was taken away since).
-                if (!_removedByScript && IsEnabled) {
+                if (!_removedByScript && !_offForZone && IsEnabled) {
                     _sentTo.Add(playerActor);
                 }
             }
@@ -399,7 +412,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             _playersWithRequirementsMet[fighter] = player;
         }
 
-        CreateObjectForPlayer(player);
+        CreateObjectForPlayer(player, evenIfOff: true);
         _playersInRange.Add(player);
         _joinedPlayers.Add(player);
 
@@ -412,7 +425,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE))]
     private void ReceiveShowAfterRemove(ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE message) {
         var player = message.PlayerActor;
-        if (player is null || !_showPending.Remove(player) || !IsEnabled || Entity.ActiveGameObject is null) {
+        if (player is null || !_showPending.Remove(player) || !IsEnabled || _offForZone || Entity.ActiveGameObject is null) {
             return;
         }
 
@@ -421,7 +434,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENEMYRESEND))]
     private void ReceiveEnemyResend(ZONE_102_PROTOCOL.MSG_ENEMYRESEND message) {
-        if (message.PlayerActor is null || !IsEnabled || _removedByScript || Entity.ActiveGameObject is null
+        if (message.PlayerActor is null || !IsEnabled || _removedByScript || _offForZone || Entity.ActiveGameObject is null
             || !_sentTo.Contains(message.PlayerActor)) {
             return;
         }
@@ -434,7 +447,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENEMYSHOWCHECK))]
     private void ReceiveEnemyShowCheck() {
         var interval = ShowCheckSeconds;
-        if (interval <= 0 || !IsEnabled || _removedByScript || Entity.ActiveGameObject is null || _lastSeen.Count == 0) {
+        if (interval <= 0 || !IsEnabled || _removedByScript || _offForZone || Entity.ActiveGameObject is null || _lastSeen.Count == 0) {
             return;
         }
 
@@ -506,6 +519,21 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         if (Entity.Info is not null && string.Equals(Entity.Info.m_zoneTag, zoneTag, System.StringComparison.OrdinalIgnoreCase)) {
             // A state for the whole zone (a trigger result) reaches every player, not just one.
             if (!msg.ExclusiveToSender && msg.Sender is null) {
+                if (string.Equals(msg.StateName, DESPAWN_STATE_NAME, System.StringComparison.OrdinalIgnoreCase)) {
+                    Entity.ChangeState(msg.StateName);
+                    TakeAwayForZoneOff();
+
+                    return;
+                }
+
+                // Turned on again after the zone had it off: every game gets it back (unless a script removed it).
+                if (_offForZone) {
+                    _offForZone = false;
+                    if (IsEnabled && !_removedByScript) {
+                        OnEnabled();
+                    }
+                }
+
                 Entity.ChangeState(msg.StateName);
 
                 // The zone's script brought a quest-only object out: everyone in the zone gets it now.
@@ -574,7 +602,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
                     _playersWithRequirementsMet[wizard] = player;
                 }
 
-                CreateObjectForPlayer(player);
+                // The player's own quest turns it on for them: that wins over the zone having it off.
+                CreateObjectForPlayer(player, evenIfOff: true);
             }
         }
     }
@@ -801,14 +830,51 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         _playersInRange.Add(player);
     }
 
+    // The zone's script holds the object Off, and it was not placed that way.
+    private bool TurnedOffByZone() {
+        var tag = Entity.Info?.m_zoneTag;
+        if (string.IsNullOrEmpty(tag) || Entity.Zone?.ScriptState is not { } script) {
+            return false;
+        }
+
+        var state = script.GetObjectState(tag);
+
+        return string.Equals(state, DESPAWN_STATE_NAME, System.StringComparison.OrdinalIgnoreCase)
+               && !string.Equals(state, Entity.Info.m_startState, System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    // The zone turned the object Off for everyone: every game lets it go, its collision with it, and nobody is sent it
+    // again (joining, walking back into range, the enemy show check) until the zone turns it on.
+    private void TakeAwayForZoneOff() {
+        if (_offForZone) {
+            return;
+        }
+
+        _offForZone = true;
+        Timers.Cancel(SHOW_AGAIN_TIMER);
+        if (Entity.ActiveGameObject is null) {
+            return;
+        }
+
+        PlayerBroadcast(new GAME_5_PROTOCOL.MSG_REMOVEOBJECT {
+            GameObjectID = Entity.ActiveGameObject.m_globalID
+        });
+        _playersInRange.Clear();
+        _sentTo.Clear();
+        _removedFromAllAt = System.DateTime.UtcNow;
+        CancelPendingShows();
+        Logger.Debug("Zone {0}: {1} turned off for the whole zone; taken from every game, collision and all.",
+            Logger.Args(Entity.Zone?.ZonePath, Entity.Info?.m_zoneTag));
+    }
+
     private static bool IsDespawnState(string stateName) {
         // A dynamod with no state hides its object for the player, as "Off" does (client triggers use both).
         return string.IsNullOrEmpty(stateName)
             || stateName.Equals(DESPAWN_STATE_NAME, System.StringComparison.OrdinalIgnoreCase);
     }
 
-    private void CreateObjectForPlayer(IActorRef player) {
-        if (player is null) {
+    private void CreateObjectForPlayer(IActorRef player, bool evenIfOff = false) {
+        if (player is null || (_offForZone && !evenIfOff)) {
             return;
         }
 
@@ -868,6 +934,10 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     private void CreateObjectForAllPlayers() {
+        if (_offForZone) {
+            return;
+        }
+
         // Taken from everyone a moment ago (turned off and straight back on): each game gets it once it let the old go.
         if (System.DateTime.UtcNow - _removedFromAllAt < SHOW_AFTER_REMOVE_DELAY) {
             foreach (var player in _lastSeen.Keys.ToList()) {
