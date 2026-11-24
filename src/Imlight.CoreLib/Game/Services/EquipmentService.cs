@@ -116,12 +116,11 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
     private void ReceiveAttachComplete(SERVICE_101_PROTOCOL.MSG_ATTACHCOMPLETE message) {
         try {
             var playerCharacter = GetActiveWizard();
-            var effects = playerCharacter.GameEffects;
 
             // Every effect goes out now, the pet's and jewels' cards included.
             EquipmentExtras.TakeCardEffectChanges(playerCharacter);
             // The other players get this wizard's speed with their spawn (ZoneService), right after the wizard's object.
-            SendAddEffects([.. effects], shareSpeed: false);
+            SendAddEffects([.. playerCharacter.GameEffectsCopy()], shareSpeed: false);
             ShowPetFormToZone(playerCharacter);
             ShowBeastFormToZone(playerCharacter);
             Battlegrounds.BeastCombat.ShowHealth(playerCharacter, SessionActor.ActorRef);
