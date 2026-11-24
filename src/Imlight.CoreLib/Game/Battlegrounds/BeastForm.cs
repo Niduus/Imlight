@@ -133,7 +133,7 @@ internal static class BeastForm {
             player.FormName = null;
         }
 
-        var current = wizard.GameEffects.ToArray().Where(e => e?.m_itemSlotID == SlotId).ToList();
+        var current = wizard.GameEffectsCopy().Where(e => e?.m_itemSlotID == SlotId).ToList();
         foreach (var effect in current) {
             wizard.GameEffects.Remove(effect);
             Broadcast(session, zone, new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
@@ -208,7 +208,7 @@ internal static class BeastForm {
             return;
         }
 
-        var before = wizard.GameEffects.ToArray().Where(e => e?.m_itemSlotID == Battlegrounds.TeamSlotId).ToList();
+        var before = wizard.GameEffectsCopy().Where(e => e?.m_itemSlotID == Battlegrounds.TeamSlotId).ToList();
         var added = Battlegrounds.AddTeamEffect(wizard, player);
         foreach (var effect in before.Where(e => !wizard.GameEffects.Contains(e))) {
             Broadcast(session, zone, new GAME_5_PROTOCOL.MSG_REMOVEEFFECT {
@@ -229,9 +229,9 @@ internal static class BeastForm {
     /// <remarks>The effect list is copied first: another service can change it while a wizard arrives, and walking it then
     /// threw "Collection was modified" and restarted the player's services (District of the Stars, 2026-11-24).</remarks>
     internal static List<IMessage> LookMessages(Wizard wizard)
-        => wizard?.GameEffects is not { } effects
+        => wizard?.GameEffects is null
             ? []
-            : AddMessages(wizard, effects.ToArray().Where(e => e?.m_itemSlotID == SlotId || e?.m_itemSlotID == Battlegrounds.TeamSlotId).ToList());
+            : AddMessages(wizard, wizard.GameEffectsCopy().Where(e => e?.m_itemSlotID == SlotId || e?.m_itemSlotID == Battlegrounds.TeamSlotId).ToList());
 
     private static List<IMessage> AddMessages(Wizard wizard, IEnumerable<GameEffectBase> effects) {
         var serializer = new CoreObjectSerializer(behaviors: SerializerFlags.None);

@@ -194,6 +194,21 @@ public class Wizard {
     [JsonIgnore] public List<GameEffectBase> GameEffects = [];
 
     /// <summary>
+    /// A copy of <see cref="GameEffects"/> to walk. Other services add and remove effects while a wizard arrives in an
+    /// area, and walking or copying the live list then threw ("Collection was modified", "Destination array was not
+    /// long enough") and restarted the wizard's services (2026-11-24). A copy caught mid-change is taken again.
+    /// </summary>
+    internal GameEffectBase[] GameEffectsCopy() {
+        for (var attempt = 0; ; attempt++) {
+            try {
+                return GameEffects.ToArray();
+            }
+            catch (ArgumentException) when (attempt < 4) {
+            }
+        }
+    }
+
+    /// <summary>
     /// An id no current effect has. The count was used before, but once an effect came off, the next one took the id
     /// of one still on, and the game kept only one of the two (the pet's Black Mantle never reached the deck window).
     /// </summary>
