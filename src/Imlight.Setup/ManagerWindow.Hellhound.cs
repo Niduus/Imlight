@@ -58,6 +58,11 @@ internal sealed partial class ManagerWindow {
     private readonly StackPanel _hhLocks = new() { Spacing = 4 };
     private readonly StackPanel _hhBotRows = new() { Spacing = 10 };
     private readonly TextBlock _hhUpdates = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBlock _hhSavitar = new() { TextWrapping = TextWrapping.Wrap };
+    private readonly TextBox _hhSavitarBox = new() {
+        AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 56, MaxHeight = 160, MinWidth = 420,
+        Watermark = "Quest IDs or quest names, one a line (AZ-CLOUD-C02-003, or a quest's name as the game shows it)",
+    };
     private readonly Dictionary<string, ToggleSwitch> _hhSwitches = [];
     private string _hhRowsKey = "";
     private bool _hhPainting;
@@ -198,6 +203,13 @@ internal sealed partial class ManagerWindow {
             Fold("users", "Bots", "Every bot",
                 "Turn each bot on or off, and pause one where it stands (it stays logged in). Each change applies within a few seconds.",
                 _hhBotRows),
+            Fold("flag", "Bots", "Savitar's quest tests",
+                "Type quest IDs or quest names, one a line, and add them to Savitar's list. He tests the first one: he is given it, " +
+                "does nothing else until it is finished (a step that never finishes is marked broken and he keeps at it until it is " +
+                "fixed), then goes on to the next. Savitar must be switched on above.",
+                _hhSavitarBox,
+                WithMargin(Action(Primary("Add to Savitar's list"), AddSavitarTestsAsync), new Thickness(0, 8, 0, 8)),
+                _hhSavitar),
             Fold("shield", "Bots", "What the bots last checked", "The checks the bots make before they play, as they last wrote them.", _hhLocks),
             Fold("download", "Bots", "Bot updates", "Which bot update the server runs, and its last look for a newer one.", _hhUpdates,
                 WithMargin(check, new Thickness(0, 8, 0, 0))));
@@ -208,7 +220,7 @@ internal sealed partial class ManagerWindow {
     private sealed record BotRow(string Name, string Section, bool On, string Count, List<SeatRow> Seats);
 
     private sealed record HomeRead(bool Stop, string Why, List<(string Name, string Text, bool Written)> Locks, List<BotRow> Bots,
-                                   string Updates);
+                                   string Updates, string Savitar);
 
     private async Task RefreshHellhoundAsync() {
         if (_hhReading) {
@@ -267,7 +279,7 @@ internal sealed partial class ManagerWindow {
             updates += "\nProblem: " + problem;
         }
 
-        return new HomeRead(stop, why, locks, bots, updates);
+        return new HomeRead(stop, why, locks, bots, updates, ReadSavitarTests(Path.Combine(logs, "savitar")));
     }
 
     private void PaintHome(HomeRead read) {
@@ -287,6 +299,7 @@ internal sealed partial class ManagerWindow {
         }
 
         _hhUpdates.Text = read.Updates;
+        _hhSavitar.Text = read.Savitar;
 
         // The rows are built again only when the bots or their seats change, so a switch being clicked isn't swept away.
         var key = string.Join("|", read.Bots.Select(b => b.Section + ":" + string.Join(",", b.Seats.Select(s => s.Id))));
@@ -401,6 +414,57 @@ internal sealed partial class ManagerWindow {
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
             throw new PanelException($"Could not pause {seat.Name}: {ex.Message}");
         }
+    }
+
+    // Savitar's test list and results (the bots' SavitarTests reads and writes the same files).
+    private const string SAVITAR_TESTS = "test-quests.txt", SAVITAR_RESULTS = "test-results.txt", SAVITAR_NOW = "testing-now.txt";
+
+    private static string ReadSavitarTests(string folder) {
+        var lines = new List<string>();
+        var now = FirstLine(Path.Combine(folder, SAVITAR_NOW))?.Split('|');
+        lines.Add(now is { Length: >= 1 } && now[0].Length > 0
+            ? $"Testing now: {now[0]}{(now.Length >= 2 ? $" (since {now[1]})" : "")}."
+            : "Testing now: nothing.");
+        var list = ReadLines(Path.Combine(folder, SAVITAR_TESTS)).Where(l => l.Length > 0 && !l.StartsWith('#')).ToList();
+        lines.Add(list.Count == 0 ? "His list is empty." : $"His list ({list.Count}): " + string.Join(", ", list.Take(12)) + (list.Count > 12 ? ", ..." : "") + ".");
+        var results = ReadLines(Path.Combine(folder, SAVITAR_RESULTS)).Where(l => l.Length > 0).TakeLast(6).ToList();
+        if (results.Count > 0) {
+            lines.Add("Last results:");
+            lines.AddRange(results.AsEnumerable().Reverse().Select(r => "  " + r));
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private static List<string> ReadLines(string path) {
+        try {
+            return File.Exists(path) ? [.. File.ReadAllLines(path).Select(l => l.Trim())] : [];
+        }
+        catch (Exception) {
+            return [];
+        }
+    }
+
+    private Task AddSavitarTestsAsync() {
+        var asked = (_hhSavitarBox.Text ?? "").Split('\n').Select(l => l.Trim().Trim('"')).Where(l => l.Length > 0).ToList();
+        if (asked.Count == 0) {
+            Say("Type a quest ID or a quest name first, one a line.", isError: true);
+            return Task.CompletedTask;
+        }
+
+        var folder = Path.Combine(_manager.ServerFolder, "logs", "savitar");
+        try {
+            Directory.CreateDirectory(folder);
+            File.AppendAllLines(Path.Combine(folder, SAVITAR_TESTS), asked);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            throw new PanelException($"Could not add to Savitar's list: {ex.Message}");
+        }
+
+        HellhoundStart.Log($"Added to Savitar's quest tests: {string.Join(", ", asked)}.");
+        _hhSavitarBox.Text = "";
+        Say($"Added {asked.Count} quest{(asked.Count == 1 ? "" : "s")} to Savitar's list. He tests them in order, one at a time, each until it is finished.");
+        return Task.CompletedTask;
     }
 
     private string CheckBotUpdateNow() {
