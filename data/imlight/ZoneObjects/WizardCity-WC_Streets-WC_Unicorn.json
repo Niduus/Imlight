@@ -1,0 +1,14 @@
+{
+  "Zone": "WizardCity/WC_Streets/WC_Unicorn",
+  "Notes": "Magic: The Archmastering (WC-PreCel-MAIN-001), the main quest from Merle Ambrose after Dragonspyre that leads on to Celestia. After you talk to Diego the Duelmaster (step 2), step 3 'Complete' asks you to enter the Arena, which for this quest is the Archmastery tutorial arena (WizardCity/Tutorial_Archmastery_Arena_1), not the Duel Arena. No door or trigger in the zone files goes there (the live server sends you), so every wizard on that step was sent to the plain Duel Arena and the step never finished: Zoom was stuck on it all day on 2026-11-23 and Ultimus from 21:25 CT. The Exit below sends the Arena doorway (the volume 'Teleport location (Street1 Arena Entrance)' at 2924, 1639, beside Diego) into the tutorial arena only while the wizard is on that step; otherwise the doorway keeps its own way into the Duel Arena.",
+  "Objects": [],
+  "Exit": {
+    "Zone": "WizardCity/Tutorial_Archmastery_Arena_1",
+    "Loc": "-8,-5800,613,-3.117046",
+    "Triggers": [
+      "Teleport location (Street1 Arena Entrance)"
+    ],
+    "WhileOnQuest": "WC-PreCel-MAIN-001",
+    "WhileOnGoal": "3_Complete"
+  }
+}
