@@ -718,7 +718,11 @@ internal static class OverlayQuestRoute {
                     to = trigger.m_results?.m_results?.OfType<ResTeleport>().Select(r => (string) r.m_destinationZone).FirstOrDefault(z => !string.IsNullOrWhiteSpace(z));
                 }
 
-                if (string.IsNullOrWhiteSpace(to) || trigger.m_fireEvents is null) {
+                // The same doorway's second way while a wizard is on a quest step (a ZoneObjects exit with WhileOnQuest):
+                // Unicorn Way's Arena door into the Archmastery tutorial arena. Only a wizard whose step is in that zone
+                // plans a way there, and the door takes him there on that step.
+                var onQuest = ZoneObjects.QuestExitZoneFor(zonePath, name);
+                if (trigger.m_fireEvents is null || (string.IsNullOrWhiteSpace(to) && string.IsNullOrWhiteSpace(onQuest))) {
                     continue;
                 }
 
@@ -726,7 +730,9 @@ internal static class OverlayQuestRoute {
                     foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == fire) == true
                                                               || "Enter_" + (string) v.m_volumeName == fire)) {
                         var reach = volume.m_radius > 0 ? volume.m_radius : MathF.Max(volume.m_length, volume.m_width) / 2;
-                        exits.Add(OnItsFloor(zonePath, new Exit(volume.m_locationX, volume.m_locationY, to.Trim(), reach, volume.m_locationZ)));
+                        foreach (var way in new[] { to, onQuest }.Where(w => !string.IsNullOrWhiteSpace(w))) {
+                            exits.Add(OnItsFloor(zonePath, new Exit(volume.m_locationX, volume.m_locationY, way.Trim(), reach, volume.m_locationZ)));
+                        }
                     }
                 }
             }

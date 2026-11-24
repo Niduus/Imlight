@@ -149,6 +149,21 @@ internal static class ZoneObjects {
             : null;
     }
 
+    /// <summary>
+    /// For the way finders: where a trigger of the zone also goes while a wizard is on a quest step (an exit with
+    /// WhileOnQuest; null when none does). The trigger keeps its own way too, so this is a second way through the same
+    /// doorway: Unicorn Way's Arena door leads into the Archmastery tutorial arena on "Magic: The Archmastering" step 3,
+    /// and into the Duel Arena otherwise (Ultimus and Zoom found no way to it, 2026-11-23).
+    /// </summary>
+    internal static string QuestExitZoneFor(string zonePath, string triggerName) {
+        var exit = FilesFor(zonePath, "").Select(f => f.Exit).LastOrDefault(e => !string.IsNullOrEmpty(e?.Zone));
+
+        return exit?.Triggers is { Count: > 0 } named && named.Contains(triggerName ?? "", StringComparer.OrdinalIgnoreCase)
+               && !string.IsNullOrEmpty(exit.WhileOnQuest)
+            ? exit.Zone
+            : null;
+    }
+
     internal static List<ZoneEventTeleport> EventTeleportsFor(string zonePath)
         => [.. FilesFor(zonePath, "").SelectMany(f => f.EventTeleports ?? [])
             .Where(t => !string.IsNullOrEmpty(t?.Event) && !string.IsNullOrEmpty(t.Zone))];
