@@ -865,6 +865,10 @@ internal partial class EquipmentService(SessionActor sessionActor) : MessageServ
         var charObjId = wizardObj.m_globalID;
 
         foreach (var effect in effects) {
+            if (effect is null) {
+                continue;
+            }
+
             var flags = PropertyFlags.Prop_Transmit | PropertyFlags.Prop_AuthorityTransmit;
             if (!_effectSerializer.Serialize(effect, flags, out var effectSerializedData)) {
                 Logger.Error("Failed to serialize effect {0} for add effects broadcast.",

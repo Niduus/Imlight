@@ -196,12 +196,14 @@ public class Wizard {
     /// <summary>
     /// A copy of <see cref="GameEffects"/> to walk. Other services add and remove effects while a wizard arrives in an
     /// area, and walking or copying the live list then threw ("Collection was modified", "Destination array was not
-    /// long enough") and restarted the wizard's services (2026-11-24). A copy caught mid-change is taken again.
+    /// long enough") and restarted the wizard's services (2026-11-24). A copy caught mid-change is taken again. A list
+    /// changed from two places at once can also hold an empty slot, which threw when the effects were sent (08:02,
+    /// 2026-11-24), so empty slots are left out of the copy.
     /// </summary>
     internal GameEffectBase[] GameEffectsCopy() {
         for (var attempt = 0; ; attempt++) {
             try {
-                return GameEffects.ToArray();
+                return [.. GameEffects.ToArray().Where(e => e is not null)];
             }
             catch (ArgumentException) when (attempt < 4) {
             }
