@@ -112,7 +112,15 @@ internal static class ClaudeGameWindows {
         var size = new PixelSize(Math.Max(1, (int) (window.Width * fit)), Math.Max(1, (int) (window.Height * fit)));
         using var stream = new MemoryStream();
         if (fit < 1) {
-            using var small = full.CreateScaledBitmap(size, BitmapInterpolationMode.HighQuality);
+            // Drawn smaller onto a new picture: CreateScaledBitmap refuses a WriteableBitmap on Windows ("Invalid source
+            // bitmap type", Niduus's first try, 2026-11-24).
+            using var small = new RenderTargetBitmap(size, new Vector(96, 96));
+            using (var ctx = small.CreateDrawingContext()) {
+                using (ctx.PushRenderOptions(new Avalonia.Media.RenderOptions { BitmapInterpolationMode = BitmapInterpolationMode.HighQuality })) {
+                    ctx.DrawImage(full, new Rect(0, 0, window.Width, window.Height), new Rect(0, 0, size.Width, size.Height));
+                }
+            }
+
             small.Save(stream);
         }
         else {
