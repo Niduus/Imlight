@@ -836,6 +836,24 @@ internal static class OverlayQuestRoute {
             Logger.Warning("Quest tracker: the areas' doors could not be read: {0}", Logger.Args(ex.Message));
         }
 
+        // The ways the zone object files open (an exit into an area no zone record leads to, like the Archmastery arena).
+        try {
+            foreach (var (from, to) in ZoneObjects.ExitLinks()) {
+                if (string.Equals(from, to, StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+
+                if (!links.TryGetValue(from, out var set)) {
+                    links[from] = set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                set.Add(to);
+            }
+        }
+        catch (Exception ex) {
+            Logger.Warning("Quest tracker: the zone object files' exits could not be read: {0}", Logger.Args(ex.Message));
+        }
+
         var arrivals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try {
             foreach (var hub in WorldHubZones.All()) {

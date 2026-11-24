@@ -164,6 +164,17 @@ internal static class ZoneObjects {
             : null;
     }
 
+    /// <summary>
+    /// For the way finders' map of which area leads to which: every area a file's exit leads to, from its zone (with or
+    /// without a quest step). The map is read from the zone records, which have no way into an area only a file opens: the
+    /// Archmastery tutorial arena (Unicorn Way's Arena door on "Magic: The Archmastering") was on no way, so Zoom stood in
+    /// The Commons for an hour on "no way from The Commons to Arena could be found" (his log, 2026-11-23 22:17-22:30).
+    /// </summary>
+    internal static List<(string From, string To)> ExitLinks()
+        => !Enabled ? []
+            : [.. Zones.Values.Where(f => f.Enabled && !string.IsNullOrWhiteSpace(f.Zone) && !string.IsNullOrWhiteSpace(f.Exit?.Zone))
+                .Select(f => (f.Zone.Trim(), f.Exit.Zone.Trim()))];
+
     internal static List<ZoneEventTeleport> EventTeleportsFor(string zonePath)
         => [.. FilesFor(zonePath, "").SelectMany(f => f.EventTeleports ?? [])
             .Where(t => !string.IsNullOrEmpty(t?.Event) && !string.IsNullOrEmpty(t.Zone))];
