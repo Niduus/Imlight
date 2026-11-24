@@ -804,9 +804,23 @@ internal static class OverlayQuestRoute {
 
     private static string WorldName(string zone) => OverlayQuestTracker.WorldName(zone);
 
+    // Whether the map holds the zone object files' exits (a map built before they were read gets them on its next use).
+    private static bool s_exitLinksIn;
+
     private static Dictionary<string, HashSet<string>> Links() {
         lock (s_lock) {
             if (s_links is not null) {
+                if (!s_exitLinksIn) {
+                    // A fresh copy with the exits added, so a way being worked out right now keeps reading the old one.
+                    var copy = s_links.ToDictionary(p => p.Key, p => new HashSet<string>(p.Value, StringComparer.OrdinalIgnoreCase),
+                        StringComparer.OrdinalIgnoreCase);
+                    AddExitLinks(copy);
+                    s_links = copy;
+                    s_exitLinksIn = true;
+                    s_backward = null;
+                    s_left.Clear();
+                }
+
                 return s_links;
             }
         }
@@ -836,23 +850,7 @@ internal static class OverlayQuestRoute {
             Logger.Warning("Quest tracker: the areas' doors could not be read: {0}", Logger.Args(ex.Message));
         }
 
-        // The ways the zone object files open (an exit into an area no zone record leads to, like the Archmastery arena).
-        try {
-            foreach (var (from, to) in ZoneObjects.ExitLinks()) {
-                if (string.Equals(from, to, StringComparison.OrdinalIgnoreCase)) {
-                    continue;
-                }
-
-                if (!links.TryGetValue(from, out var set)) {
-                    links[from] = set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                }
-
-                set.Add(to);
-            }
-        }
-        catch (Exception ex) {
-            Logger.Warning("Quest tracker: the zone object files' exits could not be read: {0}", Logger.Args(ex.Message));
-        }
+        AddExitLinks(links);
 
         var arrivals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try {
@@ -870,9 +868,32 @@ internal static class OverlayQuestRoute {
 
         lock (s_lock) {
             s_arrivals ??= arrivals;
-            s_links ??= links;
+            if (s_links is null) {
+                s_links = links;
+                s_exitLinksIn = true;
+            }
 
             return s_links;
+        }
+    }
+
+    // The ways the zone object files open (an exit into an area no zone record leads to, like the Archmastery arena).
+    private static void AddExitLinks(Dictionary<string, HashSet<string>> links) {
+        try {
+            foreach (var (from, to) in ZoneObjects.ExitLinks()) {
+                if (string.Equals(from, to, StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+
+                if (!links.TryGetValue(from, out var set)) {
+                    links[from] = set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                set.Add(to);
+            }
+        }
+        catch (Exception ex) {
+            Logger.Warning("Quest tracker: the zone object files' exits could not be read: {0}", Logger.Args(ex.Message));
         }
     }
 
