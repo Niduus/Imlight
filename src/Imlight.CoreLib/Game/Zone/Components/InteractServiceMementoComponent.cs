@@ -113,6 +113,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
 
         _shape = QuestObjectShape();
+        _floorReach = FloorReach();
 
         var updateInterval = TimeSpan.FromSeconds(WIZBANG_UPDATE_INTERVAL_SECONDS);
         var updateMsg = new ZONE_102_PROTOCOL.MSG_WIZBANGUPDATEINTERVAL();
@@ -146,7 +147,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         // Handle interaction range (for service options). A large quest object (Zafaria's fallen Zebra Scout Tower)
         // is reached at its edge too, not only near its center (ObjectReach).
-        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj);
+        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
+                      || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach));
         if (inRange
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
@@ -183,6 +185,52 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             Logger.Debug("Object reach: no shape for {0}: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
 
             return null;
+        }
+    }
+
+    // A quest object with no floor within the usual reach of its center: offered from the nearest floor instead.
+    private float _floorReach;
+
+    // How much past the nearest floor a player still reaches such an object, and how far that floor may be at most.
+    private const float FLOOR_REACH_MARGIN = 80f;
+    private const float FLOOR_REACH_MAX = 800f;
+
+    /// <summary>
+    /// The reach of a quest object (not a character) that stands too far from any floor to be offered within the usual
+    /// 300 of its center: the walk to its nearest floor plus a margin, or 0 when the usual reach already works. Stormriven's
+    /// Celestian Generator of "Ghosts of Celestia" (CL-RIVEN-C01-002) stands 363 from the nearest floor, so nobody was ever
+    /// offered "Use" and the step could not be done (Zoom, 2026-11-24 16:22 on); the main story has about 98 such things.
+    /// </summary>
+    private float FloorReach() {
+        try {
+            if (!_serviceComponents.Any(c => c is InteractQuestSelectComponent)
+                || Entity.Template is not GameObjectTemplate template
+                || template.m_behaviors?.Any(b => b is NPCBehaviorTemplate) == true
+                || Entity.Zone?.ZonePath is not { Length: > 0 } zone) {
+                return 0;
+            }
+
+            var at = Entity.ActiveGameObject.m_location;
+            if (Imlight.CoreLib.Game.Tools.OverlayQuestPath.OnFloor(zone, at.X, at.Y)
+                || Imlight.CoreLib.Game.Tools.OverlayQuestPath.NearestFloor(zone, at.X, at.Y) is not { } floor) {
+                return 0;
+            }
+
+            var gap = MathF.Sqrt(((floor.X - at.X) * (floor.X - at.X)) + ((floor.Y - at.Y) * (floor.Y - at.Y)));
+            var reach = gap + FLOOR_REACH_MARGIN;
+            if (reach <= _interactionRadius || gap > FLOOR_REACH_MAX) {
+                return 0;
+            }
+
+            Logger.Debug("Object reach: {0} stands {1:0} from the nearest floor; offered within {2:0} of its center",
+                Logger.Args(Entity.Info?.m_zoneTag, gap, reach));
+
+            return reach;
+        }
+        catch (Exception e) {
+            Logger.Debug("Object reach: no floor reach for {0}: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
+
+            return 0;
         }
     }
 
