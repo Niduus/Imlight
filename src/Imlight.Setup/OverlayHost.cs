@@ -177,6 +177,80 @@ internal static class OverlayHost {
 
     internal static string InstallFolder => s_installFolder;
 
+    /// <summary>
+    /// The file whose being there turns the whole overlay off (Niduus, 2026-11-24: "add a setting to Ahziael to turn off
+    /// the Overlay"). A file in the install, not a field of the design, so both copies (Ahziael and Ahziael Overlay on its
+    /// own) see it within a second and a designer saving an older design can't switch it back on.
+    /// </summary>
+    internal const string OFF_FILE = "overlay-off.txt";
+
+    private static bool s_off;
+
+    /// <summary>True while the overlay is turned off: nothing is drawn on any game window and no link is kept.</summary>
+    internal static bool TurnedOff => s_off;
+
+    /// <summary>True when the overlay is turned off in this install (read from the file, for a page that just opened).</summary>
+    internal static bool IsTurnedOff(string installFolder) {
+        try {
+            return installFolder.Length > 0 && File.Exists(Path.Combine(installFolder, OFF_FILE));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Turns the whole overlay off or back on, right away and without a restart: off takes it off every game window at
+    /// once, on puts it back within a second. Returns false when the setting couldn't be saved.
+    /// </summary>
+    internal static bool SetTurnedOff(bool off) {
+        if (s_installFolder.Length == 0) {
+            return false;
+        }
+
+        var path = Path.Combine(s_installFolder, OFF_FILE);
+        try {
+            if (off) {
+                File.WriteAllText(path, "The Ahziael game overlay is turned off (Play > Overlay). Delete this file, or turn it back on there, to show it again.\r\n");
+            }
+            else if (File.Exists(path)) {
+                File.Delete(path);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) {
+            Log($"Overlay: couldn't save the on/off switch: {ex.Message}");
+
+            return false;
+        }
+
+        if (s_timer is not null) {
+            s_lastScan = DateTime.MinValue;
+            Tick();
+        }
+
+        return true;
+    }
+
+    // Turned off: every overlay window goes, the other copy is let draw nothing either (it reads the same file), the
+    // server link closes and the game windows are no longer watched.
+    private static void GoQuiet() {
+        if (s_drawing || s_windows.Count > 0) {
+            StopDrawing();
+            Log("Overlay: turned off (Play > Overlay). Nothing is drawn on the game until it is turned back on.");
+        }
+
+        foreach (var hook in s_processHooks) {
+            Native.UnhookWinEvent(hook.Hook);
+        }
+
+        s_processHooks.Clear();
+        s_games = [];
+        GameSizes = [];
+        GameWindows = 0;
+        OverlayMinimapData.Wanted = [];
+        OverlayQuestData.Wanted = [];
+    }
+
     /// <summary>Starts the overlay with the saved design. Only on Windows; elsewhere it does nothing.</summary>
     /// <summary>
     /// Knows the install and its overlay design, without drawing over the game (Ahziael's safe start): the overlay
@@ -545,6 +619,18 @@ internal static class OverlayHost {
 
         Link.Load(s_installFolder);
         LoadFromServer();
+        var off = IsTurnedOff(s_installFolder);
+        if (off != s_off) {
+            s_off = off;
+            s_designVersion++;
+        }
+
+        if (s_off) {
+            GoQuiet();
+
+            return;
+        }
+
         OverlayMinimapData.Tick();
         OverlayQuestData.Tick();
         OverlayUltimusData.Tick();
