@@ -119,6 +119,10 @@ internal static class Program {
                 return SafelyOpen(options.InstallFolder, () => ManagerApp.Run(options.InstallFolder, options.StartServer));
             case SetupMode.Overlay:
                 return SafelyOpen(options.InstallFolder, () => OverlayStandalone.Run(options.InstallFolder));
+#if !HELLHOUND
+            case SetupMode.Mcp:
+                return ClaudeBridge.Run(options.InstallFolder);
+#endif
             case SetupMode.PrepareUpdate:
                 return await PrepareUpdateAsync(options);
             case SetupMode.ApplyUpdate:

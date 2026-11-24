@@ -549,6 +549,8 @@ internal sealed partial class ManagerWindow : Window {
             DailyBackup();
             await LoadPlayAsync();
             _timer.Start();
+            // Ahziael's Claude connector (Server > Ahziael > Claude), when it was left on.
+            ApplyClaude();
             _shownPage = ShownPage();
             // Instant Update looks every 5 minutes (ManagerWindow.InstantUpdate.cs); it skips while on another PC's server.
             StartInstantUpdate();
@@ -587,6 +589,7 @@ internal sealed partial class ManagerWindow : Window {
             _instantUpdateTimer.Stop();
             _positionTimer.Stop();
             _clientLogTimer.Stop();
+            StopClaude();
             OverlayHost.Stop();
         };
         // The game overlay (Play > Overlay): drawn over Wizard101 while Ahziael is open. Not in a safe start.
@@ -1523,6 +1526,9 @@ internal sealed partial class ManagerWindow : Window {
                     "The colours behind the panels drift slowly and the server light breathes. They stop while you play.")),
             IsRemote ? new Panel() : BackupsCard(),
             PrivacyCard(),
+#if !HELLHOUND
+            ClaudeCard(),
+#endif
             Fold("folder", "Tools", "Files and folders", $"Installed in {_manager.InstallFolder}.",
                 new WrapPanel {
                     Children = {

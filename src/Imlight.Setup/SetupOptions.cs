@@ -24,7 +24,7 @@ namespace Imlight.Setup;
 /// <summary>
 /// What the program was asked to do. Install also updates an existing install.
 /// </summary>
-internal enum SetupMode { Install, Start, Play, Uninstall, Panel, PrepareUpdate, ApplyUpdate, Overlay }
+internal enum SetupMode { Install, Start, Play, Uninstall, Panel, PrepareUpdate, ApplyUpdate, Overlay, Mcp }
 
 /// <summary>
 /// What setup installs and where, from the command line. The defaults install original Imlight.
@@ -102,6 +102,7 @@ internal sealed class SetupOptions {
           --play                     Start Wizard101 connected to the server on this computer.
           --uninstall                Remove Imlight from this computer.
           --panel                    Open the app (the same as no option).
+          --mcp                      Claude's connector to the open app (Claude desktop starts this itself).
           --prepare-update           Download and build the newest Imlight in the background, ready to install.
           --apply-update             Install the update --prepare-update made, then open the app again.
         """;
@@ -130,6 +131,8 @@ internal sealed class SetupOptions {
                 case "--panel": options.Mode = SetupMode.Panel; break;
                 // The game overlay on its own, without Ahziael's window (OverlayStandalone).
                 case "--overlay": options.Mode = SetupMode.Overlay; break;
+                // Claude desktop starting Ahziael's connector (ClaudeBridge): no window, messages in and out only.
+                case "--mcp": options.Mode = SetupMode.Mcp; break;
                 case "--update": options.Mode = SetupMode.Install; break;
                 case "--no-wait": options.NoWait = true; break;
                 case "--prepare-update": options.Mode = SetupMode.PrepareUpdate; options.Unattended = true; break;
