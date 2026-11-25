@@ -44,6 +44,9 @@
  *               WhileOnQuest (a quest code) and WhileOnGoal (one of its steps) make the named triggers go to the
  *               exit only while the player is on that step; otherwise they keep the game's own teleport (one doorway
  *               used for two trips). Without WhileOnGoal the quest counts once taken, even after it is done.
+ *   ShowOnQuest  the zone's own objects only wizards who took a quest (or finished it) see: Tag (the object's zone
+ *               tag) and Quest (the quest code). The Young Battledrake on the Academy's top floor waits for The Final
+ *               Countdown (DS-ACAD-C01-005) as on live (Niduus, 2026-11-25).
  *
  * Object and creature fields:
  *   Name        the object's zone tag. It must be unique in the file: the object's global id comes from the zone, the
@@ -126,6 +129,12 @@ internal static class ZoneObjects {
         public Dictionary<string, int> ReplaceSpawns { get; set; } = [];
         public ZoneExit Exit { get; set; }
         public List<ZoneEventTeleport> EventTeleports { get; set; }
+        public List<ZoneShowOnQuest> ShowOnQuest { get; set; } = [];
+    }
+
+    internal sealed class ZoneShowOnQuest {
+        public string Tag { get; set; } = "";
+        public string Quest { get; set; } = "";
     }
 
     internal sealed class ZoneEventTeleport {
@@ -427,6 +436,7 @@ internal static class ZoneObjects {
         var zoneData = results.ZoneData;
         zoneData.m_objectList ??= [];
         var removed = RemoveOwn(files.SelectMany(f => f.Remove).ToHashSet(), results);
+        ShowOwnOnQuest(zonePath, files.SelectMany(f => f.ShowOnQuest ?? []), zoneData.m_objectList);
 
         var objects = 0;
         var creatures = 0;
@@ -763,6 +773,30 @@ internal static class ZoneObjects {
         => GLOBAL_ID_MARK | (RandomGen.GenerateHash(
             $"{FOLDER}/{zonePath}{(string.IsNullOrEmpty(variant) ? "" : "@" + variant)}/{name}{part}".ToLowerInvariant())
             & GLOBAL_ID_MASK);
+
+    // The zone's own objects a quest brings out: each one named by its zone tag is seen only by wizards who took that
+    // quest (or finished it). The game files place them with no spawn requirements; the live server holds them back.
+    private static void ShowOwnOnQuest(string zonePath, IEnumerable<ZoneShowOnQuest> shows, List<CoreObjectInfo> objects) {
+        foreach (var show in shows) {
+            if (show is null || string.IsNullOrEmpty(show.Tag) || string.IsNullOrEmpty(show.Quest)) {
+                continue;
+            }
+
+            var found = 0;
+            foreach (var info in objects.Where(o => o is not null
+                         && string.Equals(o.m_zoneTag, show.Tag, StringComparison.OrdinalIgnoreCase))) {
+                info.m_spawnRequirements = new RequirementList {
+                    m_applyNOT = false, m_operator = Operator.ROP_AND,
+                    m_requirements = [new ReqHasQuest { m_questName = show.Quest, m_applyNOT = false, m_operator = Operator.ROP_AND }],
+                };
+                found++;
+            }
+
+            if (found == 0) {
+                Logger.Warning("Zone {0}: no object {1} to show only on quest {2}.", Logger.Args(zonePath, show.Tag, show.Quest));
+            }
+        }
+    }
 
     private static int RemoveOwn(HashSet<ulong> templates, ZONE_102_PROTOCOL.MSG_ZONELOADRESULTS results) {
         if (templates.Count == 0) {
