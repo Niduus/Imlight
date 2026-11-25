@@ -47,6 +47,7 @@ using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -131,8 +132,56 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
                 }
 
                 _volumeGoals.Add((quest.m_questName, goal.m_goalName));
+                RememberGoalVolume(zonePath, quest.m_questName, goal.m_goalName);
             }
         }
+    }
+
+    /*
+     * ZONE-ENTRY GOALS WITH A PLACE
+     * A waypoint goal can be marked both "on zone entry" and with a proximity tag. The game finishes it at the tagged
+     * place, not at the door: Dragonspyre's "Pick up the Spare" (DS-NEC2-C01-008) step 2 is set on entering the Crystal
+     * Storage but tagged with the volume round the storage on the top floor, and the server finished it on arrival
+     * (Niduus, 2026-11-25). Every such goal whose volume a zone has is remembered here, with where the volume is, so the
+     * quest service waits for the place (or finishes it at once when the wizard already stands in it).
+     */
+    private static readonly ConcurrentDictionary<(string Zone, string Quest, string Goal), List<(float X, float Y, float Z, float Radius)>>
+        s_goalVolumes = new();
+
+    private void RememberGoalVolume(string zonePath, string questName, string goalName) {
+        if (string.IsNullOrEmpty(zonePath)) {
+            return;
+        }
+
+        var center = Entity.ActiveGameObject.m_location;
+        var radius = _volume.m_radius > 0 ? _volume.m_radius : MathF.Max(_volume.m_length, _volume.m_width) / 2;
+        var spots = s_goalVolumes.GetOrAdd((zonePath, questName, goalName), _ => []);
+        lock (spots) {
+            if (!spots.Any(s => s.X == center.X && s.Y == center.Y && s.Z == center.Z)) {
+                spots.Add((center.X, center.Y, center.Z, radius));
+            }
+        }
+    }
+
+    /// <summary>
+    /// True when the zone has a volume for this goal's proximity tag; <paramref name="isInside"/> tells whether the
+    /// given spot is in one of them.
+    /// </summary>
+    internal static bool HasGoalVolume(string zonePath, string questName, string goalName, float x, float y, float z,
+        out bool isInside) {
+        isInside = false;
+        if (string.IsNullOrEmpty(zonePath) || !s_goalVolumes.TryGetValue((zonePath, questName, goalName), out var spots)) {
+            return false;
+        }
+
+        lock (spots) {
+            isInside = spots.Any(s => {
+                float dx = x - s.X, dy = y - s.Y, dz = z - s.Z;
+                return dx * dx + dy * dy + dz * dz <= s.Radius * s.Radius;
+            });
+        }
+
+        return true;
     }
 
     /// <summary>"Tree of Life (1)" -> "Tree of Life"; a name without a copy number comes back as it is.</summary>

@@ -50,6 +50,7 @@ using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Results;
+using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
@@ -2067,6 +2068,19 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // Guards against double completion (already completed or never started).
         if (!questInstance.IsGoalActive(goalTemplate.m_goalName)) {
             return;
+        }
+
+        // A zone-entry goal with a place (its proximity tag names a volume in this zone) finishes at that place, as in
+        // the game: the volume finishes it when the wizard walks in. Crystal Storage's "grab the crystal" step finished
+        // on reaching the top floor (VolumeComponent, Niduus 2026-11-25). Already standing in it finishes it now.
+        if (!string.IsNullOrEmpty(waypointGoal.m_proximityTag)) {
+            var playerObject = GetActiveGameObject();
+            if (playerObject is not null
+                && VolumeComponent.HasGoalVolume(wizard.Zone, questInstance.QuestName, goalTemplate.m_goalName,
+                    playerObject.m_location.X, playerObject.m_location.Y, playerObject.m_location.Z, out var isInside)
+                && !isInside) {
+                return;
+            }
         }
 
         CompleteGoal(questInstance, goalTemplate);
