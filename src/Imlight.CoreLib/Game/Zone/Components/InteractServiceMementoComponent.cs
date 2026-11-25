@@ -339,7 +339,17 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             offer.NextOfferChained = reinteract == 2;
         }
 
+        // An object whose own state option took the first "Interact" (an altar that also starts a spawner) runs that, and a
+        // wizard whose step says to use the object gets the step counted too, as one press does in the live game: the Storm
+        // Altar of "Kraken Up" in Storm Lord Temple ran its state and the step never counted (Zoom, 2026-11-25 00:59, 01:07).
+        var questUseToo = serviceComponent is InteractObjectStateComponent && playerCharacter is not null
+                          && _serviceComponents.OfType<InteractQuestSelectComponent>().FirstOrDefault() is { } stepUse
+                          && OptionsFor(stepUse, playerCharacter).Count > 0
+            ? stepUse
+            : null;
+
         serviceComponent.OnServiceInteraction(playerActor, playerCharacter, playerObject, localIndex);
+        questUseToo?.OnServiceInteraction(playerActor, playerCharacter, playerObject, 0);
     }
 
     // A click without a service name (or a component without one) is taken as meant for that component.
