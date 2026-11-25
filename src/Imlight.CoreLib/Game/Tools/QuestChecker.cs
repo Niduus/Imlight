@@ -588,12 +588,8 @@ internal static class QuestChecker {
             || npcZones.ContainsKey(template)
             || (Template(template) is { } t && (string) t.m_objectName is { Length: > 0 } name && anywhere.Names.Contains(name));
 
-    private const string PERSONA_SUFFIX = "_Persona";
-
     private static bool IsPersonaOf(string personaName, string npcName)
-        => !string.IsNullOrEmpty(npcName)
-            && (string.Equals(personaName, npcName, StringComparison.Ordinal)
-                || string.Equals(personaName, npcName + PERSONA_SUFFIX, StringComparison.Ordinal));
+        => Imlight.CoreLib.Game.Quests.PersonaName.Names(personaName, npcName);
 
     private static string NameOf(ulong id) {
         if (Template(id) is not { } npc) {

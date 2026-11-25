@@ -339,7 +339,15 @@ internal static class QuestMadlibs {
             const string suffix = "_Persona";
             var objectName = name.EndsWith(suffix, StringComparison.Ordinal) ? name[..^suffix.Length] : name;
 
-            return TemplatesByFileName().GetValueOrDefault(objectName) is var id and not 0 ? id : TemplateOfObjectInFile(objectName);
+            if (TemplatesByFileName().GetValueOrDefault(objectName) is var id and not 0) {
+                return id;
+            }
+
+            // Vassek Shadowspite's file is CL_STORM_NPC01.xml; his quests ask for CL-STORM-NPC01_Persona.
+            var other = Imlight.CoreLib.Game.Quests.PersonaName.OtherSpelling(objectName);
+            return other.Length > 0 && TemplatesByFileName().GetValueOrDefault(other) is var otherId and not 0
+                ? otherId
+                : TemplateOfObjectInFile(objectName);
         });
     }
 
@@ -367,6 +375,9 @@ internal static class QuestMadlibs {
 
     // Every template by its file's name without the folder and ".xml", the first one in the manifest when two share a
     // name. Built once: a scan of all 137,000 templates for each persona held Ravenwood's NPCs ~4 s after a start.
+    /// <summary>True when an object file of the game has this name (CL_STORM_NPC01, not CL-STORM-NPC01).</summary>
+    internal static bool HasObjectFile(string name) => !string.IsNullOrEmpty(name) && TemplatesByFileName().ContainsKey(name);
+
     private static System.Collections.Generic.Dictionary<string, uint> TemplatesByFileName() {
         if (Volatile.Read(ref s_templatesByFileName) is { } known) {
             return known;

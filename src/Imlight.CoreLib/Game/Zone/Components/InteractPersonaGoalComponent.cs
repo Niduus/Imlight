@@ -106,7 +106,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
 
         // Check if this NPC is referenced as a persona goal target in any quest (or the Manager's Quest Editor made it one).
         var personas = PersonaNames();
-        if (!string.IsNullOrEmpty(npcName) && (personas.Contains(npcName) || personas.Contains(npcName + PERSONA_SUFFIX))
+        if (!string.IsNullOrEmpty(npcName) && personas.Contains(Imlight.CoreLib.Game.Quests.PersonaName.Key(npcName))
             || IsRegistrarTemplate(npcName) && personas.Any(IsRegistrarTemplate)
             || Imlight.CoreLib.Game.Quests.QuestOptions.NamesNpc(goTemplate.m_templateID)) {
             return true;
@@ -147,6 +147,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
                 .SelectMany(quest => quest.m_goals.OfType<PersonaGoalTemplate>())
                 .Select(goal => (string) goal.m_personaName)
                 .Where(name => !string.IsNullOrEmpty(name))
+                .SelectMany(name => new[] { name, Imlight.CoreLib.Game.Quests.PersonaName.Key(name) })
                 .ToHashSet(StringComparer.Ordinal);
             s_personaNames = Tuple.Create(version, names);
 
@@ -239,16 +240,12 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         }
     }
 
-    private const string PERSONA_SUFFIX = "_Persona";
-
     /// <summary>
     /// A persona goal names the NPC by its object name (WC-ST01-NPC04) or, in most quests, by the persona
     /// the NPC's template registers, which is the object name plus "_Persona" (WC-ST01-NPC03_Persona).
     /// </summary>
     private static bool IsPersonaOf(string personaName, string npcName)
-        => !string.IsNullOrEmpty(npcName)
-            && (string.Equals(personaName, npcName, StringComparison.Ordinal)
-                || string.Equals(personaName, npcName + PERSONA_SUFFIX, StringComparison.Ordinal));
+        => Imlight.CoreLib.Game.Quests.PersonaName.Names(personaName, npcName);
 
     private static bool PersonaNamesMayMatch(string personaName, string npcName)
         => IsPersonaOf(personaName, npcName)
