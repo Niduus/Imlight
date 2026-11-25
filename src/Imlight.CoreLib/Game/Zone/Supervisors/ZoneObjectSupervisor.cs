@@ -71,6 +71,13 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                 continue;
             }
 
+            if (IsUnusedEditorStandIn(template)) {
+                Logger.Debug("Zone {0}: left out the editor stand-in {1} (template {2}); the live game does not show it.",
+                    Logger.Args(Zone.ZonePath, (string) template.m_objectName, objectInfo.m_templateID.Full));
+
+                continue;
+            }
+
             // Its state set, so a quest that changes it plays the animation on the way (States/StateTransitions).
             Imlight.CoreLib.Game.States.StateTransitions.Note(Zone.ZonePath, objectInfo.m_zoneTag, template);
 
@@ -133,6 +140,28 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         }
 
         return true;
+    }
+
+    /*
+     * EDITOR STAND-INS
+     * The zone editor's placeholders (template adjective "EditorOnly", with a DeletedBehavior) are left in the zone files
+     * but never shown by the live game. The Labyrinth's Detention tower 4 keeps "DS-StandIn-VladimirDarkflame", a boss
+     * looking Vladimir Darkflame, a step from the real one, so players saw his boss form before they could talk to him
+     * (Niduus, 2026-11-25). Others: WC-StandIn-Glowstorm, DS-StandIn-SylviaDrake, KR-Standin-Spider_Giant_A. A stand-in a
+     * quest talks to stays (Lemuria's Standin-Bantam_02, Krokotopia's StandIn-DrakeLockley and StandIn-Pork).
+     */
+    private static bool IsUnusedEditorStandIn(GameObjectTemplate template) {
+        var adjectives = template.m_adjectiveList;
+        if (adjectives is null || !adjectives.Any(a => string.Equals(a, "EditorOnly", StringComparison.OrdinalIgnoreCase))) {
+            return false;
+        }
+
+        if (template.m_behaviors is null
+            || !template.m_behaviors.Any(b => b is not null && (string) b.m_behaviorName == "DeletedBehavior")) {
+            return false;
+        }
+
+        return !Imlight.CoreLib.Game.Zone.Components.InteractPersonaGoalComponent.ShouldAttachToEntity(template);
     }
 
     private static bool IsCriticalObject(CoreTemplate template) {

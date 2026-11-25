@@ -87,7 +87,7 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             _chainedEvents.Add(chained.m_eventName.ToString());
         }
 
-        SeedTriggerStates(replacedTriggers);
+        SeedTriggerStates(replacedTriggers, message.TriggerData.m_triggers);
         NoteSleepingSpawners(spawners, replacedTriggers);
         NoteEventPeopleSpawners(spawners);
         NoteWalkInSpawners(spawners, replacedTriggers, message.PathData.m_pathList, message.NodeData.m_nodeList);
@@ -300,14 +300,27 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         ApplyTriggerStateEvents(message.EventName, message.PlayerActor, message.PlayerGameObject);
     }
 
-    private void SeedTriggerStates(List<Trigger> triggers) {
+    private void SeedTriggerStates(List<Trigger> triggers, IEnumerable<Trigger> zoneFileTriggers) {
         // A trigger whose activate events nothing in the zone posts stays enabled, since nothing could ever enable it.
+        // A trigger in the zone files with no activate event at all is one the game's designers switched off: they take
+        // StartZone out of an old copy instead of deleting it. Lord Obsidian's Tomb top floor (Necropolis 5Room3_5) keeps
+        // such copies of Pyromancer's Tomb's Drusilla taunt and forced fight; the live game never plays them, the server
+        // did (Niduus, 2026-11-25). Triggers the server adds itself (ZoneObjects event trips) have none and stay on.
+        var fromZoneFiles = new HashSet<Trigger>(zoneFileTriggers?.Where(t => t is not null) ?? [],
+            ReferenceEqualityComparer.Instance);
         _unenforceableTriggers.Clear();
         foreach (var trigger in triggers.Where(t => t is not null)) {
             var activate = trigger.m_activateEvents?.Select(e => e.ToString()).ToList() ?? [];
-            var startsEnabled = activate.Count == 0 || activate.Contains(START_ZONE_EVENT);
+            var switchedOff = activate.Count == 0 && fromZoneFiles.Contains(trigger) && !HasTeleportResult(trigger);
+            var startsEnabled = !switchedOff && (activate.Count == 0 || activate.Contains(START_ZONE_EVENT));
             string name = trigger.m_triggerName;
             Zone.ScriptState.SetTriggerEnabled(name, startsEnabled);
+
+            if (switchedOff) {
+                Logger.Debug("Zone {0}: trigger {1} has no activate event in the zone files; it stays off as in the game.",
+                    Logger.Args(Zone.ZonePath, name));
+                continue;
+            }
 
             if (!startsEnabled && !activate.Any(_chainedEvents.Contains)) {
                 _unenforceableTriggers.Add(name);
