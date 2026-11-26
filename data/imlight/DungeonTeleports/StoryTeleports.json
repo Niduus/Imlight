@@ -148,5 +148,21 @@
         }
       }
     ]
+  },
+  {
+    "ZoneName": "Zafaria/Interiors/ZF_Z04_I02_Nemean_Rock_Cave",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport location (1)",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Zafaria/Interiors/ZF_Z04_I03_Top_of_the_Rock",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
   }
 ]
