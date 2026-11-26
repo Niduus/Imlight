@@ -74,7 +74,8 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
-        && (HasBehavior(template, "WizardSelectBehavior") || IsNamedByAnyUsageGoal(gameObjectTemplate));
+        && (HasBehavior(template, "WizardSelectBehavior") || IsNamedByAnyUsageGoal(gameObjectTemplate)
+            || UsageGoals.HasPictureOf(gameObjectTemplate));
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard playerCharacter) {
         if (playerCharacter?.QuestBehavior?.CurrentQuestInstances == null) {
@@ -120,7 +121,52 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
             }
             goalList.Add(goal);
         }
+
+        foreach (var (questName, goal) in StandInGoalsOf(gameObjectTemplate, Entity.Zone?.ZonePath)) {
+            if (!_usageGoalsByQuest.TryGetValue(questName, out var goalList)) {
+                goalList = [];
+                _usageGoalsByQuest[questName] = goalList;
+            }
+
+            if (!goalList.Contains(goal)) {
+                goalList.Add(goal);
+            }
+        }
     }
+
+    /// <summary>
+    /// The "use" steps this object stands in for: steps that happen in this zone, whose own object no zone file of it
+    /// places, and whose quest button picture is this object's. Sobaka's boat (ZF_Sobakas_Boat, the step of "Fastest Hunk
+    /// of Junk", "Down By The River" and "Catching Shadows" in Zafaria) is placed nowhere in the game files; the boats
+    /// you can press, Stone Town's ZF_TeleportToWaterfront and Waterfront's ZF_TeleportToStoneTown2, carry its picture
+    /// (Location_ZF_SobakasDingy) and are the only things that do. Riding one never counted the step, so no wizard could
+    /// finish those quests (Zoom, 2026-11-26 04:30-05:15). Only for a step with nothing of its own in the zone: 332 of the
+    /// game's 743 "use" steps share their picture with other things (the Quetzal cages), and those keep their own objects.
+    /// </summary>
+    internal static IEnumerable<(string Quest, GoalTemplate Goal)> StandInGoalsOf(GameObjectTemplate template, string zone) {
+        if (template is null || string.IsNullOrEmpty(zone)) {
+            yield break;
+        }
+
+        var own = UsageGoals.Of(template).ToList();
+        foreach (var (quest, goal) in UsageGoals.PictureGoalsOf(template)) {
+            if (!string.Equals((string) goal.m_destinationZone, zone, StringComparison.OrdinalIgnoreCase)
+                || own.Any(o => o.Quest == quest && ReferenceEquals(o.Goal, goal))
+                || Imlight.CoreLib.Game.Tools.QuestStepSpots.OwnUsageObjects(zone, quest, goal.m_goalName).Count > 0) {
+                continue;
+            }
+
+            yield return (quest, goal);
+        }
+    }
+
+    /// <summary>The quest button picture of a "use" step (empty when it has none), for the stand-ins above.</summary>
+    internal static string PictureOf(string quest, string goalName)
+        => UsageGoals.PictureOf(quest, goalName);
+
+    /// <summary>The picture an object shows on a quest button (its icon), when it can be pressed at all.</summary>
+    internal static string PictureOf(GameObjectTemplate template)
+        => template?.m_sIcon is { Length: > 0 } icon && InteractOptions(template).Any() ? (string) icon : "";
 
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
         // One use completes every active usage goal that matches this object, across all of the
@@ -343,6 +389,7 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         private readonly Dictionary<string, List<int>> _byTag = new(StringComparer.Ordinal);
         private readonly Dictionary<(string Quest, string Goal), List<int>> _byGoal = [];
         private readonly Dictionary<string, List<int>> _byAdjective = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, List<int>> _byPicture = new(StringComparer.OrdinalIgnoreCase);
 
         private UsageGoals(int version, IReadOnlyList<QuestTemplate> quests) {
             _version = version;
@@ -373,6 +420,11 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
                         foreach (var adjective in scavengeGoal.m_itemAdjectives ?? []) {
                             Add(_byAdjective, (string) adjective, index);
                         }
+                    }
+
+                    if ((string) goal.m_displayImage1 is { Length: > 0 } picture
+                        && picture.StartsWith("GUI/QuestButtons/", StringComparison.OrdinalIgnoreCase)) {
+                        Add(_byPicture, picture, index);
                     }
                 }
             }
@@ -423,6 +475,30 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
             return OptionTags(option).Any(goals._byTag.ContainsKey)
                 || RequiredGoals(option).Any(goals._byGoal.ContainsKey);
+        }
+
+        /// <summary>True when some usage goal shows this object's quest button picture (a possible stand-in).</summary>
+        internal static bool HasPictureOf(GameObjectTemplate template)
+            => InteractQuestSelectComponent.PictureOf(template) is { Length: > 0 } picture && Current()._byPicture.ContainsKey(picture);
+
+        /// <summary>The usage goals whose quest button picture is this object's, in quest order.</summary>
+        internal static IEnumerable<(string Quest, GoalTemplate Goal)> PictureGoalsOf(GameObjectTemplate template) {
+            var goals = Current();
+            if (InteractQuestSelectComponent.PictureOf(template) is not { Length: > 0 } picture || !goals._byPicture.TryGetValue(picture, out var list)) {
+                return [];
+            }
+
+            return list.Distinct().Order().Select(index => goals._all[index]).ToList();
+        }
+
+        /// <summary>The quest button picture of one usage goal (empty when it has none).</summary>
+        internal static string PictureOf(string quest, string goalName) {
+            var goals = Current();
+            if (!goals._byGoal.TryGetValue((quest, goalName), out var list)) {
+                return "";
+            }
+
+            return list.Select(index => (string) goals._all[index].Goal.m_displayImage1).FirstOrDefault(p => !string.IsNullOrEmpty(p)) ?? "";
         }
 
         /// <summary>The usage goals that name this object, in quest order.</summary>
