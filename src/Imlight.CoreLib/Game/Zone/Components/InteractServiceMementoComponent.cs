@@ -193,7 +193,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
     // How much past the nearest floor a player still reaches such an object, and how far that floor may be at most.
     private const float FLOOR_REACH_MARGIN = 80f;
-    private const float FLOOR_REACH_MAX = 800f;
+    // Savannah's Watering Hole of "Off the Boil" (ZF-BAOB-C14-001) sits in a basin with no floor, its nearest rim about 830
+    // away: under the old 800 it was never offered and Zoom stood on the rim for hours (2026-11-25 19:43 on).
+    private const float FLOOR_REACH_MAX = 1000f;
 
     /// <summary>
     /// The reach of a quest object (not a character) that stands too far from any floor to be offered within the usual
@@ -212,7 +214,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
             var at = Entity.ActiveGameObject.m_location;
             if (Imlight.CoreLib.Game.Tools.OverlayQuestPath.OnFloor(zone, at.X, at.Y)
-                || Imlight.CoreLib.Game.Tools.OverlayQuestPath.NearestFloor(zone, at.X, at.Y) is not { } floor) {
+                || Imlight.CoreLib.Game.Tools.OverlayQuestPath.NearestFloorWithin(zone, at.X, at.Y, FLOOR_REACH_MAX) is not { } floor) {
                 return 0;
             }
 
