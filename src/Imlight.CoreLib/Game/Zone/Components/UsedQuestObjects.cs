@@ -34,6 +34,19 @@ internal static class UsedQuestObjects {
         return s_byTemplate.GetOrAdd(template.m_templateID, _ => Find(template));
     }
 
+    /// <summary>
+    /// Whether the object is only a wall: a solid collision with no model or state set. Used for a quest it is the way
+    /// through, so it goes for the wizard who used it.
+    /// </summary>
+    internal static bool IsBareBlocker(GameObjectTemplate template) {
+        var behaviors = template?.m_behaviors;
+        return behaviors is not null
+            && behaviors.OfType<CollisionBehaviorTemplate>().Any(c => !c.m_bDisableCollision
+                && !string.IsNullOrEmpty((string) c.m_solidCollisionFilename))
+            && !behaviors.OfType<RenderBehaviorTemplate>().Any()
+            && !behaviors.OfType<ObjectStateBehaviorTemplate>().Any();
+    }
+
     /// <summary>The look the object starts in (before it was used), or null when it has none to go back to.</summary>
     internal static string StartState(GameObjectTemplate template) {
         var setName = template?.m_behaviors?.OfType<ObjectStateBehaviorTemplate>().Select(b => (string) b.m_stateSetName)

@@ -1,0 +1,13 @@
+{
+  "Name": "PL-BORE-ENC-003",
+  "Description": "PL-BORE-ENC-003 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2320,
+  "MaxGold": 2320,
+  "ExperienceAmount": 437040,
+  "TrainingPoints": 0,
+  "Items": []
+}

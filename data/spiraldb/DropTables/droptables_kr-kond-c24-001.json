@@ -1,0 +1,13 @@
+{
+  "Name": "KR-KOND-C24-001",
+  "Description": "KR-KOND-C24-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1425,
+  "MaxGold": 1425,
+  "ExperienceAmount": 147215,
+  "TrainingPoints": 0,
+  "Items": []
+}

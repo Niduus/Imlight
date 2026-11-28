@@ -1,25 +1,32 @@
 {
+  "$type": "Imcodec.ObjectProperty.TypeCache.QuestTemplate, Imcodec.ObjectProperty",
   "m_questName": "KR-MOON-C14-001",
   "m_questNameID": 0,
   "m_questTitle": "Shadow Dancer",
-  "m_questInfo": null,
-  "m_questPrep": null,
-  "m_questUnderway": null,
-  "m_questComplete": null,
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
   "m_startGoals": [
     "1_WizardQuestGoalsKill"
   ],
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "KR_Mouse_Summoner_A.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "1_WizardQuestGoalsKill",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
         "m_results": []
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -29,12 +36,14 @@
           "m_results": []
         }
       },
+      "m_locationName": "Moon Cliffs",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_MOB.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
+      "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_B",
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -45,47 +54,100 @@
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-MoonCliffs-NPC04_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "You have done very well, Spellbinder. It is my honor to teach you how to inscribe a Shadow magic spell into your repertoire!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_11.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1223183,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               }
-            ]
+            ],
+            "m_madlibs": [],
+            "m_dialogEvents": [],
+            "m_noAggroWhileDialogIsUp": false,
+            "m_noAggroNoDelay": false
           }
         ]
       },
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_B",
-      "m_locationName": "Moon Cliffs",
-      "m_goalName": "1_WizardQuestGoalsKill",
-      "m_goalTitle": "WizardQuestGoals_Kill",
       "m_goalType": "GOAL_TYPE_BOUNTY",
-      "m_npcAdjectives": [
-        "KR_Mouse_Summoner_A.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "KR-MoonCliffs-NPC04_Persona",
+      "m_usePatron": false,
+      "m_goalName": "2_WizardQuestGoalsTalkNPC",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
         "m_results": []
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
@@ -93,24 +155,25 @@
           "m_results": []
         }
       },
+      "m_locationName": "Moon Cliffs",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
+      "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_01",
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": []
       },
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_01",
-      "m_locationName": "Moon Cliffs",
-      "m_goalName": "2_WizardQuestGoalsTalkNPC",
-      "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "KR-MoonCliffs-NPC04_Persona",
-      "m_usePatron": false
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     }
   ],
   "m_startResults": {
@@ -123,8 +186,7 @@
         "m_dynaModState": "Glowy",
         "m_zoneName": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_01",
         "m_bShowsObject": false,
-        "m_persist": false,
-        "m_requirements": null
+        "m_persist": false
       }
     ]
   },
@@ -132,7 +194,8 @@
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
-        "m_tableName": "KR-MOON-C14-001"
+        "m_tableName": "KR-MOON-C14-001",
+        "m_maxRolls": 0
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
@@ -269,6 +332,207 @@
           "m_applyNOT": false,
           "m_operator": "ROP_AND"
         }
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResUnlockShadowMagic, Imcodec.ObjectProperty"
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResFallthrough, Imcodec.ObjectProperty",
+        "m_options": [
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Sun",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self DPS"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Storm",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self DPS"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Fire",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self DPS"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Life",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self Heal"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Ice",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self Tank"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Death",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self Tank"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Balance",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self Heal"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Myth",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Self DPS"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 106954,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": "QuestItemLoot"
       }
     ]
   },
@@ -277,7 +541,7 @@
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
         "m_entryName": "Complete",
-        "m_displayName": null,
+        "m_displayName": "",
         "m_isQuestRegistry": true,
         "m_questName": "KR-MOON-C13-001",
         "m_applyNOT": false,
@@ -287,8 +551,6 @@
     "m_applyNOT": false,
     "m_operator": "ROP_AND"
   },
-  "m_prepRequirements": null,
-  "m_pruneRequirements": null,
   "m_prepAlways": false,
   "m_clientTags": [],
   "m_goalLogic": [
@@ -327,88 +589,342 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC04_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Spellbinder, when you faced Ravik Dreamscape you surely noticed a unique form of magic that he used in the duel?",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_05.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223183,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC04_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "When the Shadow Queen conquered the Eclipse Tower, she allowed Shadow magic to flow in and corrupt the Moon magic.",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_06.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223183,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC04_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Now the two are forever intertwined in this place. Moon magic is about changing forms. But Shadow magic is about rebuilding reality.",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_07.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223183,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC04_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Shadow magic is dangerous and was forbidden throughout the Spiral. But you must learn it, if you wish to fight legends.",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_08.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223183,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC04_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Ascend the Eclipse Tower again. You will see new threats, but may expand your mind. It is my honor to teach you. I dearly hope you survive.",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_09.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223183,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       },
       {
         "m_dialogTag": "Underway",
@@ -417,20 +933,74 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-MoonCliffs-NPC04_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Climb the Eclipse Tower again. You will see new threats, and I dearly hope you survive.",
             "m_picture": "GUI/NpcPortraits/Portrait_Mice_Summoner_A_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_KHR|WorldData|Sound/Dialogue/SofiaDarkSide_KHR_10.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1223183,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       }
     ]
   },
@@ -440,5 +1010,12 @@
   "m_outdated": false,
   "m_noQuestHelper": false,
   "m_mainline": true,
-  "m_activityType": "ACTIVITY_NotActivity"
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
 }

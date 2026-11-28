@@ -43,6 +43,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
@@ -93,6 +94,7 @@ public class ZoneEntity(
     internal void ReleaseLateDuelJoin() => System.Threading.Volatile.Write(ref _lateDuelClaim, 0);
     public IActorRef ZoneRef { get; protected set; } = zoneRef;
     public bool NoTransfer { get; set; } = false;
+    internal ConcurrentDictionary<ulong, Imcodec.Math.Vector3> PlayerSpots { get; } = new();
     public ushort MobileID { 
         get => ActiveGameObject.m_nMobileID; 
         private set => ActiveGameObject.m_nMobileID = value; 
@@ -292,6 +294,7 @@ public class ZoneEntity(
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTLOADBEGIN))]
     protected virtual void ReceiveObjectLoadBegin() {
         this.SelfRef = Self;
+        Zone?.NoteActor(Info?.m_zoneTag, Self);
 
         if (ActiveGameObject is not null) {
             MobileID = ReserveMobileId();
@@ -326,6 +329,16 @@ public class ZoneEntity(
     protected override void PostStop() {
         Imlight.CoreLib.Game.Tools.MinimapIndex.Stopped(this);
         base.PostStop();
+    }
+
+    [MessageHandler(typeof(Imlight.CoreLib.Game.Zone.Components.TransportVolumePrompt))]
+    private void ReceiveTransportVolumePrompt(Imlight.CoreLib.Game.Zone.Components.TransportVolumePrompt message) {
+        if (!Components.Keys.Any(component => component is Imlight.CoreLib.Game.Zone.Components.InteractDoorTeleportComponent)) {
+            AddComponent(typeof(Imlight.CoreLib.Game.Zone.Components.InteractDoorTeleportComponent));
+        }
+
+        GetComponentOfType<Imlight.CoreLib.Game.Zone.Components.InteractDoorTeleportComponent>()
+            ?.OnVolumePrompt(message);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_QUERYZONEENTITY))]
@@ -370,6 +383,15 @@ public class ZoneEntity(
         var customNpc = Imlight.CoreLib.Game.World.CustomNpcs.For(Info?.m_zoneTag);
         // A stone of the Customs tab's teleporter hubs likewise only borrows its look (CustomTeleporters).
         var customTeleporter = Imlight.CoreLib.Game.World.CustomTeleporters.For(Info?.m_zoneTag);
+        // Trigger-owned transport objects (ladders, ziplines, lifts and paired trigger volumes)
+        // are drawn by the trigger rather than by an object template in the zone object list.
+        // Attach the shared door/teleport service from the exact triggerObject tag so the
+        // trigger's own ResTeleport destination is usable from the placed object.
+        if (OwnsTransportTrigger()
+            && !Components.Keys.Any(component => component is Imlight.CoreLib.Game.Zone.Components.InteractDoorTeleportComponent)) {
+            AddComponent(typeof(Imlight.CoreLib.Game.Zone.Components.InteractDoorTeleportComponent));
+        }
+
         foreach (var (componentType, shouldAttachToEntity) in ZoneEntityComponentRegistry.GetRegisteredComponents()) {
             if ((customNpc is not null || customTeleporter is not null) && !KeptForCustomNpc(componentType)) {
                 continue;
@@ -447,6 +469,48 @@ public class ZoneEntity(
         }
 
         return minionActor;
+    }
+
+    private bool OwnsTransportTrigger() {
+        if (Zone?.TriggersByName is not { } triggers) {
+            return false;
+        }
+
+        var placedTag = Info?.m_zoneTag;
+        var here = ActiveGameObject?.m_location;
+        foreach (var trigger in triggers.Values) {
+            var info = trigger?.m_triggerObjInfo;
+            if (info is null || info.m_templateID == 0) {
+                continue;
+            }
+
+            var sameTag = !string.IsNullOrEmpty(placedTag)
+                && string.Equals((string)info.m_zoneTag, placedTag, StringComparison.OrdinalIgnoreCase);
+            var samePlace = here is { } at
+                && MathF.Abs(at.X - info.m_locationX) < 1f
+                && MathF.Abs(at.Y - info.m_locationY) < 1f
+                && MathF.Abs(at.Z - info.m_locationZ) < 1f;
+            if (!sameTag && !samePlace) {
+                continue;
+            }
+
+            if (Imlight.CoreLib.Game.Zone.Components.InteractDoorTeleportComponent.IsTransportTrigger(trigger)) {
+                return true;
+            }
+
+            if (trigger.m_results?.m_results?.OfType<ResTeleport>().Any(teleport =>
+                    !string.IsNullOrEmpty(teleport.m_destinationZone)) == true) {
+                return true;
+            }
+
+            if (Imlight.CoreLib.WizardData.Collections.ZoneDataCollection.GetZoneData(Zone.ZonePath)?.Teleports?
+                    .Any(teleport => string.Equals(teleport?.TriggerName, trigger.m_triggerName, StringComparison.OrdinalIgnoreCase)
+                        && !string.IsNullOrEmpty(teleport.Teleport?.m_destinationZone)) == true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

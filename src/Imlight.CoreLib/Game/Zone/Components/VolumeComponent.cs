@@ -131,7 +131,33 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
                 }
 
                 _volumeGoals.Add((quest.m_questName, goal.m_goalName));
+
+                // An encounter whose first step is this volume starts when a player walks in (QuestService "encounter").
+                if (quest is EncounterTemplate && quest.m_startGoals?.Any(s => (string) s == (string) goal.m_goalName) == true) {
+                    _encounterStarts.Add((quest.m_questName, goal.m_goalName));
+                }
             }
+        }
+    }
+
+    /// <summary>
+    /// Encounters (EncounterTemplate, from the game's own quest files) that start in this volume. In the game the volume's
+    /// trigger starts them (ResAddEncounter), but the server's types cannot read which encounter a zone's trigger names,
+    /// so the encounter whose first step is reaching this volume is the one it starts. Only for a player who has not done
+    /// it yet.
+    /// </summary>
+    private readonly List<(string Quest, string Goal)> _encounterStarts = [];
+
+    private void StartEncounters(IActorRef playerActor, Wizard playerWizard) {
+        foreach (var (questName, goalName) in _encounterStarts) {
+            if (playerWizard.HasQuest(questName) || playerWizard.HasCompletedQuest(questName)) {
+                continue;
+            }
+
+            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND {
+                Action = "encounter-volume",
+                QuestName = questName + "\n" + goalName,
+            });
         }
     }
 
@@ -182,6 +208,7 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
         // Quest proximity goals are tied to the volume by name; if the player has one of
         // this volume's goals active, tell their quest service to complete it.
         NotifyProximityGoals(playerObj, playerActor, playerWizard);
+        OfferTransportInteract(show: true, playerActor);
 
         string volumeName = _volume.m_volumeName;
         if (DailyAssignmentData.IsAssignmentVolume(volumeName)) {
@@ -192,6 +219,10 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private void NotifyProximityGoals(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (_volumeGoals.Count == 0 || playerWizard is null) {
             return;
+        }
+
+        if (_encounterStarts.Count > 0) {
+            StartEncounters(playerActor, playerWizard);
         }
 
         foreach (var (questName, goalName) in _volumeGoals) {
@@ -223,6 +254,88 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
             Entity.ZoneRef.Tell(postEventMsg);
         }
+
+        OfferTransportInteract(show: false, playerActor);
+    }
+
+    private void OfferTransportInteract(bool show, IActorRef playerActor) {
+        if (playerActor is null || _volume is null || Entity.Zone?.TriggersByName is not { } triggers) {
+            return;
+        }
+
+        // A POI or quest volume must not offer a ladder. Only a volume named for that ride does.
+        if (!InteractDoorTeleportComponent.HasTransportName(_volume.m_volumeName)
+            && _volume.m_enterEvents?.Any(enter => InteractDoorTeleportComponent.HasTransportName((string)enter)) != true) {
+            return;
+        }
+
+        var center = Entity.ActiveGameObject.m_location;
+        Trigger match = null;
+        var rank = 0;
+        var distance = float.MaxValue;
+        foreach (var trigger in triggers.Values) {
+            if (!InteractDoorTeleportComponent.VolumeOwnsTransport(_volume, trigger, center.X, center.Y)) {
+                continue;
+            }
+
+            var thisRank = TransportRank(_volume, trigger);
+            var info = trigger.m_triggerObjInfo;
+            var dx = center.X - (info?.m_locationX ?? center.X);
+            var dy = center.Y - (info?.m_locationY ?? center.Y);
+            var thisDistance = (dx * dx) + (dy * dy);
+            if (thisRank < rank || (thisRank == rank && thisDistance >= distance)) {
+                continue;
+            }
+
+            match = trigger;
+            rank = thisRank;
+            distance = thisDistance;
+        }
+
+        if (match is null) {
+            var near = triggers.Values.FirstOrDefault(trigger =>
+                InteractDoorTeleportComponent.IsTransportTrigger(trigger)
+                && trigger.m_triggerObjInfo is { } info
+                && ((center.X - info.m_locationX) * (center.X - info.m_locationX))
+                    + ((center.Y - info.m_locationY) * (center.Y - info.m_locationY)) <= 800f * 800f);
+            if (near is not null || InteractDoorTeleportComponent.HasTransportName(_volume.m_volumeName)) {
+                Logger.Information("Transport volume {0} entered at {1},{2} radius {3}; no trigger matched. Nearest {4}.",
+                    Logger.Args(_volume.m_volumeName, center.X, center.Y, _volume.m_radius, near?.m_triggerName));
+            }
+
+            return;
+        }
+
+        var actor = Entity.Zone.ActorFor(match.m_triggerName, (string)match.m_triggerObjInfo?.m_zoneTag)
+            ?? Entity.SelfRef;
+        if (actor is null) {
+            Logger.Information("Transport volume {0} matched {1} but has no object to prompt.",
+                Logger.Args(_volume.m_volumeName, match.m_triggerName));
+            return;
+        }
+
+        actor.Tell(new TransportVolumePrompt {
+            Show = show,
+            PlayerActor = playerActor,
+            TriggerName = match.m_triggerName,
+        });
+    }
+
+    private static int TransportRank(Volume volume, Trigger trigger) {
+        var fires = trigger.m_fireEvents;
+        if (fires is { Count: > 0 } && volume.m_enterEvents?.Any(enter =>
+                fires.Any(fire => string.Equals((string)enter, (string)fire, StringComparison.OrdinalIgnoreCase))) == true) {
+            return 3;
+        }
+
+        var volumeName = VolumeComponent.WithoutCopyNumber(volume.m_volumeName);
+        string[] names = [trigger.m_triggerName, (string)trigger.m_triggerObjInfo?.m_zoneTag];
+        if (names.Any(name => string.Equals(volumeName, name, StringComparison.OrdinalIgnoreCase)
+                              || string.Equals(volume.m_volumeName, name, StringComparison.OrdinalIgnoreCase))) {
+            return 2;
+        }
+
+        return 1;
     }
 
 }

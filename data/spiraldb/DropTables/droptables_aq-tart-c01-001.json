@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-TART-C01-001",
+  "Description": "AQ-TART-C01-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2300,
+  "MaxGold": 2300,
+  "ExperienceAmount": 189630,
+  "TrainingPoints": 0,
+  "Items": []
+}

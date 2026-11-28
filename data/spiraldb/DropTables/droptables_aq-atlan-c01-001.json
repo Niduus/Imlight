@@ -1,0 +1,13 @@
+{
+  "Name": "AQ-ATLAN-C01-001",
+  "Description": "AQ-ATLAN-C01-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2700,
+  "MaxGold": 2700,
+  "ExperienceAmount": 97375,
+  "TrainingPoints": 0,
+  "Items": []
+}

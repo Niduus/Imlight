@@ -1,0 +1,13 @@
+{
+  "Name": "AH-FORB-MAIN-008",
+  "Description": "Ahmarra quest The Dream-Quest of Kaddath (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1240,
+  "MaxGold": 1240,
+  "ExperienceAmount": 155750,
+  "TrainingPoints": 0,
+  "Items": []
+}

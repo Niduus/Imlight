@@ -181,7 +181,8 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
 
             var templateId = QuestMadlibs.GiverTemplateOf(questTemplate);
 
-            if (templateId == entity.ActiveGameObject.m_templateID) {
+            if (templateId == entity.ActiveGameObject.m_templateID
+                || IsSameCharacterHandIn(questTemplate, templateId, entity.ActiveGameObject.m_templateID)) {
                 _givesQuests.Add(questTemplate);
             }
         }
@@ -189,6 +190,33 @@ internal sealed class InteractQuestOfferComponent(ZoneEntity entity)
         _givesQuests.Sort((a, b) => string.Compare(a.m_questTitle, b.m_questTitle, StringComparison.Ordinal));
         _cachedPlayerStates.Clear();
     }
+
+    /// <summary>
+    /// Whether this NPC is another copy of the quest's giver (same name) that a quest this one needs is handed in to. One
+    /// character often has several templates: Alwyn WoodWard takes Planning the Attack in Last Wood (KR-LastWood-NPC31),
+    /// while the data names his Foothold copy (KR-LastWood-NPC02) as the giver of First Through the Breach, so he took the
+    /// quest in and offered nothing (2026-11-26). The one handed in to now offers the next quest too, as live.
+    /// </summary>
+    private static bool IsSameCharacterHandIn(QuestTemplate quest, ulong giverId, ulong npcId) {
+        if (giverId == 0 || npcId == 0 || quest?.m_requirements is null
+            || Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(giverId) is not GameObjectTemplate giver
+            || Imlight.CoreLib.Shared.Resources.CoreObjectFactory.GetCoreTemplate(npcId) is not GameObjectTemplate npc) {
+            return false;
+        }
+
+        var giverName = EnglishName(giver.m_displayName);
+        if (string.IsNullOrEmpty(giverName) || !string.Equals(giverName, EnglishName(npc.m_displayName), StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        return Imlight.CoreLib.Game.Tools.QuestGuide.NeededQuests(quest.m_requirements)
+            .Select(QuestTemplateCollection.GetQuestByName)
+            .Any(needed => needed?.m_goals?.Any(goal => goal is PersonaGoalTemplate persona
+                && QuestMadlibs.SpeakerTemplateOf(persona.m_personaName, 0) == npcId) == true);
+    }
+
+    private static string EnglishName(string key)
+        => string.IsNullOrEmpty(key) ? "" : Imlight.CoreLib.Shared.Resources.Locale.GetEnglishName(key) is { Length: > 0 } name ? name : key;
 
     public override void OnPlayerJoin(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         if (_givesVersion != QuestOptions.Version) {

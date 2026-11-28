@@ -45,11 +45,14 @@ using Imcodec.CoreObject;
 using Imcodec.Cryptography;
 using Imcodec.IO;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.Math;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
@@ -90,6 +93,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     // last checked again.
     private readonly Dictionary<IActorRef, Wizard> _hiddenUntilQuest = [];
     private readonly Dictionary<IActorRef, System.DateTime> _questCheckedAt = [];
+    private readonly Dictionary<IActorRef, System.DateTime> _spotCheckedAt = [];
     private static readonly System.TimeSpan QUEST_CHECK_INTERVAL = System.TimeSpan.FromSeconds(2);
 
     // The enemy show check (Niduus, 2026-11-12: "tighten enemy appearances. Sometimes they do project as invisible. Have
@@ -128,7 +132,11 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         || template is GameObjectTemplate { m_behaviors: var behaviors } && behaviors.Any(x => x is PetGameBehaviorTemplate)
         // The solo hatchery sigil (Teleport Pet Morphing 1P) has no model either, but the game only shows its press-X
         // prompt for an object it was sent (Niduus, 2026-10-20: the solo sigil had no prompt, the duo one did).
-        || template is GameObjectTemplate { m_templateID: SOLO_HATCH_SIGIL_TEMPLATE_ID };
+        || template is GameObjectTemplate { m_templateID: SOLO_HATCH_SIGIL_TEMPLATE_ID }
+        // Any press-X object with no model (a ladder or zip-line such as KR-TyrianGorge-LadderD): the game shows its press-X
+        // only for an object it was sent (2026-11-25).
+        || template is GameObjectTemplate interactable
+            && interactable.m_behaviors?.Any(x => x is InteractableBehaviorTemplate) == true;
 
     private const uint SOLO_HATCH_SIGIL_TEMPLATE_ID = 266075;
 
@@ -196,17 +204,26 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         // Check to see if dynamods would enable/disable this object.
         // We don't need to check for spawns, only despawns.
+        // A mod names its zone by path ("Khrysalis/KR_Z04_TyrianGorge"), as quests write it. Only the zone file's own name
+        // was compared, which never matches a path, so every mod of a named zone was skipped when a wizard came in and an
+        // object a quest took away was sent again on every login (2026-11-26).
         var relevantDynaMods = wizard?.DynamodSet?.Dynamods?
-            .Where(d => d.ClientTag.Equals(Entity.Info?.m_zoneTag, System.StringComparison.OrdinalIgnoreCase))
-            .Where(d => string.IsNullOrEmpty(d.ZoneName) 
+            .Where(d => d is not null && NamedBy(d.ClientTag))
+            .Where(d => string.IsNullOrEmpty(d.ZoneName)
+                     || d.ZoneName.Equals(Entity.Zone?.ZonePath, System.StringComparison.OrdinalIgnoreCase)
                      || d.ZoneName.Equals(Entity.Zone.ZoneData.m_zoneName, System.StringComparison.OrdinalIgnoreCase))
             .ToList() ?? [];
         string persistedState = null;
         foreach (var mod in relevantDynaMods) {
             // If the player has a dynamod that disables this object, do not spawn it for them.
             if (IsDespawnState(mod.ModState)) {
+                var tag = Entity.Info?.m_zoneTag;
+                if (QuestLeftovers.ActiveUsageNames(wizard, tag?.ToString()) || CharacterOfferedByQuest(wizard)) {
+                    continue;
+                }
                 _playerIgnoreBecauseDynamod[suspect] = wizard;
                 LogMajid($"hidden by dynamod {mod.ModState} from", suspect);
+                RemoveClientCopy(suspect);
 
                 return;
             }
@@ -221,6 +238,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             _hiddenUntilQuest[suspect] = wizard;
             _questCheckedAt[suspect] = System.DateTime.UtcNow;
             LogMajid("held back as quest-only from", suspect);
+            RemoveClientCopy(suspect);
 
             return;
         }
@@ -233,6 +251,14 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
                 requirements,
                 new ZoneRequirementContext(requirements, suspect, null, wizard, Entity.ZoneRef)
             );
+
+            // Which NPC shows for whom and why, so an NPC that should be gone (or not here yet) can be traced to its needs.
+            if (Entity.Template is GameObjectTemplate npcTemplate
+                && npcTemplate.m_behaviors?.All(b => b is not DuelistBehaviorTemplate) != false) {
+                Logger.Information("Object {0} in {1}: {2} for {3}; needs {4}.",
+                    Logger.Args(Entity.Info.m_zoneTag, Entity.Zone?.ZonePath, requirementsMet ? "shown" : "hidden", wizard?.CharId,
+                        Imlight.CoreLib.Game.Sigils.SigilRequirements.Describe(requirements)));
+            }
         }
 
         if (requirementsMet) {
@@ -263,6 +289,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         // If the player doesn't meet spawn requirements, nothing to do.
         LogMajid("hidden by spawn requirements from", suspect);
+        RemoveClientCopy(suspect);
         if (!_doesDistanceCheck) {
             return;
         }
@@ -300,6 +327,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         _lastSeen[playerActor] = (playerObj, playerWizard ?? _lastSeen.GetValueOrDefault(playerActor).Wizard);
+        SyncSpot(playerActor);
         if (playerWizard is not null && Entity.Info?.m_spawnRequirements is null && _joinedPlayers.Add(playerActor)) {
             if (IsQuestOnly) {
                 // This player was in the zone before the object was made, so OnStart did not send it to them.
@@ -412,7 +440,9 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE))]
     private void ReceiveShowAfterRemove(ZONE_102_PROTOCOL.MSG_SHOWAFTERREMOVE message) {
         var player = message.PlayerActor;
-        if (player is null || !_showPending.Remove(player) || !IsEnabled || Entity.ActiveGameObject is null) {
+
+        if (player is null || !_showPending.Remove(player) || !IsEnabled || Entity.ActiveGameObject is null
+            || _playerIgnoreBecauseDynamod.ContainsKey(player)) {
             return;
         }
 
@@ -490,11 +520,84 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             && (msg.ObjectName == goTemplate.m_objectName || msg.TemplateID == goTemplate.m_templateID)) {
             _removedByScript = true;
             _sentTo.Clear();
+            foreach (var player in _joinedPlayers.Concat(_lastSeen.Keys).Distinct().ToList()) {
+                DespawnObjectForPlayer(player);
+            }
         }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEOBJECTSHOWAGAIN))]
     private void ReceiveShowAgain() => OnEnabled();
+
+    [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_POSTEVENT))]
+    private void ReceiveQuestStatePostEvent(ZONE_102_PROTOCOL.MSG_POSTEVENT msg) {
+        if (!string.Equals(msg.EventName, "QuestStateChanged", System.StringComparison.OrdinalIgnoreCase)
+            || Entity.Info?.m_spawnRequirements is null) {
+            return;
+        }
+
+        foreach (var (wizard, player) in _playersWithRequirementsMet.ToList()) {
+            if (wizard is null || player is null) continue;
+            var met = RequirementDispatcher.EvaluateRequirements(
+                Entity.Info.m_spawnRequirements,
+                new ZoneRequirementContext(Entity.Info.m_spawnRequirements, player, null, wizard, Entity.ZoneRef));
+            if (!met) {
+                Logger.Debug("Object {0} in {1}: hidden for {2}, its needs no longer met after a quest change.",
+                    Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, wizard.CharId));
+                _playersWithRequirementsMet.Remove(wizard);
+                _playersInRange.Remove(player);
+                DespawnObjectForPlayer(player);
+            }
+        }
+
+        foreach (var (player, seen) in _lastSeen.ToList()) {
+            var wizard = seen.Wizard;
+            if (wizard is null) continue;
+            if (_playersWithRequirementsMet.ContainsKey(wizard)) continue;
+            var met = RequirementDispatcher.EvaluateRequirements(
+                Entity.Info.m_spawnRequirements,
+                new ZoneRequirementContext(Entity.Info.m_spawnRequirements, player, null, wizard, Entity.ZoneRef));
+            if (met) {
+                Logger.Debug("Object {0} in {1}: shown for {2}, its needs met after a quest change.",
+                    Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, wizard.CharId));
+                _playersWithRequirementsMet[wizard] = player;
+                _playersInRange.Add(player);
+                CreateObjectForPlayer(player);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether a state change or dynamod for <paramref name="name"/> is meant for this object: its zone tag, else (when no
+    /// placed object carries that tag) its debug or template name, " instance" or not. Quests do not always name an object
+    /// exactly as its zone places it.
+    /// </summary>
+    private bool NamedBy(string name) {
+        if (string.IsNullOrEmpty(name)) {
+            return false;
+        }
+
+        if (string.Equals(Entity.Info?.m_zoneTag, name, System.StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        var wanted = WithoutInstance(name);
+        if (string.Equals(WithoutInstance(Entity.Info?.m_zoneTag), wanted, System.StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        // Another object placed under that very tag takes it, not this one.
+        var zonePath = Entity.Zone?.ZonePath;
+        if (!string.IsNullOrEmpty(zonePath) && Imlight.CoreLib.Game.Zone.Core.ZoneObjectTags.IsPlaced(zonePath, name)) {
+            return false;
+        }
+
+        return string.Equals(WithoutInstance(Entity.ActiveGameObject?.m_debugName.ToString()), wanted, System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(WithoutInstance((Entity.Template as GameObjectTemplate)?.m_objectName.ToString()), wanted, System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string WithoutInstance(string name)
+        => name?.EndsWith(" instance", System.StringComparison.OrdinalIgnoreCase) == true ? name[..^" instance".Length] : name;
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ENTERSTATE))]
     public void ReceiveEnterState(ZONE_102_PROTOCOL.MSG_ENTERSTATE msg) {
@@ -503,7 +606,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         // If the tag matches, spawn or despawn the object for the sender.
         var zoneTag = msg.ObjectName;
-        if (Entity.Info is not null && string.Equals(Entity.Info.m_zoneTag, zoneTag, System.StringComparison.OrdinalIgnoreCase)) {
+        if (Entity.Info is not null && NamedBy(zoneTag)) {
             // A state for the whole zone (a trigger result) reaches every player, not just one.
             if (!msg.ExclusiveToSender && msg.Sender is null) {
                 Entity.ChangeState(msg.StateName);
@@ -537,6 +640,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
                     wizard ??= questWizard;
                 }
 
+                Logger.Debug("Object {0} in {1}: hidden for {2} by a dynamod.",
+                    Logger.Args(zoneTag, Entity.Zone?.ZonePath, player.Path.Name));
                 DespawnObjectForPlayer(player);
                 _playerIgnoreBecauseDynamod[player] = wizard;
             }
@@ -617,7 +722,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     private bool IsQuestOnly
-        => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
+        => _isQuestOnly ??= Entity.Info is { m_spawnRequirements: null } info
+           && (info.m_bUndetectable || IsDungeonStepNpc())
            && info.GetType() == typeof(CoreObjectInfo)
            && !IsAlwaysShown(info)
            && Entity.ActiveGameObject is not WizClientPet
@@ -656,6 +762,17 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private static bool IsQuestService(IServiceComponent service)
         => service is InteractPersonaGoalComponent or InteractQuestOfferComponent or InteractQuestUnderwayComponent
            or InteractQuestSelectComponent;
+
+    private bool IsDungeonStepNpc()
+        => Entity.Zone?.IsInstance == true
+           && Entity.GetComponentOfType<InteractPersonaGoalComponent>() is not null
+           && Entity.GetComponentOfType<InteractQuestOfferComponent>() is null;
+
+    private bool CharacterOfferedByQuest(Wizard wizard) {
+        if (!Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate)) return false;
+        return InteractPersonaGoalComponent.HasPendingGoalFor(Entity, wizard)
+            || Entity.GetComponentOfType<InteractQuestOfferComponent>()?.GetServiceOptions(wizard).Any() == true;
+    }
 
     private bool? _isQuestOnly;
 
@@ -812,6 +929,14 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             return;
         }
 
+        // A dynamod took it from this wizard: nothing sends it back but a mod that shows it again (which takes the wizard
+        // off that list first).
+        if (_playerIgnoreBecauseDynamod.ContainsKey(player)) {
+            Logger.Debug("Object {0} in {1}: not sent again to {2}, a dynamod hides it.",
+                Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, player.Path.Name));
+            return;
+        }
+
         // Taken from this game a moment ago: sent now, the game would drop it while it still lets the old copy go.
         var removed = _removedAt.TryGetValue(player, out var at) ? at : System.DateTime.MinValue;
         if (_removedFromAllAt > removed) {
@@ -845,20 +970,70 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         }
     }
 
+    private Vector3? UpdateSpot(IActorRef player) {
+        if (!_lastSeen.TryGetValue(player, out var seen) || seen.Wizard is null) return null;
+        var spot = InteractPersonaGoalComponent.ActiveGoalSpot(Entity, seen.Wizard)
+                   ?? InteractQuestSelectComponent.ActiveGoalSpot(Entity, seen.Wizard);
+        if (!spot.HasValue
+            && QuestArrowGoals.GetExactActiveSpot(seen.Wizard) is { } exact
+            && string.Equals(exact.Zone, Entity.Zone?.ZonePath, System.StringComparison.OrdinalIgnoreCase)
+            && Entity.Info is not null
+            && !string.IsNullOrEmpty(Entity.Info.m_zoneTag)
+            && string.Equals(Entity.Info.m_zoneTag, exact.Tag, System.StringComparison.OrdinalIgnoreCase)) {
+            spot = exact.Spot;
+        }
+        var fullId = seen.Object?.m_globalID.Full;
+        if (fullId is not null && spot.HasValue) Entity.PlayerSpots[fullId.Value] = spot.Value;
+        else if (fullId is not null) Entity.PlayerSpots.TryRemove(fullId.Value, out _);
+        return spot;
+    }
+
+    private void SyncSpot(IActorRef player) {
+        var utcNow = System.DateTime.UtcNow;
+        if (!_sentTo.Contains(player)
+            || (_spotCheckedAt.TryGetValue(player, out var last) && utcNow - last < System.TimeSpan.FromSeconds(2))
+            || !_lastSeen.TryGetValue(player, out var seen)
+            || seen.Object is null) return;
+        _spotCheckedAt[player] = utcNow;
+        var hadSpot = Entity.PlayerSpots.ContainsKey(seen.Object.m_globalID.Full);
+        if (UpdateSpot(player).HasValue != hadSpot) {
+            DespawnObjectForPlayer(player);
+            CreateObjectForPlayer(player);
+        }
+    }
+
     private void SendObjectTo(IActorRef player) {
+        // Every path that sends this object one player at a time ends here: none sends it to a wizard a dynamod hides it from.
+        if (player is null || _playerIgnoreBecauseDynamod.ContainsKey(player)) {
+            if (player is not null) {
+                Logger.Debug("Object {0} in {1}: not sent again to {2}, a dynamod hides it.",
+                    Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, player.Path.Name));
+            }
+
+            return;
+        }
+
         // Serialize the client object.
         var clientObj = Entity.GetClientObject();
+        if (UpdateSpot(player) is { } spot) clientObj.m_location = spot;
         if (!_serializer.Serialize(clientObj, _propertyFlags, out var serializedData)) {
             Logger.Error("Failed to serialize object data.");
 
             return;
         }
 
-        // Send object data to the player.
-        var newObjectMsg = new GAME_5_PROTOCOL.MSG_NEWOBJECT {
-            Data = serializedData
-        };
-        player.Tell(newObjectMsg);
+        // Send object data to the player, unless the game built this object itself from its zone file and still has it: it
+        // carries the game's own id, so a second copy would be one id twice (ClientCopies).
+        var id = Entity.ActiveGameObject.m_globalID.Full;
+        if (ClientCopies.Holds(player, id)) {
+            Logger.Debug("Object {0} in {1}: {2}'s game built it itself ({3}); not sent again.",
+                Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, player.Path.Name, id));
+        }
+        else {
+            player.Tell(new GAME_5_PROTOCOL.MSG_NEWOBJECT { Data = serializedData });
+            ClientCopies.Sent(player, id);
+        }
+
         _sentTo.Add(player);
         LogMajid("sent to", player);
 
@@ -881,6 +1056,17 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         var clientObj = Entity.GetClientObject();
         if (!_serializer.Serialize(clientObj, _propertyFlags, out var serializedData)) {
             Logger.Error("Failed to serialize object data.");
+
+            return;
+        }
+
+        // A wizard a dynamod hides it from is left out: a broadcast to the whole zone would bring an object straight back
+        // for a wizard whose quest took it away.
+        // One the game builds itself goes player by player too: each game may or may not still have its own (ClientCopies).
+        if (_playerIgnoreBecauseDynamod.Count > 0 || ClientBuiltObjects.IsClientBuiltId(Entity.ActiveGameObject.m_globalID.Full)) {
+            foreach (var player in _lastSeen.Keys.Where(p => !_playerIgnoreBecauseDynamod.ContainsKey(p)).ToList()) {
+                SendObjectTo(player);
+            }
 
             return;
         }
@@ -930,6 +1116,18 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private bool IsDuelCircle()
         => Entity.Info is CombatSigilObjectInfo circle
            && Sigils.SigilFactory.GetSigilTemplate(circle.m_sigilType) is PvPCombatSigilTemplate;
+
+    // A player who is not to see an object the game built itself from its zone file: the game is told to remove its own copy.
+    private void RemoveClientCopy(IActorRef player) {
+        var id = Entity.ActiveGameObject.m_globalID.Full;
+        if (!ClientCopies.Holds(player, id)) {
+            return;
+        }
+
+        player.Tell(new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = id });
+        Logger.Debug("Object {0} in {1}: {2}'s game built it itself ({3}); removed, as they are not to see it.",
+            Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, player.Path.Name, id));
+    }
 
     private void DespawnObjectForPlayer(IActorRef player) {
         // Send object data to the player

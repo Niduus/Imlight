@@ -1,0 +1,13 @@
+{
+  "Name": "AH-BALE-MAIN-009",
+  "Description": "Ahmarra quest The Fault in the Stars (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1090,
+  "MaxGold": 1090,
+  "ExperienceAmount": 137060,
+  "TrainingPoints": 0,
+  "Items": []
+}

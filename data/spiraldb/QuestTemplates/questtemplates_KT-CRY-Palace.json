@@ -1,0 +1,255 @@
+{
+  "$type": "Imcodec.ObjectProperty.TypeCache.EncounterTemplate, Imcodec.ObjectProperty",
+  "m_vars": [],
+  "m_questName": "KT-CRY-Palace",
+  "m_questNameID": 0,
+  "m_questTitle": "QuestTitle_00000909",
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
+  "m_startGoals": [
+    "Goal"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "KrokPharaoh-StormPony-KTBoss-L03.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00000114",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_77021",
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Krok_Pharoh_Storm_Ponytail.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "Ddl_KT_KP_PMkhaiKara"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Krokotopia/KT_Tomb/KT_KaranahnPalace",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "KrokPharaoh-StormBird-KTBoss-L03.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 1",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00000105",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_77021",
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Krok_Pharoh_Storm_Bird_Hat.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "Ddl_KT_KP_PMetiKara"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Krokotopia/KT_Tomb/KT_KaranahnPalace",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "KrokPharaoh-StormCloth-KTBoss-L03.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 2",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00000108",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_77021",
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Krok_Pharoh_Storm_Cloth_Hat.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "Ddl_KT_KP_PAtiKara"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Krokotopia/KT_Tomb/KT_KaranahnPalace",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "KrokBurly-Storm-KTBoss-L04-1.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 3",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00000101",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_77021",
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Krok_Burly_Storm.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "Ddl_KT_KP_PAkaKara"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Krokotopia/KT_Tomb/KT_KaranahnPalace",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    }
+  ],
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "KT-CRY-Palace",
+        "m_maxRolls": 0
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqMagicLevel, Imcodec.ObjectProperty",
+        "m_magicSchool": "",
+        "m_numericValue": 10,
+        "m_operatorType": "OPERATOR_GREATER_THAN_EQ",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "Goal"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 1"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 1"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 2"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 2"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 3"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 3"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 0
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 1,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": []
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
+}

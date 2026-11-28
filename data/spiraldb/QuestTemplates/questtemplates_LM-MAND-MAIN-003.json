@@ -1,0 +1,390 @@
+{
+  "m_questName": "LM-MAND-MAIN-003",
+  "m_questNameID": 0,
+  "m_questTitle": "Mothly Hospitality",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsExplore"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Palace of Xul-thurun",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/LM-Location-Mandoria-Palace.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z05_Mandoria",
+      "m_locationName": "Mandoria",
+      "m_goalName": "1_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Lemuria/LM_Z05_Mandoria",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-MAND-MAIN-003"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-MAND-MAIN-002",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsExplore"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Mandar, who used to be our king, said that he left you to your doom. Do you haunt us as a ghost?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Mander_Warrior_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Amra_LM-MAND_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507627,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The tales of my doom have been greatly exaggerated. You say Mandar used to be your king. What happened to him?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-MAND_051.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507624,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He has been overthrown! The uncouth, Boar-raised usurper rules us no more. We have a new king. A wiser king. He will wish to meet you.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Mander_Warrior_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Amra_LM-MAND_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507627,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Go to the Palace of Xul-thurun. There he will take the measure of these visitors to Mandoria.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Mander_Warrior_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Amra_LM-MAND_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507627,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I know the way, Wizard.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-MAND_052.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507624,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Greetings, mighty travelers. I am Moth-Amon: magician, sage, and Overlord of Mandoria. Tell me, why have you come into my realm?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moth_Sorcerer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Moth_Amon_LM-MAND_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507628,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Greetings, Moth-Amon. I am Doctor Claire Savage, scientist, explorer, and Duck of action. I am here to find the Monitoring Station of the Old One.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-MAND_053.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507624,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You mean the Ancient One! That is a dark name, a name of terror.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moth_Sorcerer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Moth_Amon_LM-MAND_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507628,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Manders destroyed his monuments long ago. Only their valor and strength saved us from that dark demon.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moth_Sorcerer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Moth_Amon_LM-MAND_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507628,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Everybody else reveres the memory of the Old One, but the Manders do not. What happened to make them turn their back on him?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-MAND_103.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507625,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Ancient One's Fane is a place of death and terror. Why would you seek it? Are you worshippers of the Ancient One? Should we fear you?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moth_Sorcerer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Moth_Amon_LM-MAND_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507628,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We mean no harm. I believe your legends are... incomplete. In my home there is another such place. There are powerful secrets inside.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-MAND_054.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507624,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And you have glimpsed these secrets? Will you teach them to me? I am always eager to learn more of the Magical Arts.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moth_Sorcerer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Moth_Amon_LM-MAND_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507628,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I'm... not sure how much use they would be to you. I've come to find the Fane so it can help me unravel the mysteries of the one back home.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-MAND_055.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507624,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I understand. Perhaps I can help you in your search. Let us speak in the Atrium, within.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moth_Sorcerer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Moth_Amon_LM-MAND_007.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507628,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-Mandoria-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They are very strange.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-MAND_106.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1507625,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "WC-CATA-ENC-010",
+  "Description": "WC-CATA-ENC-010 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 6900,
+  "MaxGold": 6900,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

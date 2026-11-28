@@ -1,0 +1,13 @@
+{
+  "Name": "KR-PALA-C03-001",
+  "Description": "KR-PALA-C03-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2405,
+  "MaxGold": 2405,
+  "ExperienceAmount": 247940,
+  "TrainingPoints": 0,
+  "Items": []
+}

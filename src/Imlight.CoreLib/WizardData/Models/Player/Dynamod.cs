@@ -43,25 +43,23 @@ public class DynamodSet {
             return true;
         }
 
-        // Check to see if the zone name and client tag already exists.
-        // If it does, overwrite it.
-        foreach (var existingDynamod in Dynamods) {
-            if (existingDynamod is null) {
-                continue;
-            }
-
-            if (existingDynamod.ZoneName.Equals(dynamod.ZoneName, StringComparison.OrdinalIgnoreCase)
-                && existingDynamod.ClientTag.Equals(dynamod.ClientTag, StringComparison.OrdinalIgnoreCase)) {
-                existingDynamod.ModState = dynamod.ModState;
-
-                return true;
-            }
-        }
-
+        // A mod for the same object in an overlapping place (the same zone, "any zone", or a zone path's start) replaces the
+        // old one, and the new one goes last. The game gets every mod with no zone and applies them in order, so two mods for
+        // one object would fight (a quest's mod and an older "any zone" one for the same tag).
+        Dynamods.RemoveAll(existing => existing is not null
+            && string.Equals(existing.ClientTag, dynamod.ClientTag, StringComparison.OrdinalIgnoreCase)
+            && ZonesOverlap(existing.ZoneName, dynamod.ZoneName));
         Dynamods.Add(dynamod);
 
         return true;
     }
+
+    /// <summary>Whether a mod for <paramref name="a"/> and one for <paramref name="b"/> can name the same object: either names
+    /// no zone, or one zone path starts with the other ("WizardCity/Interiors").</summary>
+    internal static bool ZonesOverlap(string a, string b)
+        => string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)
+            || a.StartsWith(b, StringComparison.OrdinalIgnoreCase)
+            || b.StartsWith(a, StringComparison.OrdinalIgnoreCase);
 
     internal bool RemoveDynamod(string clientTag) {
         if (Dynamods == null) {

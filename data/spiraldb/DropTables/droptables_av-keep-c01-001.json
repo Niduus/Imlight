@@ -1,0 +1,13 @@
+{
+  "Name": "AV-KEEP-C01-001",
+  "Description": "AV-KEEP-C01-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1950,
+  "MaxGold": 1950,
+  "ExperienceAmount": 105030,
+  "TrainingPoints": 0,
+  "Items": []
+}

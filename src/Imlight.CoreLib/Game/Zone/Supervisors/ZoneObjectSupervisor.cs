@@ -25,6 +25,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imcodec.Types;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.Shared.Resources;
@@ -74,7 +75,7 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
             // Its state set, so a quest that changes it plays the animation on the way (States/StateTransitions).
             Imlight.CoreLib.Game.States.StateTransitions.Note(Zone.ZonePath, objectInfo.m_zoneTag, template);
 
-            var coreObject = CoreObjectFactory.FinalizeCoreObject(objectInfo, template);
+            var coreObject = Make(objectInfo, template);
             if (coreObject is null) {
                 Logger.Warning("Could not finalize CoreObject {0} with template ID {1}.",
                     Logger.Args(objectInfo.m_zoneTag, objectInfo.m_templateID.Full));
@@ -100,6 +101,19 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         }
 
         ReportLoadedWhenEntitiesLoad();
+    }
+
+    // The server's copy of a placed object. One the game also builds itself from its zone file, at the same spot, takes the
+    // id the game gives its own copy (ClientBuiltObjects), so everything the server sends about it (a removal, a state, an
+    // interaction) reaches the object the player sees, and no second copy is sent while the game has its own (ClientCopies).
+    private CoreObject Make(CoreObjectInfo info, GameObjectTemplate template) {
+        var coreObject = CoreObjectFactory.FinalizeCoreObject(info, template);
+        if (coreObject is not null
+            && Imlight.CoreLib.Game.Zone.Core.ClientBuiltObjects.TryGlobalId(Zone.ZonePath, Zone.DynamicZoneId, info, out var id)) {
+            coreObject.m_globalID = id;
+        }
+
+        return coreObject;
     }
 
     private const float DUPLICATE_DISTANCE = 15.0f;
@@ -230,7 +244,7 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
             }
 
             RemoveEntity(placed.Actor, placed.Object);
-            placed.Object = CoreObjectFactory.FinalizeCoreObject(placed.Info, placed.Template);
+            placed.Object = Make(placed.Info, placed.Template);
             placed.Actor = placed.Object is null ? null : CreateEntityActor(placed.Object, placed.Template, placed.Info, $"_{++_addedWhileRunning}");
             moved++;
         }
@@ -261,7 +275,7 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                 gone++;
             }
             else if (!off && placed.Actor is null && !placed.TriggerRemoved) {
-                placed.Object = CoreObjectFactory.FinalizeCoreObject(placed.Info, placed.Template);
+                placed.Object = Make(placed.Info, placed.Template);
                 placed.Actor = CreateEntityActor(placed.Object, placed.Template, placed.Info, $"_{++_addedWhileRunning}");
                 back++;
             }
@@ -274,7 +288,43 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT))]
     private void ReceiveRemoveTriggerObject(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT message) {
-        foreach (var placed in _placed.Where(p => IsNamed(p, message.ObjectName))) {
+        var requested = message.ObjectName?.ToString();
+        if (!string.IsNullOrEmpty(requested)
+            && QuestLeftovers.LooksLikeBlocker(requested)
+            && !_placed.Any(p => IsNamed(p, requested))) {
+            var broad = _placed.Where(p =>
+                p.Info?.m_zoneTag is { Length: > 0 } tag
+                && (tag.ToString().Contains("Collision", StringComparison.OrdinalIgnoreCase)
+                    || tag.ToString().Contains("Barrier", StringComparison.OrdinalIgnoreCase)
+                    || tag.ToString().Contains("Blocker", StringComparison.OrdinalIgnoreCase)
+                    || tag.ToString().Contains("Gate", StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+            foreach (var placed in broad) {
+                placed.TriggerRemoved = true;
+                if (placed.Actor is not null) {
+                    ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
+                        Message = new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = placed.Object.m_globalID },
+                        Targets = ZoneBroadcastTarget.Players,
+                    });
+                    ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_RELEASEMOBILEID { MobileId = placed.Object.m_nMobileID });
+                    EntityActors.Remove(placed.Actor);
+                    Context.Stop(placed.Actor);
+                    placed.Actor = null;
+                }
+            }
+        }
+        foreach (var placed in _placed.Where(p =>
+                     IsNamed(p, message.ObjectName)
+                     || (string.Equals(message.ObjectName, "AZ_DynaTrigger_CloudHoF_DoorCollision", StringComparison.OrdinalIgnoreCase)
+                         && p.Info.m_zoneTag.ToString().Contains("CloudHoF", StringComparison.OrdinalIgnoreCase))
+                     || (string.Equals(message.ObjectName, "AZ_DynaTrigger_CloudHoF_DoorCollision instance", StringComparison.OrdinalIgnoreCase)
+                         && p.Info.m_zoneTag.ToString().Contains("CloudHoF", StringComparison.OrdinalIgnoreCase))
+                     || (string.Equals(message.ObjectName, "AZ_Rubble-TheMawCollision", StringComparison.OrdinalIgnoreCase)
+                         && p.Info.m_templateID.Full == 1546446)
+                     || (string.Equals(message.ObjectName, "AZ_Rubble-TheMawCollision instance", StringComparison.OrdinalIgnoreCase)
+                         && p.Info.m_templateID.Full == 1546446)
+                     || (string.Equals(message.ObjectName, "AZ-MagicalWard_Maw", StringComparison.OrdinalIgnoreCase)
+                         && p.Info.m_templateID.Full == 643381))) {
             placed.TriggerRemoved = true;
             if (placed.Actor is null) {
                 continue;
@@ -311,7 +361,7 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
             }
 
             if (placed.Actor is null) {
-                placed.Object = CoreObjectFactory.FinalizeCoreObject(placed.Info, placed.Template);
+                placed.Object = Make(placed.Info, placed.Template);
                 placed.Actor = CreateEntityActor(placed.Object, placed.Template, placed.Info);
             }
             else if (!string.IsNullOrEmpty(message.StateName)) {

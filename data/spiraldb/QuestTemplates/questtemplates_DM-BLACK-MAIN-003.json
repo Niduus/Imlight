@@ -1,0 +1,465 @@
+{
+  "m_questName": "DM-BLACK-MAIN-003",
+  "m_questNameID": 0,
+  "m_questTitle": "Substance of Shadow",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 871984803,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Hierophant schemes, but she will be outwitted by the Fool. And, yes, Magician, that Fool is me. I haplessly opened the Scholomance.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-BLACK_050.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700036,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I proved it was possible to follow Balaur's path and it showed me... myself, as it will show you.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-BLACK_051.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700036,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "For the Scholomance is not a physical place and cannot be reached through conventional means. There is no road, there is only a path.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-BLACK_052.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700036,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "It is trapped twixt Life and Death and that path is personal, unique to us all. And thus the rituals necessary to navigate it vary for each person.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-BLACK_053.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700036,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And finding those rituals is... difficult. I buried myself in experiments with time and spirit. As for you... how would you find the truth of yourself?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-BLACK_054.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700036,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-001_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I can... actually help with that, but it will take a while. We can summon a shadow of yourself, Wizard, the ineffable reflection of your soul.",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_103.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700033,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-004_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You have entreated the wellspring of Shadow and gathered its substance. Then the Ritual of Balaur can begin.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-BLACK_056.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700036,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Darkmoor/DM_Z04_BlackLagoon",
+      "m_locationName": "Black Lagoon",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "DM-BLACK-NPC-004_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "DM-BLACK-MAIN-003"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "DM-BLACK-MAIN-002",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-002_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You arrive here with Sister Grim-Omen and expect me to believe you offer anything else? Do you even realize, child, with whom you travel?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_PriestessF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/The_Hierophant_DM-BLACK_017.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700034,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-002_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Keziah? No, that may be the epithet with which she bridled herself. But that is not her title, not her true self.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_PriestessF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/The_Hierophant_DM-BLACK_018.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700034,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-002_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "She is Grim-Omen. She walked the Path of Balaur and discovered the Scholomance. And if she were to do it again... I could be convinced to let you live.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_PriestessF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/The_Hierophant_DM-BLACK_019.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700034,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-002_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You and the wayward apprentice. But know this, mortal, deceive me, or fail me, and I will introduce you to such suffering, Bartleby will feel it.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_PriestessF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/The_Hierophant_DM-BLACK_020.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700034,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I don't know much about finding the Scholomance, but I do know how to summon a Shadow Self. Something personal doesn't mean something physical.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_105.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "There is nothing more personal than a story. Like, how once upon a time, there was a girl. She didn't have a name, but she was raised by witches.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_106.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They took her when she was very little, too little to remember, and made her their apprentice. They were shaping her into something wicked.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_107.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And she figured it out, right here, at this lake, delving into secrets the witches wanted forgotten. She faced herself, what she would become...",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_108.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And she fled, found the Outsiders, took a real name. She called herself Velma and she kept studying forbidden things, and dedicated her life to them.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_109.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "That's my story, my real story, one I don't like to tell, but that's what the ritual needs. So take your time, tell your own.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_110.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "...",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_111.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wow. Thank you for that. And don't worry, that will stay between you, me and the Shadows. Speaking of, you need one more thing.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_112.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "See those Blobs? They're congealed shades that ooze out of the lake. Take from them the Shadow Substance from which your Shadow Self can form.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-BLACK_113.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

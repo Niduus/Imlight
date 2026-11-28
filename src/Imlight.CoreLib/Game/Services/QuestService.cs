@@ -197,6 +197,15 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // zone). Grant BEFORE the waypoint check so a fresh quest's enter-the-dungeon goal completes on
         // this same attach.
         TryGrantDungeonQuests(wizard, reconcileWithInstance: true);
+        QuestLeftovers.ReleaseHidesBlockingActiveUsage(wizard);
+        QuestLeftovers.ReleaseHidesBlockingActivePersonaGoals(wizard);
+        QuestHiddenObjects.ReleaseFinishedHides(wizard);
+        SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = "QuestStateChanged",
+            PlayerActor = SessionActor.ActorRef,
+            PlayerGameObject = GetActiveGameObject(),
+            RetryRefused = true,
+        });
 
         // Entering the zone may have triggered waypoint goals for quests.
         CheckForWaypointGoalZoneEntry(wizard);
@@ -204,12 +213,18 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // Exiting the previous zone may have triggered waypoint goals for quests.
         CheckForWaypointGoalZoneExit(wizard);
 
+        // Gates finished go-to steps opened here stay open (QuestLeftovers.OpenedWays).
+        ReopenFinishedWays(wizard);
+
         // A quest with nothing to do, or a step that needs something turned off, is put right (QuestSafety).
         RepairActiveQuests(wizard, fromCommand: false);
 
         // The zone checked its EnterZone triggers before these goals moved on; triggers waiting on the next goal
         // (Old Judd in Caretaker's Tower needs "Goal 2" active) get another look now.
         RecheckEntryTriggers();
+        QuestLeftovers.ReleaseHidesBlockingActiveUsage(wizard);
+        QuestLeftovers.ReleaseHidesBlockingActivePersonaGoals(wizard);
+        QuestHiddenObjects.ReleaseFinishedHides(wizard);
     }
 
     [MessageHandler(typeof(CHARACTER_103_PROTOCOL.MSG_SENDQUESTOFFERCACHEOPTION))]
@@ -999,8 +1014,26 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             case "forcegrant":
                 CommandGrantQuest(wizard, questName, message.Action == "forcegrant");
                 return;
+            case "encounter":
+                StartEncounter(wizard, questName);
+                return;
+            case "encounter-volume": {
+                // Walked into the volume of an encounter's first step (VolumeComponent): it starts, and that step is done.
+                var parts = questName.Split('\n');
+                if (parts.Length == 2 && !wizard.HasCompletedQuest(parts[0]) && StartEncounter(wizard, parts[0])
+                    && wizard.QuestBehavior.CurrentQuestInstances.FirstOrDefault(q => q.QuestName == parts[0]) is { } started
+                    && started.IsGoalActive(parts[1])
+                    && CachedQuestTemplates.FirstOrDefault(q => q.m_questName == parts[0])?.m_goals?
+                        .FirstOrDefault(g => g.m_goalName == parts[1]) is { } firstStep) {
+                    CompleteGoal(started, firstStep);
+                }
+                return;
+            }
             case "remove":
                 CommandRemoveQuest(wizard, questName);
+                return;
+            case "removeall":
+                CommandRemoveAllQuests(wizard);
                 return;
             case "toquest":
                 CommandToQuest(wizard, questName);
@@ -1204,6 +1237,27 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         CommandReply(wizard.HasQuest(questName)
             ? $"Could not complete quest '{questName}'."
             : $"Completed quest '{questName}'.");
+    }
+
+    private void CommandRemoveAllQuests(Wizard wizard) {
+        var current = wizard.QuestBehavior.CurrentQuestInstances
+            .Where(q => q is not null)
+            .ToList();
+        var removed = 0;
+
+        foreach (var quest in current) {
+            QuestSafety.RememberRewardsBeforeReset(wizard, quest.QuestName);
+            if (wizard.RemoveQuest(quest.QuestName)) {
+                SendRemoveQuest(quest.ID);
+                removed++;
+            }
+        }
+
+        WizardCollection.UpdateCharacterQuestBehavior(wizard);
+        TryGrantDungeonQuests(wizard);
+        TryAutoStartQuests(wizard);
+        RecheckEntryTriggers();
+        CommandReply($"Removed {removed} quest(s) from the quest book.");
     }
 
     private void CommandRemoveQuest(Wizard wizard, string questName) {
@@ -1466,6 +1520,47 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         return string.IsNullOrEmpty(where) ? text : $"{text} in {where}";
     }
 
+    /// <summary>
+    /// An encounter a game result started (ResAddEncounter): it starts unless the wizard is on it, it is turned off, or its
+    /// requirements are not met. One done before starts over when it may be repeated (m_questRepeat, or the Quest Editor);
+    /// otherwise it stays done.
+    /// </summary>
+    private bool StartEncounter(Wizard wizard, string questName) {
+        if (wizard is null || string.IsNullOrEmpty(questName)
+            || QuestTemplateCollection.GetQuestByName(questName) is not { } template) {
+            Logger.Debug("Encounter {0} was started by a result, but the server has no such quest.", Logger.Args(questName));
+            return false;
+        }
+
+        if (wizard.HasQuest(template.m_questName) || QuestOptions.IsOff(template.m_questName)) {
+            return false;
+        }
+
+        if (template.m_requirements is not null
+            && !RequirementDispatcher.EvaluateRequirements(template.m_requirements,
+                new GenericRequirementContext(
+                    requirements: template.m_requirements,
+                    playerRef: SessionActor.ActorRef,
+                    playerObj: GetActiveGameObject(),
+                    wizard: wizard))) {
+            return false;
+        }
+
+        if (wizard.HasQuestRegistryValue(template.m_questName, QUEST_COMPLETED_ENTRY)) {
+            if (template.m_questRepeat == 0 && !QuestOptions.IsRepeatable(template.m_questName)) {
+                return false;
+            }
+
+            QuestSafety.RememberRewardsBeforeReset(wizard, template.m_questName);
+            wizard.QuestBehavior.RemoveAllQuestRegistryEntries(template.m_questName);
+            WizardCollection.UpdateCharacterQuestBehavior(wizard);
+        }
+
+        Logger.Information("Encounter {0} starts for {1}.", Logger.Args(template.m_questName, wizard.CharId));
+        StartQuest(template, wizard);
+        return wizard.HasQuest(template.m_questName);
+    }
+
     private void CommandGrantQuest(Wizard wizard, string questName, bool force) {
         if (string.IsNullOrEmpty(questName)) {
             CommandReply("Give a quest name.");
@@ -1566,8 +1661,20 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             return;
         }
 
+        _cachedQuestOffers.RemoveAll(_ => true);
+
         zone.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
             EventName = "EnterZone",
+            PlayerActor = SessionActor.ActorRef,
+            PlayerGameObject = GetActiveGameObject(),
+            RetryRefused = true,
+        });
+
+        // Objects shown or hidden by quest progress (their spawn requirements) look again too, as on entering the zone.
+        // Only a zone change re-checked them, so Moon Cliffs' Brood Mother stood beside Queen Sabina after Queensrych
+        // (2026-11-26).
+        zone.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = "QuestStateChanged",
             PlayerActor = SessionActor.ActorRef,
             PlayerGameObject = GetActiveGameObject(),
             RetryRefused = true,
@@ -1927,7 +2034,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 if (gTemplate is not WaypointGoalTemplate waypointGoal) {
                     continue;
                 }
-                if (waypointGoal.m_zoneTag != currentZone) {
+                if (!QuestSpotGoals.MatchesZone(waypointGoal, currentZone)) {
                     // Player is not in the correct zone for this goal.
                     continue;
                 }
@@ -2061,15 +2168,33 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         if (goalTemplate is not WaypointGoalTemplate waypointGoal || !waypointGoal.m_zoneEntry) {
             return;
         }
-        if (waypointGoal.m_zoneTag != wizard.Zone) {
+        if (!QuestSpotGoals.MatchesZone(waypointGoal, wizard.Zone)) {
             return;
         }
-        // Guards against double completion (already completed or never started).
-        if (!questInstance.IsGoalActive(goalTemplate.m_goalName)) {
+        var questTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
+        var exactSpots = QuestSpotGoals.SpotsFor(questTemplate, goalTemplate, wizard.Zone);
+        if (!string.IsNullOrEmpty(waypointGoal.m_proximityTag)) {
             return;
         }
-
-        CompleteGoal(questInstance, goalTemplate);
+        // poi.dat marks a step that only means "enter this zone" with no target and the spot 0,0,0. Such a step (or one
+        // with no spot at all, in the zone its m_zoneTag names) completes on entry, as m_zoneEntry says. A step with a real
+        // spot still waits until the player is near it (QuestSpotGoals.OnPlayerMoved), or here when they arrive there.
+        var realSpots = exactSpots.Where(s => MathF.Abs(s.X) >= 1f || MathF.Abs(s.Y) >= 1f).ToArray();
+        if (realSpots.Length == 0) {
+            if (exactSpots.Length == 0
+                && !string.Equals(waypointGoal.m_zoneTag, wizard.Zone, StringComparison.OrdinalIgnoreCase)) {
+                return;
+            }
+            Logger.Information("Quest {0} step {1}: entering {2} completes it (the step has no spot of its own in this zone).",
+                Logger.Args(questInstance.QuestName, goalTemplate.m_goalName, wizard.Zone));
+            CompleteGoal(questInstance, goalTemplate);
+            return;
+        }
+        var at = GetActiveGameObject()?.m_location;
+        if (at is { } location
+            && realSpots.Any(s => (s.X - location.X) * (s.X - location.X) + (s.Y - location.Y) * (s.Y - location.Y) <= 450f * 450f)) {
+            CompleteGoal(questInstance, goalTemplate);
+        }
     }
 
     private void CompleteGoal(QuestInstance questInstance, GoalTemplate goalTemplate, bool showCompletionDialogue = true,
@@ -2141,11 +2266,131 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             }
         }
 
+        QuestLeftovers.ReleaseHidesBlockingActiveUsage(wizard);
+        QuestLeftovers.ReleaseHidesBlockingActivePersonaGoals(wizard);
+        QuestHiddenObjects.ReleaseFinishedHides(wizard);
+        RecheckEntryTriggers();
+
         // None of the next steps could start for this wizard: one still does, or the quest would have nothing to do.
         EnsureAStepStarted(questInstance, qTemplate, [.. gTemplates], startedGoals);
 
         // The Manager's Spell Quests tab shows which step each wizard is on.
         NoteProgress(wizard);
+        RefreshMawInteractOptions(wizard);
+    }
+
+    private void RefreshMawInteractOptions(Wizard wizard) {
+        if (wizard is null
+            || !wizard.QuestBehavior.CurrentQuestInstances.Any(q =>
+                string.Equals(q.QuestName, "AZ-THREE-C01-002", StringComparison.OrdinalIgnoreCase)
+                && q.GoalProgress.Any(g =>
+                    g.GoalName == "1_WizardQuestGoalsUseItem"
+                    && g.DoesPlayerHaveGoal()
+                    && !g.IsGoalCompleted()))) {
+            return;
+        }
+
+        SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = "EnterZone",
+            PlayerActor = SessionActor.ActorRef,
+            PlayerGameObject = GetActiveGameObject(),
+            RetryRefused = true,
+        });
+    }
+
+    /// <summary>
+    /// A go-to step finished at a gate with a wall by it opens that gate and takes the wall away for this wizard
+    /// (QuestLeftovers.OpenedWays). The mods are kept, so the way stays open after a zone change or a log-in.
+    /// </summary>
+    private void OpenWaysAt(string questName, string goalName, string zone, Imcodec.Math.Vector3 at) {
+        if (string.IsNullOrEmpty(zone)) {
+            return;
+        }
+        foreach (var (tag, state, remove) in QuestLeftovers.OpenedWays(zone, at)) {
+            Logger.Information("Quest {0} step {1}: {2} {3} where the step was finished ({4}).",
+                Logger.Args(questName, goalName, tag, remove ? "goes, a wall at the gate," : $"opens to {state}", zone));
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                DynaMod = new ResAddDynaMod {
+                    m_dynaModClientTag = tag,
+                    m_dynaModState = state,
+                    m_zoneName = zone,
+                    m_bShowsObject = false,
+                    m_dynaModRemove = remove,
+                    m_persist = true,
+                },
+                ContextActor = SessionActor.ActorRef,
+            });
+        }
+    }
+
+    /// <summary>
+    /// A finished "use" step opens the way it works on the quest's road, in whichever zone it is (QuestLeftovers.LinkedWays):
+    /// a lever's bridge lowers and the wall on it goes, for this wizard. The mods are kept, so a way in another zone is
+    /// there on arrival. With <paramref name="onlyZone"/>, only the ways in that zone (on arrival, for steps finished
+    /// before this rule existed).
+    /// </summary>
+    private void OpenLinkedWays(QuestTemplate quest, GoalTemplate goal, string onlyZone = null) {
+        List<(string Zone, string Tag, string State, bool Remove)> ways;
+        try {
+            ways = QuestLeftovers.LinkedWays(quest, goal);
+        }
+        catch (Exception e) {
+            Logger.Warning("Quest {0} step {1}: the ways it opens could not be worked out: {2}",
+                Logger.Args(quest?.m_questName, goal?.m_goalName, e.Message));
+            return;
+        }
+        foreach (var (zone, tag, state, remove) in ways) {
+            if (onlyZone is not null && !string.Equals(zone, onlyZone, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+            Logger.Information("Quest {0} step {1}: {2} {3} in {4} (the used object works it).",
+                Logger.Args(quest.m_questName, goal.m_goalName, tag, remove ? "goes, a wall on the way," : $"goes to {state}", zone));
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                DynaMod = new ResAddDynaMod {
+                    m_dynaModClientTag = tag,
+                    m_dynaModState = state,
+                    m_zoneName = zone,
+                    m_bShowsObject = false,
+                    m_dynaModRemove = remove,
+                    m_persist = true,
+                },
+                ContextActor = SessionActor.ActorRef,
+            });
+        }
+    }
+
+    /// <summary>
+    /// On arrival: the ways finished go-to steps of the wizard's current quests opened in this zone, for steps finished
+    /// before this rule existed. Each is placed at the step's own arrow spot; mods the wizard already has are not resent.
+    /// </summary>
+    private void ReopenFinishedWays(Wizard wizard) {
+        var zone = wizard?.Zone;
+        if (string.IsNullOrEmpty(zone)) {
+            return;
+        }
+        foreach (var instance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+            var quest = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == instance.QuestName);
+            foreach (var goal in quest?.m_goals ?? []) {
+                if (goal is null
+                    || instance.GoalProgress.FirstOrDefault(g => g.GoalName == goal.m_goalName) is not { } progress
+                    || !progress.IsGoalCompleted()) {
+                    continue;
+                }
+                if (goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
+                    OpenLinkedWays(quest, goal, onlyZone: zone);
+                    continue;
+                }
+                if (goal.m_goalType != GOAL_TYPE.GOAL_TYPE_WAYPOINT) {
+                    continue;
+                }
+                foreach (var (spotZone, spot) in QuestArrowGoals.GetSpots(quest, goal)) {
+                    if (string.Equals(spotZone, zone, StringComparison.OrdinalIgnoreCase)
+                        && (MathF.Abs(spot.X) >= 1f || MathF.Abs(spot.Y) >= 1f)) {
+                        OpenWaysAt(quest.m_questName, goal.m_goalName, zone, spot);
+                    }
+                }
+            }
+        }
     }
 
     // Zone triggers listen for this event to react to a goal (an NPC walks to a new spot, a barricade falls).
@@ -2155,15 +2400,98 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             return;
         }
 
+        var quest = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName);
+        var goalTemplate = quest?.m_goals?.FirstOrDefault(g =>
+            g is not null && string.Equals(g.m_goalName, goalName, StringComparison.OrdinalIgnoreCase));
+        QuestLeftovers.ReleaseHidesBlockingActiveUsage(GetActiveWizard());
+        QuestLeftovers.ReleaseHidesBlockingActivePersonaGoals(GetActiveWizard());
+        if (goalTemplate?.m_goalType == GOAL_TYPE.GOAL_TYPE_WAYPOINT && GetActiveGameObject()?.m_location is { } finishedAt) {
+            OpenWaysAt(questName, goalName, GetActiveWizard()?.Zone, finishedAt);
+        }
+        if (goalTemplate?.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
+            if (string.Equals(questName, "AZ-ZOCA-C11-002", StringComparison.OrdinalIgnoreCase)) {
+                string revealTag = goalName switch {
+                    "2_WizardQuestGoals00000006" => "AZ-3POINTS-NPC14",
+                    "3_WizardQuestGoals00000006" => "AZ-PalaceGuard02",
+                    "4_WizardQuestGoals00000006" => "AZ-PalaceGuard03",
+                    "5_WizardQuestGoals00000006" => "AZ-PalaceGuard04",
+                    _ => null,
+                };
+                if (!string.IsNullOrEmpty(revealTag)) {
+                    SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_REMOVEDYNAMOD {
+                        DynaMod = new ResRemoveDynaMod {
+                            m_dynaModClientTag = revealTag + " instance",
+                        },
+                        ContextActor = SessionActor.ActorRef,
+                    });
+                }
+            }
+            else {
+            OpenLinkedWays(quest, goalTemplate);
+            foreach (var tag in QuestLeftovers.FinishedUsageBlockerTags(goalTemplate.m_destinationZone, goalTemplate)) {
+                zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT {
+                    ObjectName = tag,
+                });
+                SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                    DynaMod = new ResAddDynaMod {
+                        m_dynaModClientTag = tag,
+                        m_dynaModState = "Off",
+                        m_zoneName = (string)goalTemplate.m_destinationZone,
+                        m_bShowsObject = false,
+                        m_persist = true,
+                    },
+                    ContextActor = SessionActor.ActorRef,
+                });
+            }
+
+            // A used object that is itself a wall is the way through: it goes for this wizard (QuestLeftovers).
+            foreach (var tag in QuestLeftovers.UsedBareBlockerTags(goalTemplate.m_destinationZone, goalTemplate)) {
+                Logger.Information("Quest {0} step {1}: {2} is a wall that was used as the way through; it goes for {3}.",
+                    Logger.Args(questName, goalName, tag, GetActiveWizard()?.CharId));
+                SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                    DynaMod = new ResAddDynaMod {
+                        m_dynaModClientTag = tag,
+                        m_dynaModState = "",
+                        m_zoneName = (string)goalTemplate.m_destinationZone,
+                        m_bShowsObject = false,
+                        m_dynaModRemove = true,
+                        m_persist = true,
+                    },
+                    ContextActor = SessionActor.ActorRef,
+                });
+            }
+            }
+        }
+
+        if (string.Equals(questName, "AZ-THREE-C01-002", StringComparison.OrdinalIgnoreCase)) {
+            zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+                EventName = "ExplodeIt",
+                PlayerActor = SessionActor.ActorRef,
+                PlayerGameObject = GetActiveGameObject(),
+            });
+
+            foreach (var objectName in new[] {
+                         "AZ_Rubble-TheMawCollision",
+                         "AZ_Rubble-TheMawCollision instance",
+                         "AZ-MagicalWard_Maw",
+                         "AZ_Rubble-TheMaw",
+                         "AZ_Rubble-TheMaw instance",
+                     }) {
+                zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT {
+                    ObjectName = objectName,
+                });
+            }
+        }
+
         // The game's triggers wait on its own names for the steps of quests we rebuilt ("GoalComplete_<quest>_Goal 6"),
         // and on its own code for quests rebuilt from Wizard404's recordings ("GoalComplete_LM-NIGHT-MAIN-001_Goal").
         var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questName);
         string[] goalNames = [goalName, .. Imlight.CoreLib.Game.Quests.VanillaGoalNames.GameNames(template, goalName)];
         string[] questNames = [questName, .. Imlight.CoreLib.WizardData.QuestCodeAliases.GameCodes(questName)];
-        foreach (var quest in questNames) {
+        foreach (var questCode in questNames) {
             foreach (var goal in goalNames) {
                 zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-                    EventName = $"{GOAL_COMPLETE_EVENT_PREFIX}{quest}_{goal}",
+                    EventName = $"{GOAL_COMPLETE_EVENT_PREFIX}{questCode}_{goal}",
                     PlayerActor = SessionActor.ActorRef,
                     PlayerGameObject = GetActiveGameObject(),
                 });
@@ -2258,7 +2586,32 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // Chain advance: completion stamps the "Complete" registry entry, which is the ReqHasEntry
         // prerequisite of the next quest in the dungeon's chain.
         TryGrantDungeonQuests(wizard);
+        for (var retry = 0; retry < 12; retry++) {
+            var before = wizard.QuestBehavior.CurrentQuestInstances.Count;
+            TryGrantDungeonQuests(wizard);
+            if (wizard.QuestBehavior.CurrentQuestInstances.Count == before) break;
+        }
+        if (string.Equals(questInstance.QuestName, "AZ-ZOCA-C16-001", StringComparison.OrdinalIgnoreCase)
+            && wizard.HasQuestRegistryValue("AZ-ZOCA-C16-001", QUEST_COMPLETED_ENTRY)
+            && !wizard.HasQuest("WC-PreKR-C01-001")
+            && !wizard.HasQuestRegistryValue("WC-PreKR-C01-001", QUEST_COMPLETED_ENTRY)
+            && QuestTemplateCollection.GetQuestByName("WC-PreKR-C01-001") is { } khrysalisQuest) {
+            var context = new GenericRequirementContext(
+                requirements: khrysalisQuest.m_requirements,
+                playerRef: SessionActor.ActorRef,
+                playerObj: GetActiveGameObject(),
+                wizard: wizard);
+            if (khrysalisQuest.m_requirements is null
+                || RequirementDispatcher.EvaluateRequirements(khrysalisQuest.m_requirements, context)) {
+                Logger.Information("Cross-world follow-on: WC-PreKR-C01-001 starts after AZ-ZOCA-C16-001.");
+                StartQuest(khrysalisQuest, wizard);
+            }
+        }
         TryAutoStartQuests(wizard);
+        QuestLeftovers.ReleaseHidesBlockingActiveUsage(wizard);
+        QuestLeftovers.ReleaseHidesBlockingActivePersonaGoals(wizard);
+        QuestHiddenObjects.ReleaseFinishedHides(wizard);
+        RecheckEntryTriggers();
         NoteProgress(wizard);
     }
 
@@ -2267,6 +2620,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     private const string AUTO_START_TAG = "ImlightAutoStart";
     // A class, not a value tuple: every session reads it on a thread of its own.
     private static Tuple<int, List<QuestTemplate>> s_autoStartQuests = Tuple.Create(-1, (List<QuestTemplate>) null);
+
 
     private void TryAutoStartQuests(Wizard wizard) {
         // Listed again after the Manager's Quest Editor changed quests (one may now start by itself).
@@ -2432,7 +2786,8 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // log of 2026-10-25).
         bool MobCounts(int index) => adjectivesPerMob[index]?.Any(adjective => goalMobAdjectives.Contains(adjective)) == true
             || templateIdsPerMob is not null && index < templateIdsPerMob.Length
-            && Imlight.CoreLib.Game.Quests.BountyStandIns.Counts(goalMobAdjectives.Select(a => (string) a), templateIdsPerMob[index]);
+            && (Imlight.CoreLib.Game.Quests.BountyStandIns.Counts(goalMobAdjectives.Select(a => (string) a), templateIdsPerMob[index])
+                || Imlight.CoreLib.Game.Quests.BountyStandIns.CountsByTally(goalTemplate, templateIdsPerMob[index]));
 
         var matchCount = anyCreature ? 1
             : adjectivesPerMob is { Length: > 0 }
@@ -2490,9 +2845,10 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // Check the quest dialog for the "Prep" section.
         // The patron will be whomever gave the player the quest.
         var dialogList = qTemplate.m_dialogList as ActorDialogList;
-        var prepDialogList = dialogList?.m_dialogs.FirstOrDefault(de => de.m_dialogTag == "Prep");
+        // A quest from the game's own files can have a "Prep" section with no lines (encounters): no picture then.
+        var prepDialogList = dialogList?.m_dialogs?.FirstOrDefault(de => de is not null && de.m_dialogTag == "Prep");
 
-        return prepDialogList?.m_dialogEntries.FirstOrDefault()?.m_picture ?? "";
+        return prepDialogList?.m_dialogEntries?.FirstOrDefault()?.m_picture ?? "";
     }
 
     private static bool DetermineNextGoals(QuestTemplate qTemplate,
@@ -2898,14 +3254,19 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                 wizard: wizard) {
                 InstanceZones = instanceZones,
                 InstanceQuestCompleted = inInstance
-                    ? name => zoneQuestNames.Contains(name) ? completedQuests.Contains(name) : null
+                    ? name => zoneQuestNames.Contains(name)
+                        ? completedQuests.Contains(name) || wizard.HasQuestRegistryValue(name, QUEST_COMPLETED_ENTRY)
+                        : null
                     : null,
             };
 
             return RequirementDispatcher.EvaluateRequirements(template.m_requirements, context);
         }
 
-        foreach (var template in templates) {
+        var remaining = templates.ToList();
+        for (var pass = 0; remaining.Count > 0 && pass < remaining.Count + 2; pass++) {
+            var granted = false;
+            foreach (var template in remaining.ToList()) {
             var saved = wizard.QuestBehavior.CurrentQuestInstances.FirstOrDefault(q => q.QuestName == template.m_questName);
             if (saved is not null) {
                 // The instance's progress wins over what the player saved for the quest.
@@ -2955,6 +3316,8 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             }
 
             SendQuestStartingMessage(template, questInstance);
+            remaining.Remove(template);
+            granted = true;
             if (!inInstance) {
                 MarkOpenZoneQuest(wizard, template.m_questName);
             }
@@ -2978,6 +3341,10 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             // while the crates stayed used, 2026-11-20). A fresh copy has no counts, so it starts over as before.
             if (inInstance) {
                 RestoreInstanceGoalCounts(wizard, questInstance, template, progress.GoalCounts);
+            }
+        }
+            if (!granted) {
+                break;
             }
         }
     }

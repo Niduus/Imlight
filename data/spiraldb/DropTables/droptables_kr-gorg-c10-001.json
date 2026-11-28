@@ -1,0 +1,13 @@
+{
+  "Name": "KR-GORG-C10-001",
+  "Description": "KR-GORG-C10-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1670,
+  "MaxGold": 1670,
+  "ExperienceAmount": 172400,
+  "TrainingPoints": 0,
+  "Items": []
+}

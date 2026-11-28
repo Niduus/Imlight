@@ -1,0 +1,13 @@
+{
+  "Name": "MSC-PAGODA-C04-001",
+  "Description": "MSC-PAGODA-C04-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 920,
+  "MaxGold": 920,
+  "ExperienceAmount": 47260,
+  "TrainingPoints": 0,
+  "Items": []
+}

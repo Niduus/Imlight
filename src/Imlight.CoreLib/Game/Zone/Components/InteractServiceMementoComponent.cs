@@ -113,6 +113,12 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
 
         _shape = QuestObjectShape();
+        _offGroundReach = _shape is null ? OffGroundReach() : 0f;
+        if (SizeFactor() > 1.5f && _serviceComponents.Any(c => c is InteractPersonaGoalComponent or InteractQuestOfferComponent)) {
+            Logger.Information("Reach: {0} ({1}) in {2} is placed {3:0.#} times its size; it is reached from {4:0} away.",
+                Logger.Args(Entity.Info?.m_zoneTag, (Entity.Template as GameObjectTemplate)?.m_objectName, Entity.Zone?.ZonePath,
+                    Entity.Info?.m_fScale, _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS) * SizeFactor()));
+        }
 
         var updateInterval = TimeSpan.FromSeconds(WIZBANG_UPDATE_INTERVAL_SECONDS);
         var updateMsg = new ZONE_102_PROTOCOL.MSG_WIZBANGUPDATEINTERVAL();
@@ -120,6 +126,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _heldPrompts.Remove(playerActor);
         if (_playersInInteractionRange.Any(x => x.Value == playerActor)) {
             var playerObj = _playersInInteractionRange.First(x => x.Value == playerActor).Key;
             _playersInInteractionRange.Remove(playerObj);
@@ -139,10 +146,17 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         var playerId = playerObj.m_globalID.Full;
 
+        // A volume-held prompt (a ladder) is not the mesh reach. Moving must not open or close it.
+        if (_heldPrompts.Contains(playerActor)) {
+            _playersInInteractionRange[playerId] = playerActor;
+            _playersInRenderRange[playerId] = playerActor;
+            return;
+        }
+
         // Effective interaction radius = the SMALLEST any attached service asks for (default 300).
-        var interactionRadius = _serviceComponents.Count > 0
+        var interactionRadius = (_serviceComponents.Count > 0
             ? _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS)
-            : _interactionRadius;
+            : _interactionRadius) * SizeFactor();
 
         // Handle interaction range (for service options). A large quest object (Zafaria's fallen Zebra Scout Tower)
         // is reached at its edge too, not only near its center (ObjectReach).
@@ -150,6 +164,16 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         if (inRange
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
+            if (SizeFactor() > 1f) {
+                // Said for big NPCs and objects, so a talk that is never offered can be traced (the Auroracle, 2026-11-28).
+                var offered = _serviceComponents.Sum(c => {
+                    try { return c.GetServiceOptions(playerWizard).Count(); } catch (Exception) { return 0; }
+                });
+                Logger.Information("Reach: {0} came within {1:0} of the big {2} ({3}); {4} option(s) to offer ({5}).",
+                    Logger.Args(playerWizard?.CharId, interactionRadius, Entity.Info?.m_zoneTag, (Entity.Template as GameObjectTemplate)?.m_objectName,
+                        offered, string.Join(", ", _serviceComponents.Select(c => c.GetType().Name))));
+            }
+
             SendActorServiceOptions(playerActor, nextSection: true);
         }
         else if (!inRange
@@ -158,12 +182,72 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             SendLeaveServiceRange(playerActor);
         }
 
+        TryTalkToBigNpc(playerObj, playerActor, playerWizard);
+
         // Wizbangs go to every player in the zone, near or far (Niduus, 2026-10-25: vendors and trainers lost the
         // symbol over their heads at times). The zone's far clip is no sure measure of what the client draws, and a
         // player who has not moved yet since arriving was never counted.
         // The newest session of a wizard replaces an old one (a relog or a trip back into the zone keeps the same
         // object id): the old session no longer answers, and asking it held up this NPC's symbol for everyone.
         _playersInRenderRange[playerId] = playerActor;
+    }
+
+    // Talk steps already opened by walking up to a big NPC, by player and goal: once each.
+    private readonly HashSet<(ulong Player, ulong Goal)> _bigTalksOpened = [];
+
+    /// <summary>
+    /// The game shows no talk prompt for an NPC placed much bigger than normal that stands out of walking reach (the
+    /// Auroracle, PL-FROZ-NPC05, five times its size over the pool of its chamber: the server offered the talk, the game
+    /// never showed it, PL-FROZ-MAIN-010, 2026-11-28). A wizard on a talk step for such an NPC who walks up to it (within
+    /// the usual reach times the square root of its size) gets the talk opened as if X had been pressed, once a step.
+    /// </summary>
+    private void TryTalkToBigNpc(CoreObject playerObj, IActorRef playerActor, Wizard wizard) {
+        try {
+            var factor = SizeFactor();
+            if (factor <= 1.5f || wizard is null || playerObj is null
+                || _serviceComponents.OfType<InteractPersonaGoalComponent>().FirstOrDefault() is not { } talk
+                || !IsInHorizontalRadius(playerObj, _interactionRadius * MathF.Sqrt(factor))) {
+                return;
+            }
+
+            if (talk.GetServiceOptions(wizard).OfType<GoalEntry>().FirstOrDefault() is not { } goal
+                || !_bigTalksOpened.Add((playerObj.m_globalID.Full, goal.m_goalID))) {
+                return;
+            }
+
+            RefreshServiceMomento(wizard);
+            var index = _componentFirstOption.TryGetValue(talk, out var first) ? (uint) first : 0u;
+            Logger.Information("Reach: {0} walked up to the big {1}; its talk step opens by itself (the game shows no prompt for it).",
+                Logger.Args(wizard.CharId, Entity.Info?.m_zoneTag));
+            PlayerInteraction(new ZONE_102_PROTOCOL.MSG_ZONEINTERACTION {
+                GlobalID = Entity.ActiveGameObject.m_globalID.Full,
+                ServiceName = talk.ServiceName,
+                ServiceIndex = index,
+                PlayerActor = playerActor,
+                PlayerCharacter = wizard,
+                PlayerObject = playerObj,
+            });
+        }
+        catch (Exception e) {
+            Logger.Debug("Reach: opening the talk of {0} failed: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
+        }
+    }
+
+    // The largest reach a big placed object gets (its size times the usual reach).
+    private const float MAX_SIZED_REACH = 1500f;
+
+    /// <summary>
+    /// How much bigger than usual the zone placed this object: its reach grows with it. The Auroracle (PL-FROZ-NPC05,
+    /// PL-FROZ-MAIN-010) is placed five times its size; measured as a normal NPC, nobody could stand close enough to its
+    /// centre to talk to it (2026-11-28).
+    /// </summary>
+    private float SizeFactor() {
+        var scale = Entity.Info?.m_fScale ?? 1f;
+        if (float.IsNaN(scale) || scale <= 1f) {
+            return 1f;
+        }
+
+        return MathF.Min(scale, MAX_SIZED_REACH / MathF.Max(1f, _interactionRadius));
     }
 
     // The shape of a quest object that is not a character, when it is larger than the usual reach (ObjectReach).
@@ -186,7 +270,63 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
+    // How far a player may stand from a quest object whose own spot is off the ground players walk on (0: the usual reach).
+    private float _offGroundReach;
+
+    // The furthest a quest object off the walk ground is reached from (its nearest ground further than this is no shore).
+    private const float OFF_GROUND_REACH_MAX = 1500f;
+
+    /// <summary>
+    /// A quest object with no collision shape whose spot is not on the ground players walk on (Kondha's BlightedWater, the
+    /// pool "Heal" of KR-KOND-C08-002 asks for: its spot lies in the pool, about 500 past the Water Bug Cave sigil and off
+    /// the zone's walk ground) is reached from the nearest ground instead: from there plus the usual edge reach. Measured
+    /// from its spot alone, nobody could stand close enough to be offered it (2026-11-27).
+    /// </summary>
+    private float OffGroundReach() {
+        try {
+            if (!_serviceComponents.Any(c => c is InteractQuestSelectComponent)
+                || Entity.Template is not GameObjectTemplate template
+                || template.m_behaviors?.Any(b => b is NPCBehaviorTemplate) == true
+                || Entity.Zone?.ZonePath is not { Length: > 0 } zone
+                || Entity.ActiveGameObject is not { } self) {
+                return 0f;
+            }
+
+            var at = new System.Numerics.Vector3(self.m_location.X, self.m_location.Y, self.m_location.Z);
+            if (Imlight.CoreLib.Game.Zone.Core.SafeLanding.Problem(zone, at) is not { } why
+                || Imlight.CoreLib.Game.Zone.Core.SafeLanding.Check(zone, at) is not { Moved: true } ground) {
+                return 0f;
+            }
+
+            var dx = ground.Spot.X - at.X;
+            var dy = ground.Spot.Y - at.Y;
+            var reach = MathF.Sqrt((dx * dx) + (dy * dy)) + ObjectReach.EDGE_REACH;
+            if (reach <= _interactionRadius || reach > OFF_GROUND_REACH_MAX) {
+                return 0f;
+            }
+
+            Logger.Information("Quest object {0} in {1}: its spot is {2}; it is reached from the nearest ground, {3:0} away (reach {4:0}).",
+                Logger.Args(Entity.Info?.m_zoneTag, zone, why, reach - ObjectReach.EDGE_REACH, reach));
+
+            return reach;
+        }
+        catch (Exception e) {
+            Logger.Debug("Object reach: no ground reach for {0}: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
+
+            return 0f;
+        }
+    }
+
     private bool ReachesShape(CoreObject playerObj) {
+        if (_offGroundReach > 0f && playerObj is not null) {
+            var center = Entity.ActiveGameObject.m_location;
+            var dx = playerObj.m_location.X - center.X;
+            var dy = playerObj.m_location.Y - center.Y;
+            if ((dx * dx) + (dy * dy) <= _offGroundReach * _offGroundReach) {
+                return true;
+            }
+        }
+
         if (_shape is null || playerObj is null) {
             return false;
         }
@@ -201,7 +341,14 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             return;
         }
 
-        _playersInRenderRange[playerObj.m_globalID.Full] = playerActor;
+        var playerId = playerObj.m_globalID.Full;
+        var interactionRadius = _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS) * SizeFactor();
+        if (IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)) {
+            _playersInInteractionRange[playerId] = playerActor;
+            SendActorServiceOptions(playerActor, nextSection: false);
+        }
+
+        _playersInRenderRange[playerId] = playerActor;
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEINTERACTION))]
@@ -270,6 +417,15 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             && OptionsFor(questUse, playerCharacter).Count > 0) {
             serviceComponent = questUse;
             serviceIndex = _componentFirstOption.TryGetValue(questUse, out var questFirst) ? (uint) questFirst : 0;
+        }
+
+        // A collect/usage object can own both state and quest services. The active quest step wins over a stale
+        // wooden-chest, vendor or door GUI even when the game sends an old flat index after quest progress changes.
+        if (playerCharacter is not null
+            && _serviceComponents.OfType<InteractQuestSelectComponent>().FirstOrDefault() is { } activeQuestUse
+            && OptionsFor(activeQuestUse, playerCharacter).Count > 0) {
+            serviceComponent = activeQuestUse;
+            serviceIndex = _componentFirstOption.TryGetValue(activeQuestUse, out var questFirst) ? (uint) questFirst : 0;
         }
 
         if (serviceComponent is null) {
@@ -354,6 +510,27 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
+    private readonly HashSet<IActorRef> _heldPrompts = [];
+
+    /// <summary>Shows Press-X because the player is inside this object's trigger volume, not because they are near the mesh.</summary>
+    internal void HoldPrompt(IActorRef playerActor) {
+        if (playerActor is null) {
+            return;
+        }
+
+        _heldPrompts.Add(playerActor);
+        SendActorServiceOptions(playerActor);
+    }
+
+    /// <summary>Clears a volume-held Press-X when the player leaves that trigger volume.</summary>
+    internal void ReleasePrompt(IActorRef playerActor) {
+        if (playerActor is null || !_heldPrompts.Remove(playerActor)) {
+            return;
+        }
+
+        SendLeaveServiceRange(playerActor);
+    }
+
     /// <summary>Sends a player this NPC's options again without closing what the game shows (a quest dialog).</summary>
     internal void SendServiceOptions(IActorRef playerActor)
         => SendActorServiceOptions(playerActor);
@@ -429,6 +606,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             var wizard = result.Wizards[i];
             if (wizard != null) {
                 SendWizBang(result.PlayerActors[i], wizard);
+                // A volume-held Press-X (a ladder) is sent once when the player steps in, as a door's is. Sending it
+                // again on every wizbang tick was dropped (2026-11-25).
 
                 continue;
             }
@@ -454,8 +633,22 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         RefreshServiceMomento(wizard);
 
+        if (SizeFactor() > 1.5f) {
+            Logger.Information("Reach: {0} ({1}) offers {2} option(s) to {3}: {4}.",
+                Logger.Args(Entity.Info?.m_zoneTag, (Entity.Template as GameObjectTemplate)?.m_objectName,
+                    _serviceMemento.m_serviceOptions.Count, wizard.CharId,
+                    string.Join(", ", _serviceComponents.Select(c => {
+                        try { return $"{c.GetType().Name} {c.GetServiceOptions(wizard).Count()}"; } catch (Exception e) { return $"{c.GetType().Name} failed ({e.Message})"; }
+                    }))));
+        }
+
         // If we have no service options, do not send anything.
         if (_serviceMemento.m_serviceOptions.Count <= 0) {
+            if (Entity.Template is GameObjectTemplate transportTemplateWithoutOptions
+                && InteractDoorTeleportComponent.HasTransportName(transportTemplateWithoutOptions.m_objectName.ToString())) {
+                Logger.Information("Transport prompt: {0} has no service options for {1}.",
+                    Logger.Args(Entity.Info?.m_zoneTag ?? transportTemplateWithoutOptions.m_objectName.ToString(), playerActor.Path.Name));
+            }
             return;
         }
 
@@ -481,6 +674,13 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         };
 
         playerActor.Tell(npcOptionsMsg);
+        if (Entity.Template is GameObjectTemplate transportTemplateWithOptions
+            && InteractDoorTeleportComponent.HasTransportName(transportTemplateWithOptions.m_objectName.ToString())) {
+            Logger.Information("Transport prompt: sent {0} option(s) for {1} to {2}.",
+                Logger.Args(_serviceMemento.m_serviceOptions.Count,
+                    Entity.Info?.m_zoneTag ?? transportTemplateWithOptions.m_objectName.ToString(),
+                    playerActor.Path.Name));
+        }
     }
 
     private void SendLeaveServiceRange(IActorRef playerActor) {
@@ -528,6 +728,14 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         if (door is not null && questUse is not null && playerCharacter is not null
             && OptionsFor(door, playerCharacter).Count > 0 && OptionsFor(questUse, playerCharacter).Count > 0) {
             dropped.Add(door);
+        }
+
+        // The same for an object with a use of its own (Last Wood's fire pits: put out, and "set off the smoke signal" of
+        // Planning the Attack). Two "Interact" options opened a person's "What can I do for you?" menu with two blank
+        // buttons (2026-11-25). While the wizard's step needs the object, the step's use is the only option.
+        if (objectState is not null && questUse is not null && playerCharacter is not null
+            && OptionsFor(questUse, playerCharacter).Count > 0) {
+            dropped.Add(objectState);
         }
 
         foreach (var component in _serviceComponents) {

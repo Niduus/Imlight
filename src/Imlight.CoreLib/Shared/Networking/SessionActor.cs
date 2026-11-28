@@ -439,6 +439,8 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         );
 
     protected override void PostStop() {
+        Imlight.CoreLib.Game.Zone.Core.ClientCopies.Forget(Self);
+
         // The server frees the session id on this message, so it goes out only once the actor is gone.
         if (!_isDeallocated) {
             _isDeallocated = true;
@@ -506,7 +508,72 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
         _socketSenderRef = Context.ActorOf(senderProps, $"SocketSender-{SessionID}");
     }
 
+    // Removals of objects the game builds from the zone file it is about to load: sent once it is told to load it.
+    private readonly List<(IMessage Message, IActorRef Sender)> _heldClientCopyRemovals = [];
+
+    // Notes which of the objects the game builds from its zone file it still has (ClientCopies). A removal of one of the
+    // zone it is about to load waits for MSG_LOGINCOMPLETE, or the game would build it after being told to remove it.
+    private bool TrackClientCopies(IMessage message) {
+        switch (message) {
+            case GAME_5_PROTOCOL.MSG_LOGINCOMPLETE login:
+                Imlight.CoreLib.Game.Zone.Core.ClientCopies.ZoneLoaded(Self, login.DynamicZoneID);
+                _socketSenderRef.Forward(message);
+                ReleaseClientCopyRemovals();
+
+                return true;
+            case GAME_5_PROTOCOL.MSG_REMOVEOBJECT remove:
+                return HoldOrNoteRemoval(message, remove.GameObjectID);
+            case GAME_5_PROTOCOL.MSG_DELETEOBJECT delete:
+                return HoldOrNoteRemoval(message, delete.GameObjectID);
+            default:
+                return false;
+        }
+    }
+
+    private bool HoldOrNoteRemoval(IMessage message, ulong id) {
+        if (!Imlight.CoreLib.Game.Zone.Core.ClientBuiltObjects.IsClientBuiltId(id)) {
+            return false;
+        }
+
+        if (!Imlight.CoreLib.Game.Zone.Core.ClientCopies.ZoneReady(Self, id)) {
+            _heldClientCopyRemovals.Add((message, Sender));
+
+            return true;
+        }
+
+        Imlight.CoreLib.Game.Zone.Core.ClientCopies.Removed(Self, id);
+
+        return false;
+    }
+
+    private void ReleaseClientCopyRemovals() {
+        if (_heldClientCopyRemovals.Count == 0) {
+            return;
+        }
+
+        var held = _heldClientCopyRemovals.ToArray();
+        _heldClientCopyRemovals.Clear();
+        foreach (var (message, sender) in held) {
+            var id = message switch {
+                GAME_5_PROTOCOL.MSG_REMOVEOBJECT remove => remove.GameObjectID,
+                GAME_5_PROTOCOL.MSG_DELETEOBJECT delete => delete.GameObjectID,
+                _ => 0UL,
+            };
+            // One of another zone (the player moved on before it was sent) has nothing to remove.
+            if (!Imlight.CoreLib.Game.Zone.Core.ClientCopies.ZoneReady(Self, id)) {
+                continue;
+            }
+
+            Imlight.CoreLib.Game.Zone.Core.ClientCopies.Removed(Self, id);
+            _socketSenderRef.Tell(message, sender);
+        }
+    }
+
     private void SendToSocket(IMessage message) {
+        if (TrackClientCopies(message)) {
+            return;
+        }
+
         if (HeldUntilZoned(message) && (!_clientZoned || _heldDialogs.Count > 0)) {
             _heldDialogs.Add((message, Sender));
             if (!_heldDialogFlushScheduled) {

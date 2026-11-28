@@ -1,0 +1,13 @@
+{
+  "Name": "HG-GAUNT-SINBAD-001",
+  "Description": "HG-GAUNT-SINBAD-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 11280,
+  "MaxGold": 11280,
+  "ExperienceAmount": 2000,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "EM-SAMS-ENC-005",
+  "Description": "EM-SAMS-ENC-005 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 455,
+  "MaxGold": 455,
+  "ExperienceAmount": 48527,
+  "TrainingPoints": 0,
+  "Items": []
+}

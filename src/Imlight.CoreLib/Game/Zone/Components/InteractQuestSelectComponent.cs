@@ -43,6 +43,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imcodec.Math;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.WizBang;
@@ -60,12 +61,15 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
     public string ServiceName => "Interact";
     public string NpcIcon { get; private set; } = null;
     public string NpcNameKey { get; private set; } = null;
-    public string NpcTextKey => "GUI_ChestInteract"; // TODO: Presumably the same for all quest interactables?
-                                                     // Come back to this. If we don't see a problem, leave as is and mark as complete.
+    // The object's own text (m_interactTextOverride), else chest text for a chest, else none: the memento then shows the
+    // plain object "Interact" text. Every quest object said chest text, so Last Wood's fire pits offered the smoke signal
+    // step with a chest's window (2026-11-25).
+    public string NpcTextKey { get; private set; }
     public WizBangs WizBang => WizBangs.None;
     public string StateName => null;
     public string InteractWizBang => null;
     public string DisplayKey => null;
+    public float DEFAULT_INTERACTION_RADIUS => 300f;
 
     private readonly Dictionary<string, List<GoalTemplate>> _usageGoalsByQuest = [];
 
@@ -74,11 +78,27 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
     public static bool ShouldAttachToEntity(CoreTemplate template)
         => template is GameObjectTemplate gameObjectTemplate
-        && (HasBehavior(template, "WizardSelectBehavior") || IsNamedByAnyUsageGoal(gameObjectTemplate));
+           && (HasBehavior(template, "WizardSelectBehavior")
+               || IsNamedByAnyUsageGoal(gameObjectTemplate)
+               || string.Equals(gameObjectTemplate.m_objectName.ToString(), "AZ_Rubble-TheMaw", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(gameObjectTemplate.m_objectName.ToString(), "AZ_Rubble-TheMaw instance", StringComparison.OrdinalIgnoreCase));
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard playerCharacter) {
         if (playerCharacter?.QuestBehavior?.CurrentQuestInstances == null) {
             yield break;
+        }
+
+        var hasMawUseStep = playerCharacter.QuestBehavior.CurrentQuestInstances.Any(q =>
+            string.Equals(q.QuestName, "AZ-THREE-C01-002", StringComparison.OrdinalIgnoreCase)
+            && q.GoalProgress.Any(g =>
+                g.GoalName == "1_WizardQuestGoalsUseItem"
+                && g.DoesPlayerHaveGoal()
+                && !g.IsGoalCompleted()));
+        if (hasMawUseStep
+            && Entity.Template is GameObjectTemplate mawTemplate
+            && (string.Equals(mawTemplate.m_objectName.ToString(), "AZ_Rubble-TheMaw", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(mawTemplate.m_objectName.ToString(), "AZ_Rubble-TheMaw instance", StringComparison.OrdinalIgnoreCase))) {
+            yield return new InteractableOption { m_serviceName = ServiceName };
         }
 
         // If we did not find any quests with active usage goals, don't show the interaction option at all.
@@ -109,6 +129,14 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         // Determine icon and name key from template.
         NpcIcon = gameObjectTemplate.m_sIcon;
         NpcNameKey = gameObjectTemplate.m_displayName;
+        var ownText = gameObjectTemplate.m_behaviors?
+            .OfType<InteractableBehaviorTemplate>()
+            .Select(behavior => behavior?.m_interactTextOverride?.ToString())
+            .FirstOrDefault(text => !string.IsNullOrEmpty(text));
+        NpcTextKey = ownText
+            ?? (gameObjectTemplate.m_objectName.ToString().Contains("Chest", StringComparison.OrdinalIgnoreCase)
+                ? "GUI_ChestInteract"
+                : null);
 
         // Register every usage goal whose client tags name this object; the object is
         // interactable only while one of those goals is active (see GetServiceOptions).
@@ -121,7 +149,163 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         }
     }
 
+    private static bool C14MagicRaftAtZocalo(string zone, string name, string tag)
+        => string.Equals(zone, "Azteca/AZ_Z00_Zocalo", StringComparison.OrdinalIgnoreCase)
+            && (!string.IsNullOrEmpty(name) && name.Contains("MagicRaft", StringComparison.OrdinalIgnoreCase)
+                || !string.IsNullOrEmpty(tag) && tag.Contains("AZ-MagicRaft", StringComparison.OrdinalIgnoreCase));
+
+    private static bool C14MagicRaftAtZultunDock(string zone, string name, string tag)
+        => string.Equals(zone, "Azteca/AZ_Z05_ZultunDock", StringComparison.OrdinalIgnoreCase)
+            && (!string.IsNullOrEmpty(name) && (name.Contains("MagicRaft", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("ZULTUNDOCK", StringComparison.OrdinalIgnoreCase))
+                || !string.IsNullOrEmpty(tag) && (tag.Contains("MagicRaft", StringComparison.OrdinalIgnoreCase)
+                || tag.Contains("ZULTUNDOCK", StringComparison.OrdinalIgnoreCase)));
+
+    private static void CompleteC14Usage(IActorRef playerActor, Wizard playerCharacter) {
+        if (playerCharacter?.QuestBehavior?.CurrentQuestInstances is null) {
+            return;
+        }
+
+        var quest = playerCharacter.QuestBehavior.CurrentQuestInstances.FirstOrDefault(q =>
+            string.Equals(q.QuestName, "AZ-ZOCA-C14-001", StringComparison.OrdinalIgnoreCase));
+        var goal = quest?.GoalProgress.FirstOrDefault(g =>
+            g.GoalName == "1_WizardQuestGoalsUseItem"
+            && g.DoesPlayerHaveGoal()
+            && !g.IsGoalCompleted());
+        if (quest is not null && goal is not null) {
+            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_COMPLETEUSAGEGOAL {
+                QuestID = quest.ID,
+                GoalID = goal.ID,
+                SuppressCompletionDialog = false,
+            });
+        }
+    }
+
+    private static bool C10PetalDoor(string zone, string name, string tag)
+        => string.Equals(zone, "Azteca/AZ_Z09_AltoAlto", StringComparison.OrdinalIgnoreCase)
+            && (!string.IsNullOrEmpty(name) && name.Contains("PetalDoor", StringComparison.OrdinalIgnoreCase)
+                || !string.IsNullOrEmpty(tag) && tag.Contains("PetalDoor-Z09", StringComparison.OrdinalIgnoreCase));
+
+    private static void CompleteC10Ritual(IActorRef playerActor, Wizard playerCharacter) {
+        if (playerCharacter?.QuestBehavior?.CurrentQuestInstances is null) {
+            return;
+        }
+
+        var quest = playerCharacter.QuestBehavior.CurrentQuestInstances.FirstOrDefault(q =>
+            string.Equals(q.QuestName, "AZ-ALTO-C10-001", StringComparison.OrdinalIgnoreCase));
+        var goal = quest?.GoalProgress.FirstOrDefault(g =>
+            g.GoalName == "1_PerformRitual"
+            && g.DoesPlayerHaveGoal()
+            && !g.IsGoalCompleted());
+        if (quest is not null && goal is not null) {
+            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_COMPLETEUSAGEGOAL {
+                QuestID = quest.ID,
+                GoalID = goal.ID,
+                SuppressCompletionDialog = false,
+            });
+        }
+    }
+
+    private static void CompleteCloudPillarUsage(IActorRef playerActor, Wizard playerCharacter) {
+        if (playerCharacter?.QuestBehavior?.CurrentQuestInstances is null) {
+            return;
+        }
+
+        var quest = playerCharacter.QuestBehavior.CurrentQuestInstances.FirstOrDefault(q =>
+            string.Equals(q.QuestName, "AZ-CLOUD-C02-003", StringComparison.OrdinalIgnoreCase));
+        var goal = quest?.GoalProgress.FirstOrDefault(g =>
+            g.GoalName == "1_WizardQuestGoalsUseItem"
+            && g.DoesPlayerHaveGoal()
+            && !g.IsGoalCompleted());
+        if (quest is not null && goal is not null) {
+            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_COMPLETEUSAGEGOAL {
+                QuestID = quest.ID,
+                GoalID = goal.ID,
+                SuppressCompletionDialog = false,
+            });
+        }
+    }
+
+    private static void RaiseCloudPillar(IActorRef zoneActor, IActorRef playerActor, CoreObject playerObject) {
+        zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
+            EventName = "AZ-SkyPillarRise",
+            PlayerActor = playerActor,
+            PlayerGameObject = playerObject,
+        });
+
+        foreach (var tag in new[] { "AZ-Sky-PillarTeleport", "AZ-Sky-PillarTeleport instance" }) {
+            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_REMOVEDYNAMOD {
+                DynaMod = new ResRemoveDynaMod {
+                    m_dynaModClientTag = tag,
+                },
+                ContextActor = playerActor,
+            });
+        }
+    }
+
     public void OnServiceInteraction(IActorRef playerActor, Wizard playerCharacter, CoreObject playerObject, uint serviceOptionIndex) {
+        var zone = Entity.Zone?.ZonePath;
+        var name = (Entity.Template as GameObjectTemplate)?.m_objectName.ToString();
+        var tag = (string?)Entity.Info?.m_zoneTag;
+        if (C10PetalDoor(zone, name, tag)) {
+            CompleteC10Ritual(playerActor, playerCharacter);
+            Entity.GetComponentOfType<InteractObjectStateComponent>()?.ApplyGoalOptions(playerActor, playerObject);
+            playerActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = "Azteca/AZ_Z10_FloatingMountains",
+                DestinationLocation = "Start",
+                SendToClient = true,
+                ByZoneDoor = true,
+                OwnerCharId = playerCharacter.CharId,
+            });
+            return;
+        }
+        if (C14MagicRaftAtZocalo(zone, name, tag)) {
+            CompleteC14Usage(playerActor, playerCharacter);
+            playerActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = "Azteca/AZ_Z05_ZultunDock",
+                DestinationLocation = "Start",
+                SendToClient = true,
+                ByZoneDoor = true,
+                OwnerCharId = playerCharacter.CharId,
+            });
+            return;
+        }
+        if (C14MagicRaftAtZultunDock(zone, name, tag)) {
+            playerActor.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = "Azteca/AZ_Z00_Zocalo",
+                DestinationLocation = "Start",
+                SendToClient = true,
+                ByZoneDoor = true,
+                OwnerCharId = playerCharacter.CharId,
+            });
+            return;
+        }
+        if (string.Equals(zone, "Azteca/AZ_Z06_CloudburstIsland", StringComparison.OrdinalIgnoreCase)
+            && (!string.IsNullOrEmpty(name) && name.Contains("Cloud-Bearer-Pedestal", StringComparison.OrdinalIgnoreCase)
+                || !string.IsNullOrEmpty(tag) && tag.Contains("Cloud-Bearer-Pedestal", StringComparison.OrdinalIgnoreCase))) {
+            CompleteCloudPillarUsage(playerActor, playerCharacter);
+            RaiseCloudPillar(Entity.ZoneRef, playerActor, playerObject);
+        }
+
+        var mawQuest = playerCharacter?.QuestBehavior?.CurrentQuestInstances?.FirstOrDefault(q =>
+            string.Equals(q.QuestName, "AZ-THREE-C01-002", StringComparison.OrdinalIgnoreCase));
+        var mawGoal = mawQuest?.GoalProgress?.FirstOrDefault(g =>
+            g.GoalName == "1_WizardQuestGoalsUseItem"
+            && g.DoesPlayerHaveGoal()
+            && !g.IsGoalCompleted());
+        if (mawQuest is not null
+            && mawGoal is not null
+            && Entity.Template is GameObjectTemplate mawTemplate
+            && (string.Equals(mawTemplate.m_objectName.ToString(), "AZ_Rubble-TheMaw", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(mawTemplate.m_objectName.ToString(), "AZ_Rubble-TheMaw instance", StringComparison.OrdinalIgnoreCase))) {
+            playerActor.Tell(new CHARACTER_103_PROTOCOL.MSG_COMPLETEUSAGEGOAL {
+                QuestID = mawQuest.ID,
+                GoalID = mawGoal.ID,
+                SuppressCompletionDialog = false,
+            });
+            return;
+        }
+
         // One use completes every active usage goal that matches this object, across all of the
         // player's quests, each through the normal goal-completion path.
         var activeGoals = FindActiveMatchingGoals(playerCharacter);
@@ -228,6 +412,18 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
             }
 
             foreach (var goal in goals) {
+                if (string.Equals(quest.QuestName, "AZ-SWAMP-C01-001", StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(goal.m_goalName, "3_WizardQuestGoals00000006", StringComparison.OrdinalIgnoreCase)) {
+                    var zone = Entity.Zone?.ZonePath;
+                    var objectName = (Entity.Template as GameObjectTemplate)?.m_objectName.ToString();
+                    if (!string.Equals(zone, "Azteca/Interiors/AZ_Z04_DeadTreeCavern", StringComparison.OrdinalIgnoreCase)
+                        || !string.Equals(objectName, "AZ-SWAMP-NPC01", StringComparison.OrdinalIgnoreCase)
+                           && !string.Equals(objectName, "AZ-SWAMP-NPC01Projection", StringComparison.OrdinalIgnoreCase)
+                           && !string.Equals(objectName, "AZ-SWAMP-Jade-Wind-Sun", StringComparison.OrdinalIgnoreCase)) {
+                        continue;
+                    }
+                }
+
                 var goalProgress = quest.GoalProgress.FirstOrDefault(gp =>
                     IsActiveUsageGoal(gp, goal.m_goalName));
 
@@ -292,6 +488,42 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
     /// </summary>
     internal static bool IsNamedByUsageGoal(InteractOptionTemplate option)
         => UsageGoals.Names(option);
+
+    internal static Vector3? ActiveGoalSpot(ZoneEntity entity, Wizard wizard) {
+        if (entity?.Zone?.ZoneData?.m_objectList is null || wizard is null) {
+            return null;
+        }
+
+        foreach (var quest in wizard.QuestBehavior?.CurrentQuestInstances?.ToList() ?? []) {
+            if (!string.Equals(quest.QuestName, "AZ-ZOCA-C11-002", StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+
+            var active = quest.GoalProgress;
+            string tag = quest.IsGoalActive("2_WizardQuestGoals00000006") ? "AZ-3POINTS-NPC14"
+                : quest.IsGoalActive("3_WizardQuestGoals00000006") ? "AZ-PalaceGuard02"
+                : quest.IsGoalActive("4_WizardQuestGoals00000006") ? "AZ-PalaceGuard03"
+                : quest.IsGoalActive("5_WizardQuestGoals00000006") ? "AZ-PalaceGuard04"
+                : null;
+
+            if (string.IsNullOrEmpty(tag)) {
+                continue;
+            }
+
+            var placed = entity.Zone.ZoneData.m_objectList.FirstOrDefault(o =>
+                string.Equals(NormalizeInstanceTag((string?)o?.m_zoneTag), tag, StringComparison.OrdinalIgnoreCase));
+            if (placed is not null) {
+                return placed.m_location;
+            }
+        }
+
+        return null;
+    }
+
+    private static string NormalizeInstanceTag(string tag)
+        => tag?.EndsWith(" instance", StringComparison.OrdinalIgnoreCase) == true
+            ? tag[..^" instance".Length]
+            : tag;
 
     /// <summary>The usage goals that using this object counts for (the quest checker asks, QuestChecker.cs).</summary>
     internal static IEnumerable<(string Quest, GoalTemplate Goal)> UsageGoalsOf(GameObjectTemplate template)

@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CHRO-ENC-001",
+  "Description": "MR-CHRO-ENC-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1300,
+  "MaxGold": 1300,
+  "ExperienceAmount": 169500,
+  "TrainingPoints": 0,
+  "Items": []
+}

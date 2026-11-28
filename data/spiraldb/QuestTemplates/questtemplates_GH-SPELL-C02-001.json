@@ -1,62 +1,252 @@
 {
+  "$type": "Imcodec.ObjectProperty.TypeCache.QuestTemplate, Imcodec.ObjectProperty",
   "m_questName": "GH-SPELL-C02-001",
   "m_questNameID": 0,
   "m_questTitle": "The Runedown",
-  "m_questInfo": null,
-  "m_questPrep": null,
-  "m_questUnderway": null,
-  "m_questComplete": null,
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
   "m_startGoals": [
     "1_WizardQuestGoalsExplore"
   ],
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05",
+      "m_proximityTag": "Enter_SkabrokTauntVolume",
+      "m_zoneExit": false,
+      "m_goalName": "1_WizardQuestGoalsExplore",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "",
+                  "m_nameOverride": "WizQst53900_00000005",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst53900_00000004",
+                  "m_picture": "GUI/NpcPortraits/Art_Portrait_Grendel_WtchDctr_01.dds",
+                  "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/Skabrok_GH2_01.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 0,
+                  "m_cameraOffsetX": 269.2441,
+                  "m_cameraOffsetY": -276.2091,
+                  "m_cameraOffsetZ": 79.20883,
+                  "m_pitch": -0.07259589,
+                  "m_yaw": -1.092027,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 0,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [],
+                  "m_dialogAnimationList": [],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 0,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Skabrok's Cave",
+        "m_percentChance": 1,
+        "m_descriptor": "Skabrok\u0027s Cave",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Sudrilund",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Grendel_WtchDctr_01.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05",
-      "m_locationName": "Sudrilund",
-      "m_goalName": "1_WizardQuestGoalsExplore",
-      "m_goalTitle": "WizardQuestGoals_Explore",
       "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "GH2-Grendel-Large-2-BOSS-R10.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "2_WizardQuestGoalsKillCollect",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_KillCollect",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 1
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "",
+                  "m_nameOverride": "",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst53900_00000007",
+                  "m_picture": "GUI/QuestButtons/Art_Quest_Rune_Stone_A.dds",
+                  "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/Narrator_GH2_116.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 0,
+                  "m_cameraOffsetX": 810.293,
+                  "m_cameraOffsetY": -531.4357,
+                  "m_cameraOffsetZ": 830.8563,
+                  "m_pitch": 0.637404,
+                  "m_yaw": -1.092027,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 0,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [],
+                  "m_dialogAnimationList": [],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 0,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
         "m_percentChance": 80,
         "m_descriptor": "Bag of Rune-Spells",
@@ -66,37 +256,37 @@
           "m_results": []
         }
       },
+      "m_locationName": "Sudrilund",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Grendel_WtchDctr_01.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05",
-      "m_locationName": "Sudrilund",
-      "m_goalName": "2_WizardQuestGoalsKillCollect",
-      "m_goalTitle": "WizardQuestGoals_KillCollect",
       "m_goalType": "GOAL_TYPE_BOUNTYCOLLECT",
-      "m_npcAdjectives": [
-        "GH2-Grendel-Large-2-BOSS-R10.AdjRef"
-      ],
-      "m_bountyTotal": 1,
-      "m_bountyType": "BT_MOB_KILL"
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "GH-HUB-NPC03_Persona",
+      "m_usePatron": false,
+      "m_goalName": "3_WizardQuestGoalsTalkNPC",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
         "m_results": []
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
@@ -104,12 +294,14 @@
           "m_results": []
         }
       },
+      "m_locationName": "Northguard",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_BearScout_Peasant_Purple.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
+      "m_destinationZone": "Grizzleheim/GH_MainHub",
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -120,41 +312,102 @@
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "GH-HUB-NPC03_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "You won back my bag of rune-spells? I am in your debt. Let me reward you with a spell.",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_BearScout_Peasant_Purple.dds",
                 "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/ErikWyrdrune_GH2_22.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 164451,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               }
-            ]
+            ],
+            "m_madlibs": [],
+            "m_dialogEvents": [],
+            "m_noAggroWhileDialogIsUp": false,
+            "m_noAggroNoDelay": false
           }
         ]
       },
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Grizzleheim/GH_MainHub",
-      "m_locationName": "Northguard",
-      "m_goalName": "3_WizardQuestGoalsTalkNPC",
-      "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "GH-HUB-NPC03_Persona",
-      "m_usePatron": false
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDownloadPackage, Imcodec.ObjectProperty",
+        "m_packageList": [
+          "Grizzleheim/GH_HFjord/Interiors/GH_Sud_Cave05"
+        ]
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
-        "m_tableName": "GH-SPELL-C02-001"
+        "m_tableName": "GH-SPELL-C02-001",
+        "m_maxRolls": 0
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
@@ -274,6 +527,172 @@
           "m_applyNOT": false,
           "m_operator": "ROP_AND"
         }
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResFallthrough, Imcodec.ObjectProperty",
+        "m_options": [
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Storm",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Insane Bolt"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Fire",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Power Link"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Ice",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Frozen Armor"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Life",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Brilliant Light"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Death",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Virulent Plague"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Myth",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Minion Myth 004"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Balance",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Availing Hands"
+                }
+              ]
+            }
+          }
+        ]
       }
     ]
   },
@@ -282,7 +701,7 @@
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
         "m_entryName": "Complete",
-        "m_displayName": null,
+        "m_displayName": "",
         "m_isQuestRegistry": true,
         "m_questName": "WC-SPELL-C02-001",
         "m_applyNOT": false,
@@ -292,8 +711,6 @@
     "m_applyNOT": false,
     "m_operator": "ROP_AND"
   },
-  "m_prepRequirements": null,
-  "m_pruneRequirements": null,
   "m_prepAlways": false,
   "m_clientTags": [],
   "m_goalLogic": [
@@ -343,54 +760,208 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "GH-HUB-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "It is clear that Fate sent you here at this time. I need help, and can offer magic in return.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_BearScout_Peasant_Purple.dds",
             "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/ErikWyrdrune_GH2_18.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 164451,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "GH-HUB-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "An evil Grendel named Skabrok stole my bag of rune-spells, and I fear he means to do terrible things with such power!",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_BearScout_Peasant_Purple.dds",
             "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/ErikWyrdrune_GH2_19.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 164451,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "GH-HUB-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "Can you go to his cave in Sudrilund and recover my bag of rune-spells? If you do so, I'll gladly share my magic with you.",
+            "m_dialog": "Can you go to his cave in Sudrilund and recover my bag of rune-spells? If you do so, I\u0027ll gladly share my magic with you.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_BearScout_Peasant_Purple.dds",
             "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/ErikWyrdrune_GH2_20.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 164451,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       },
       {
         "m_dialogTag": "Underway",
@@ -399,20 +970,74 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "GH-HUB-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "Can you go to Skabrok's cave in Sudrilund and recover my bag of rune-spells? If you do, I'll share my magic.",
+            "m_dialog": "Can you go to Skabrok\u0027s cave in Sudrilund and recover my bag of rune-spells? If you do, I\u0027ll share my magic.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_BearScout_Peasant_Purple.dds",
             "m_soundFile": "|Sound_Dialogue_GH1|WorldData|Sound/Dialogue/ErikWyrdrune_GH2_21.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 164451,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       }
     ]
   },
@@ -422,5 +1047,12 @@
   "m_outdated": false,
   "m_noQuestHelper": false,
   "m_mainline": false,
-  "m_activityType": "ACTIVITY_NotActivity"
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
 }

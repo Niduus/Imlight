@@ -1,29 +1,44 @@
 {
+  "$type": "Imcodec.ObjectProperty.TypeCache.QuestTemplate, Imcodec.ObjectProperty",
   "m_questName": "KT-SPH5-C02-003",
   "m_questNameID": 0,
   "m_questTitle": "QuestTitle_9972",
-  "m_questInfo": null,
-  "m_questPrep": null,
-  "m_questUnderway": null,
-  "m_questComplete": null,
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
   "m_startGoals": [
     "Goal"
   ],
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "KT-SPH5-NPC02",
+      "m_usePatron": false,
       "m_goalName": "Goal",
       "m_goalNameID": 2559431,
       "m_goalTitle": "WizardQuestGoals_TalkNPC",
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyEntry, Imcodec.ObjectProperty",
+            "m_questName": "",
+            "m_entryName": "QT-KT-SPH5-C02-003",
+            "m_isQuestRegistry": false,
+            "m_value": 0
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "ActivateDoor",
+            "m_subEventName": ""
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
@@ -55,7 +70,6 @@
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": -1,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "WizQst9972_00000026",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_Balance_Professor_Green.dds",
                 "m_soundFile": "",
@@ -123,7 +137,6 @@
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": -1,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "WizQst9972_00000027",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_Balance_Professor_Green.dds",
                 "m_soundFile": "",
@@ -219,7 +232,7 @@
                 "m_index": 228834447
               }
             ],
-            "m_dialogEvents": null,
+            "m_dialogEvents": [],
             "m_noAggroWhileDialogIsUp": false,
             "m_noAggroNoDelay": false
           }
@@ -232,24 +245,42 @@
         "m_results": []
       },
       "m_hideGoalFloatyText": false,
-      "m_behaviors": null,
-      "m_personaName": "KT-SPH5-NPC02",
-      "m_usePatron": false
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "Colossus-KTBoss-L03.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
       "m_goalName": "Goal 1",
       "m_goalNameID": 572984775,
       "m_goalTitle": "WizardQuestGoals_Kill",
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "Kroc_Sphinx_05_Window_03",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": true,
+            "m_dynaModState": "",
+            "m_zoneName": "Krokotopia/KT_Krokosphinx/KT_Vault",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResMarkZoneNoWarn, Imcodec.ObjectProperty"
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "WizQst9972_00000013",
         "m_count": 1,
@@ -265,7 +296,6 @@
       "m_autoQualify": false,
       "m_autoComplete": false,
       "m_destinationZone": "",
-      "m_dialogList": null,
       "m_goalType": "GOAL_TYPE_BOUNTY",
       "m_noQuestHelper": false,
       "m_petOnlyQuest": false,
@@ -273,15 +303,17 @@
         "m_results": []
       },
       "m_hideGoalFloatyText": false,
-      "m_behaviors": null,
-      "m_bountyTotal": 1,
-      "m_npcAdjectives": [
-        "Colossus-KTBoss-L03.AdjRef"
-      ]
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     }
   ],
   "m_startResults": {
-    "m_results": []
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResMarkZoneNoWarn, Imcodec.ObjectProperty"
+      }
+    ]
   },
   "m_endResults": {
     "m_results": [
@@ -289,35 +321,41 @@
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
         "m_tableName": "KT-SPH5-C02-003",
         "m_maxRolls": 1
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 4926,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": "QuestItemLoot"
       }
     ]
   },
   "m_requirements": {
-    "$type": "Imcodec.ObjectProperty.TypeCache.RequirementList, Imcodec.ObjectProperty",
-    "m_applyNOT": false,
-    "m_operator": "ROP_AND",
     "m_requirements": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqInZone, Imcodec.ObjectProperty",
+        "m_zoneName": "Krokotopia/KT_Krokosphinx/KT_Retreat",
         "m_applyNOT": false,
-        "m_operator": "ROP_AND",
-        "m_zoneName": "Krokotopia/KT_Krokosphinx/KT_Retreat"
+        "m_operator": "ROP_AND"
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
         "m_entryName": "Complete",
-        "m_displayName": null,
+        "m_displayName": "",
         "m_isQuestRegistry": true,
         "m_questName": "KT-SPH5-C02-002",
         "m_applyNOT": false,
         "m_operator": "ROP_AND"
       }
-    ]
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
   },
-  "m_prepRequirements": null,
-  "m_pruneRequirements": null,
   "m_prepAlways": false,
-  "m_clientTags": null,
+  "m_clientTags": [],
   "m_goalLogic": [
     {
       "m_goalsAND": [
@@ -344,19 +382,18 @@
   "m_questRepeat": 0,
   "m_onStartQuestScript": "",
   "m_onEndQuestScript": "",
-  "m_dialogList": null,
-  "m_missionDoors": null,
-  "m_dynaMods": null,
+  "m_missionDoors": [],
+  "m_dynaMods": [],
   "m_isHidden": false,
   "m_outdated": false,
   "m_noQuestHelper": false,
   "m_mainline": false,
-  "m_defaultDialogAnimation": null,
+  "m_defaultDialogAnimation": [],
   "m_skipQHAutoSelect": false,
-  "m_questEffectInfoList": null,
+  "m_questEffectInfoList": [],
   "m_forceInteraction": false,
   "m_checkInventoryForCrafting": false,
   "m_playAsYourPetNPC": false,
   "m_activityType": "ACTIVITY_NotActivity",
-  "m_behaviors": null
+  "m_behaviors": []
 }

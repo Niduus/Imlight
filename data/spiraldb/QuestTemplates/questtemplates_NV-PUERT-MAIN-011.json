@@ -1,0 +1,329 @@
+{
+  "m_questName": "NV-PUERT-MAIN-011",
+  "m_questNameID": 0,
+  "m_questTitle": "Something Smells Fishy",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-PUERT-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Your friend, he heard you? And he has done as I asked? FABULOSO! I have taken the Pingouins' Snapper away. Or at least, he says I have.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_026.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1562164,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-PUERT-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "If the Snapper are gone, there is no need for military action, enjoyable as it might be. We must go to La Ville Rose and verify this is the case.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_027.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1562164,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-PUERT-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And by we, I of course mean you. I shall remain here and begin celebrating. Oh, if only I could see their little faces! Draw me a sketch, Wizard.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_028.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1562164,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-PUERT-NPC14_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ah, <ITALICS>amico mio</ITALICS>! You are back quickly this time. So what did the Pingouins say? Where is your sketch?!",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_029.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1562164,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Novus/NV_Z03_PuertoNuovo_VA",
+      "m_locationName": "Puerto Nuovo",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "NV-PUERT-NPC14_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "NV-PUERT-MAIN-011"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "NV-PUERT-MAIN-010",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>Sorpredente!</ITALICS> I wonder... Is this truly a good thing? Alas, what will be will be.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_ExplorerF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Fernanda_Maregellan_NV-PUERT_029.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562151,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Let us go tell the Principe what you have accomplished. Perhaps he will now have his wish. For Valencia's sake.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_ExplorerF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Fernanda_Maregellan_NV-PUERT_030.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562151,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wizard - you have come. Thank goodness! This is a calamity! Something terrible has happened. The fish - look at them. LOOK!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-PUERT_057.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546275,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They are Valencian Snapper no more. They are cold, stinky Sole - the worst of all fish!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-PUERT_058.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546275,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wait... this is no accident? Your friend Dasein, he has done this? Pourquois? Wait, the VALENCIANS did this? How?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-PUERT_059.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546275,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "What? WHAT? The Unicorns seek to deprive us, and YOU have been their instrument? This is not maintaining peace! It's an act of war!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-PUERT_060.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546275,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But... we of Polaris are an enlightened nation, ruled by reason and equality, not the greed of monarchs. We will not start a war. We will negotiate!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-PUERT_061.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546275,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wizard, you will stand in for the Valencian government, since you are so close. To the Negotiation Chamber with you! C'est by the Basstille.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-PUERT_062.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546275,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

@@ -99,6 +99,7 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             }
         }
         Zone.TriggersByName = byName;
+        NoteTransportSpots(replacedTriggers, message.VolumeData?.m_volumes, message.ZoneData?.m_objectList);
 
         // The state sets of the triggers' own objects (doors, gates), so a change plays its animation (StateTransitions).
         foreach (var info in replacedTriggers.Select(t => t?.m_triggerObjInfo).Where(i => i is not null && i.m_templateID != 0)) {
@@ -230,8 +231,9 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             if (!EvaluateRequirements(trigger, message)) {
                 // A door that stays shut is otherwise silent ("friend can not enter Hedge Maze", 2026-10-22).
                 if (HasTeleportResult(trigger)) {
-                    Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met.",
-                        Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name));
+                    Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met ({4}).",
+                        Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name,
+                            Imlight.CoreLib.Game.Sigils.SigilRequirements.Describe(trigger.m_requirements)));
                     // The bots learn it at once: this way opens with the quests its needs name (BotGates).
                     if (message.PlayerActor is not null && BotDoor.Side is { } bots && bots.GateNamesQuests(trigger)) {
                         bots.GateRefused(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath, trigger);
@@ -405,6 +407,319 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
         }
     }
 
+    private void NoteTransportSpots(IEnumerable<Trigger> triggers, IEnumerable<Volume> volumes, IEnumerable<CoreObjectInfo> placed) {
+        var spots = new List<TransportSpot>();
+        var volumeList = volumes?.Where(volume => volume is not null).ToList() ?? [];
+        var triggerList = triggers?.Where(trigger => trigger is not null).ToList() ?? [];
+        foreach (var trigger in triggerList.Where(InteractDoorTeleportComponent.IsTransportTrigger)) {
+            var info = trigger.m_triggerObjInfo;
+            var volume = volumeList.FirstOrDefault(item => VolumeNamed(item, trigger))
+                ?? volumeList.FirstOrDefault(item => VolumeFires(item, trigger))
+                ?? volumeList
+                    .Select(item => (Volume: item, Distance: TriggerDistance(item, info)))
+                    .Where(pair => info is not null && pair.Distance <= TransportReach(pair.Volume) * TransportReach(pair.Volume))
+                    .OrderBy(pair => pair.Distance)
+                    .Select(pair => pair.Volume)
+                    .FirstOrDefault();
+            if (volume is null) {
+                Logger.Information("Transport trigger {0} in {1} has no volume. Object {2} at {3},{4}.",
+                    Logger.Args(trigger.m_triggerName, Zone.ZonePath, (string)info?.m_zoneTag, info?.m_locationX, info?.m_locationY));
+                continue;
+            }
+
+            var reach = TransportReach(volume);
+            spots.Add(new TransportSpot {
+                TriggerName = trigger.m_triggerName,
+                ObjectTag = (string)info?.m_zoneTag,
+                VolumeName = volume.m_volumeName,
+                X = volume.m_locationX,
+                Y = volume.m_locationY,
+                RadiusSq = reach * reach,
+            });
+            Logger.Information("Transport spot {0} uses volume {1} at {2},{3} radius {4}.",
+                Logger.Args(trigger.m_triggerName, volume.m_volumeName, volume.m_locationX, volume.m_locationY, reach));
+        }
+
+        foreach (var info in placed ?? []) {
+            var tag = (string)info?.m_zoneTag;
+            if (info is null || !InteractDoorTeleportComponent.HasTransportName(tag)) {
+                continue;
+            }
+
+            var at = info.m_location;
+
+            // A second copy of a ladder end (The Hive's two KR-Hive-BottomPAFladder) gets its own spot around itself.
+            if (spots.Any(spot => !spot.UsesHeight
+                    && string.Equals(StripTransportName(spot.ObjectTag), StripTransportName(tag), StringComparison.OrdinalIgnoreCase))) {
+                continue;
+            }
+
+            var named = volumeList.FirstOrDefault(volume => VolumeNamed(volume, tag))
+                ?? volumeList.FirstOrDefault(volume => triggerList.Any(item =>
+                    VolumeFires(volume, item) && TriggerOwnsObject(item, tag)));
+            if (named is not null) {
+                AddObjectSpot(spots, named, triggerList.FirstOrDefault(item => TriggerOwnsObject(item, tag))
+                    ?? triggerList.FirstOrDefault(item => VolumeFires(named, item)), tag);
+            }
+
+            var near = triggerList
+                .Select(item => (Trigger: item, Distance: TriggerDistance(at.X, at.Y, item.m_triggerObjInfo)))
+                .Where(pair => pair.Distance <= 400f * 400f)
+                .OrderBy(pair => pair.Distance)
+                .Take(3);
+            var logged = false;
+            foreach (var pair in near) {
+                logged = true;
+                var owned = pair.Trigger.m_triggerObjInfo;
+                var (ox, oy) = TriggerLocation(owned);
+                Logger.Information("Transport object {0} at {1},{2} near trigger {3} tag {4} template {5} load {6} at {7},{8}.",
+                    Logger.Args(tag, at.X, at.Y, pair.Trigger.m_triggerName, (string)owned?.m_zoneTag,
+                        owned?.m_templateID, owned?.m_loadingType, ox, oy));
+            }
+
+            if (named is null && TryBehaviorSpot(spots, info, tag, at.X, at.Y)) {
+                continue;
+            }
+
+            if (named is null) {
+                var pad = volumeList
+                    .Select(volume => {
+                        var dx = at.X - volume.m_locationX;
+                        var dy = at.Y - volume.m_locationY;
+                        return (Volume: volume, Reach: TransportReach(volume), Distance: MathF.Sqrt((dx * dx) + (dy * dy)));
+                    })
+                    .Where(pair => pair.Reach is > 1f and <= 250f && pair.Distance <= pair.Reach + 200f)
+                    .OrderBy(pair => pair.Distance)
+                    .FirstOrDefault();
+                if (pad.Volume is not null) {
+                    var padTrigger = triggerList.FirstOrDefault(item => VolumeFires(pad.Volume, item))
+                        ?? triggerList.FirstOrDefault(item => TriggerOwnsObject(item, tag));
+                    AddObjectSpot(spots, pad.Volume, padTrigger, tag);
+                }
+                else if (TryOwnSpot(spots, info, tag)) {
+                    continue;
+                }
+                else if (!logged) {
+                    Logger.Information("Transport object {0} in {1} at {2},{3} has no nearby trigger.",
+                        Logger.Args(tag, Zone.ZonePath, at.X, at.Y));
+                }
+            }
+        }
+
+        // A ladder end around itself is only one with another end over or under it (a quest's web ladder that is used for
+        // its step, not climbed, keeps its own use).
+        var ownEnds = spots.Where(spot => spot.UsesHeight).ToList();
+        foreach (var end in ownEnds.Where(end => !ownEnds.Any(other => !ReferenceEquals(other, end)
+                     && MathF.Abs(other.Z - end.Z) >= 150f
+                     && ((other.X - end.X) * (other.X - end.X)) + ((other.Y - end.Y) * (other.Y - end.Y)) <= 900f * 900f))) {
+            spots.Remove(end);
+            Logger.Information("Transport object {0} in {1} at {2:0},{3:0} has no other ladder end over or under it.",
+                Logger.Args(end.ObjectTag, Zone.ZonePath, end.X, end.Y));
+        }
+
+        Logger.Information("Transport spots in {0}: {1}.", Logger.Args(Zone.ZonePath, spots.Count));
+        Zone.SetTransportSpots(spots);
+    }
+
+    // How near a ladder end with nothing else to go by (no trigger, volume, click box or behavior radius) a wizard stands
+    // to be offered it.
+    private const float OWN_SPOT_RADIUS = 200f;
+
+    // A ladder end that is only an interactable placed in the zone (all of The Hive's): its press-X spot is around itself,
+    // on its own level, and its other end is the nearest ladder end over or under it (Zone.TryNearestTransportEnd).
+    private bool TryOwnSpot(List<TransportSpot> spots, CoreObjectInfo info, string tag) {
+        if (CoreObjectFactory.GetCoreTemplate(info.m_templateID) is not GameObjectTemplate template
+            || template.m_behaviors?.OfType<InteractableBehaviorTemplate>().Any() != true) {
+            return false;
+        }
+
+        var at = info.m_location;
+        spots.Add(new TransportSpot {
+            TriggerName = StripTransportName(tag),
+            ObjectTag = tag,
+            VolumeName = "own",
+            X = at.X,
+            Y = at.Y,
+            Z = at.Z,
+            RadiusSq = OWN_SPOT_RADIUS * OWN_SPOT_RADIUS,
+            UsesHeight = true,
+        });
+        Logger.Information("Transport spot {0} in {1}: around itself at {2:0},{3:0},{4:0} (no trigger, volume or click box).",
+            Logger.Args(tag, Zone.ZonePath, at.X, at.Y, at.Z));
+
+        return true;
+    }
+
+    private bool TryBehaviorSpot(List<TransportSpot> spots, CoreObjectInfo info, string tag, float x, float y) {
+        var template = CoreObjectFactory.GetCoreTemplate(info.m_templateID) as GameObjectTemplate;
+        var behaviors = template?.m_behaviors;
+        var collision = behaviors?.OfType<CollisionBehaviorTemplate>().FirstOrDefault();
+        if (collision?.m_bAutoClickBox == true && string.IsNullOrEmpty(collision.m_clickableCollisionFilename)) {
+            const float clickRadius = 200f;
+            spots.Add(new TransportSpot {
+                TriggerName = StripTransportName(tag),
+                ObjectTag = tag,
+                VolumeName = "auto-click",
+                X = x,
+                Y = y,
+                Z = info.m_location.Z,
+                RadiusSq = clickRadius * clickRadius,
+            });
+            Logger.Information("Transport spot {0} uses its auto click box, radius {1} at {2},{3}.",
+                Logger.Args(tag, clickRadius, x, y));
+            return true;
+        }
+
+        var prox = behaviors?.OfType<TeleportProximityBehaviorTemplate>().FirstOrDefault(item => item.m_radius > 1f);
+        var area = behaviors?.OfType<AreaBehaviorTemplate>().FirstOrDefault(item => item.m_radius > 1f);
+        if (prox is null && area is null) {
+            var described = behaviors?.Select(item => $"{item?.GetType().Name}:{item?.m_behaviorName}").ToList() ?? [];
+            Logger.Information("Transport object {0} template {1} behaviors {2}; click {3}; auto box {4}; client only {5}.",
+                Logger.Args(tag, info.m_templateID.Full, described.Count == 0 ? "none" : string.Join(", ", described),
+                    collision?.m_clickableCollisionFilename, collision?.m_bAutoClickBox, collision?.m_bClientOnly));
+            return false;
+        }
+
+        var radius = prox?.m_radius ?? area.m_radius;
+        spots.Add(new TransportSpot {
+            TriggerName = string.IsNullOrEmpty(prox?.m_locationName) ? StripTransportName(tag) : prox.m_locationName,
+            ObjectTag = tag,
+            VolumeName = prox?.m_behaviorName ?? area?.m_behaviorName ?? "behavior",
+            X = x + (prox?.m_offsetX ?? 0f),
+            Y = y + (prox?.m_offsetY ?? 0f),
+            RadiusSq = radius * radius,
+        });
+        Logger.Information("Transport spot {0} object {1} uses behavior radius {2} at {3},{4}.",
+            Logger.Args(prox?.m_locationName ?? tag, tag, radius, x + (prox?.m_offsetX ?? 0f), y + (prox?.m_offsetY ?? 0f)));
+        return true;
+    }
+
+    private void AddObjectSpot(List<TransportSpot> spots, Volume volume, Trigger trigger, string tag) {
+        var reach = TransportReach(volume);
+        var box = volume.m_radius <= 0f && volume.m_length > 0f && volume.m_width > 0f;
+        spots.Add(new TransportSpot {
+            TriggerName = trigger?.m_triggerName ?? StripTransportName(tag),
+            ObjectTag = tag,
+            VolumeName = volume.m_volumeName,
+            X = volume.m_locationX,
+            Y = volume.m_locationY,
+            RadiusSq = box ? 0f : reach * reach,
+            Length = box ? volume.m_length : 0f,
+            Width = box ? volume.m_width : 0f,
+            Yaw = box ? volume.m_orientation.Z : 0f,
+        });
+        Logger.Information("Transport spot {0} object {1} uses volume {2} at {3},{4} radius {5}.",
+            Logger.Args(trigger?.m_triggerName ?? tag, tag, volume.m_volumeName, volume.m_locationX, volume.m_locationY, reach));
+    }
+
+    private static bool VolumeNamed(Volume volume, string tag) {
+        var volumeName = StripTransportName(volume.m_volumeName);
+        var name = StripTransportName(tag);
+        return !string.IsNullOrEmpty(volumeName) && !string.IsNullOrEmpty(name)
+            && (volumeName.Equals(name, StringComparison.OrdinalIgnoreCase)
+                || volumeName.EndsWith(name, StringComparison.OrdinalIgnoreCase)
+                || name.EndsWith(volumeName, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool TriggerOwnsObject(Trigger trigger, string tag) {
+        var name = StripTransportName(tag);
+        return string.Equals(StripTransportName(trigger?.m_triggerName), name, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(StripTransportName((string)trigger?.m_triggerObjInfo?.m_zoneTag), name, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(StripTransportName((string)trigger?.m_triggerObjInfo?.m_triggerObjName), name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static float TriggerDistance(float x, float y, TriggerObjectInfo info) {
+        if (info is null) {
+            return float.MaxValue;
+        }
+
+        var (ox, oy) = TriggerLocation(info);
+        var dx = x - ox;
+        var dy = y - oy;
+        return (dx * dx) + (dy * dy);
+    }
+
+    private static (float X, float Y) TriggerLocation(TriggerObjectInfo info) {
+        if (info is null) {
+            return (0f, 0f);
+        }
+
+        if (MathF.Abs(info.m_locationX) > 1f || MathF.Abs(info.m_locationY) > 1f) {
+            return (info.m_locationX, info.m_locationY);
+        }
+
+        return (info.m_location.X, info.m_location.Y);
+    }
+
+    private static bool VolumeContains(Volume volume, float x, float y) {
+        var dx = x - volume.m_locationX;
+        var dy = y - volume.m_locationY;
+        if (volume.m_radius <= 0f && volume.m_length > 0f && volume.m_width > 0f) {
+            var yaw = volume.m_orientation.Z;
+            var localX = (dx * MathF.Cos(yaw)) + (dy * MathF.Sin(yaw));
+            var localY = (dy * MathF.Cos(yaw)) - (dx * MathF.Sin(yaw));
+            return MathF.Abs(localX) <= volume.m_length / 2f && MathF.Abs(localY) <= volume.m_width / 2f;
+        }
+
+        var reach = TransportReach(volume);
+        return (dx * dx) + (dy * dy) <= reach * reach;
+    }
+
+    private static bool VolumeNamed(Volume volume, Trigger trigger) {
+        var volumeName = StripTransportName(volume.m_volumeName);
+        foreach (var raw in new string[] {
+            trigger.m_triggerName,
+            (string)trigger.m_triggerObjInfo?.m_zoneTag,
+            (string)trigger.m_triggerObjInfo?.m_triggerObjName,
+        }) {
+            var name = StripTransportName(raw);
+            if (string.IsNullOrEmpty(volumeName) || string.IsNullOrEmpty(name)) {
+                continue;
+            }
+
+            if (volumeName.Equals(name, StringComparison.OrdinalIgnoreCase)
+                || volumeName.EndsWith(name, StringComparison.OrdinalIgnoreCase)
+                || name.EndsWith(volumeName, StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+
+            if (volumeName.Length >= 6 && name.Length >= 6
+                && (volumeName.Contains(name, StringComparison.OrdinalIgnoreCase)
+                    || name.Contains(volumeName, StringComparison.OrdinalIgnoreCase))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool VolumeFires(Volume volume, Trigger trigger)
+        => trigger.m_fireEvents is { Count: > 0 } fires
+           && volume.m_enterEvents?.Any(enter => fires.Any(fire =>
+               string.Equals((string)enter, (string)fire, StringComparison.OrdinalIgnoreCase))) == true;
+
+    private static float TriggerDistance(Volume volume, TriggerObjectInfo info) {
+        if (volume is null || info is null) {
+            return float.MaxValue;
+        }
+
+        var dx = volume.m_locationX - info.m_locationX;
+        var dy = volume.m_locationY - info.m_locationY;
+        return (dx * dx) + (dy * dy);
+    }
+
+    private static float TransportReach(Volume volume) {
+        var reach = MathF.Max(volume.m_radius, MathF.Max(volume.m_length, volume.m_width) / 2f);
+        return reach > 1f ? reach : 200f;
+    }
+
+    private static string StripTransportName(string name) {
+        const string suffix = " instance";
+        return !string.IsNullOrEmpty(name) && name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)
+            ? name[..^suffix.Length]
+            : name;
+    }
+
     private void SpawnTriggerObject(Trigger trigger) {
         // The object is a DYNAMIC_SERVER one, so the client only has it once MSG_NEWOBJECT arrives.
         var info = trigger.m_triggerObjInfo;
@@ -463,6 +778,8 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
 
         var actor = CreateEntityActor(coreObject, template, info);
         _triggerObjects[name] = (actor, coreObject, objectTag);
+        Zone.NoteActor(name, actor);
+        Zone.NoteActor(objectTag, actor);
         Logger.Debug("Trigger {0} in {1}: object {2} created, template {3} ({4}), location {5}, start state {6}, drawn by the client: {7}.",
             Logger.Args(name, Zone.ZonePath, objectTag, info.m_templateID, template.GetType().Name, info.m_location,
                 info.m_startState, RenderComponent.ShouldAttachToEntity(template)));

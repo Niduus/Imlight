@@ -1,0 +1,322 @@
+{
+  "$type": "Imcodec.ObjectProperty.TypeCache.EncounterTemplate, Imcodec.ObjectProperty",
+  "m_vars": [],
+  "m_questName": "EM-SAMS-ENC-002",
+  "m_questNameID": 0,
+  "m_questTitle": "QuestTitle_1624C4",
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
+  "m_startGoals": [
+    "Goal"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_proximityTag": "Enter_Activator Volume Combat (2)",
+      "m_zoneExit": false,
+      "m_goalName": "Goal",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000017",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst1624DD_00000000",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1451186",
+      "m_displayImage1": "GUI/QuestButtons/EM_Z14_BattleClearing.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "EM_MonkeySpider_Hunter_B_01.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 1",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00003036",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1451186",
+      "m_displayImage1": "GUI/NpcPortraits/MonkeySpider_Hunter_B_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_proximityTag": "Enter_Activator Volume Combat (1)",
+      "m_zoneExit": false,
+      "m_goalName": "Goal 2",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000017",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst1624DD_00000001",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1451186",
+      "m_displayImage1": "GUI/QuestButtons/EM_Z14_BattleClearing.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "EM_MonkeySpider_Hunter_B_02.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 3",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00003036",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1451186",
+      "m_displayImage1": "GUI/NpcPortraits/MonkeySpider_Hunter_B_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_proximityTag": "Enter_Activator Volume Combat",
+      "m_zoneExit": false,
+      "m_goalName": "Goal 4",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000017",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst1624DD_00000002",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1451186",
+      "m_displayImage1": "GUI/QuestButtons/EM_Z14_BattleClearing.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "EM_Ant_Giant_A_02.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 5",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00002996",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1451186",
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Ant_Giant_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z12_DyingGlade",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    }
+  ],
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "EM-SAMS-ENC-002",
+        "m_maxRolls": 0
+      }
+    ]
+  },
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "Goal"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 1"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 1"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 2"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 2"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 3"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 3"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 4"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 4"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 5"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 5"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 0
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 1,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": []
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
+}

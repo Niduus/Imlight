@@ -1,27 +1,31 @@
 {
+  "$type": "Imcodec.ObjectProperty.TypeCache.QuestTemplate, Imcodec.ObjectProperty",
   "m_questName": "KR-KOND-C12-001",
   "m_questNameID": 0,
   "m_questTitle": "Higher Learning",
-  "m_questInfo": null,
-  "m_questPrep": null,
-  "m_questUnderway": null,
-  "m_questComplete": null,
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
   "m_startGoals": [
     "1_WizardQuestGoalsTalkNPC"
   ],
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "KR-KondhaDesert-NPC15_Persona",
+      "m_usePatron": false,
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
         "m_results": []
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
@@ -29,12 +33,14 @@
           "m_results": []
         }
       },
+      "m_locationName": "Solar Arc",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_Mice_SageF_D_NPC.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
+      "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I08_SolarArcMain",
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -45,99 +51,352 @@
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-KondhaDesert-NPC15_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "Morganthe broke this place of purpose when the Spider Magi brought her here. Shadow magic was not to be touched, but they did not care.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_SageF_D_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ElanaDarkSun_KH2_07.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1283173,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-KondhaDesert-NPC15_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "By using Sun magic to open the path to Shadow, Morganthe inadvertently taught me much. And now it is my place to train you.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_SageF_D_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ElanaDarkSun_KH2_08.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1283173,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-KondhaDesert-NPC15_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "WizQst12ECE4_00000002",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_SageF_D_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ElanaDarkSun_KH2_09.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1283173,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-KondhaDesert-NPC15_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "WizQst12ECE4_00000003",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_SageF_D_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ElanaDarkSun_KH2_10.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1283173,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               },
               {
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "KR-KondhaDesert-NPC15_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "There are many kinds of Shadow Creatures, of course, but I will start by teaching you the one I think is most suited to you.",
                 "m_picture": "GUI/NpcPortraits/Portrait_Mice_SageF_D_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/ElanaDarkSun_KH2_11.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 1283173,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               }
-            ]
+            ],
+            "m_madlibs": [],
+            "m_dialogEvents": [],
+            "m_noAggroWhileDialogIsUp": false,
+            "m_noAggroNoDelay": false
           }
         ]
       },
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Khrysalis/Interiors/KR_Z10_I08_SolarArcMain",
-      "m_locationName": "Solar Arc",
-      "m_goalName": "1_WizardQuestGoalsTalkNPC",
-      "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "KR-KondhaDesert-NPC15_Persona",
-      "m_usePatron": false
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     }
   ],
   "m_startResults": {
@@ -147,7 +406,8 @@
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
-        "m_tableName": "KR-KOND-C12-001"
+        "m_tableName": "KR-KOND-C12-001",
+        "m_maxRolls": 0
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
@@ -267,6 +527,172 @@
           "m_applyNOT": false,
           "m_operator": "ROP_AND"
         }
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResFallthrough, Imcodec.ObjectProperty",
+        "m_options": [
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Fire",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Fiend"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Myth",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Fiend"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Balance",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Fiend"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Storm",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Big Bomb"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Ice",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Big Bomb"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Death",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Healer"
+                }
+              ]
+            }
+          },
+          {
+            "m_requirements": {
+              "m_requirements": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ReqSchoolOfFocus, Imcodec.ObjectProperty",
+                  "m_magicSchool": "Life",
+                  "m_applyNOT": false,
+                  "m_operator": "ROP_AND"
+                }
+              ],
+              "m_applyNOT": false,
+              "m_operator": "ROP_AND"
+            },
+            "m_results": {
+              "m_results": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.ResAddSpell, Imcodec.ObjectProperty",
+                  "m_templateID": 0,
+                  "m_spellName": "Shadow Creature Healer"
+                }
+              ]
+            }
+          }
+        ]
       }
     ]
   },
@@ -275,7 +701,7 @@
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
         "m_entryName": "Complete",
-        "m_displayName": null,
+        "m_displayName": "",
         "m_isQuestRegistry": true,
         "m_questName": "KR-KOND-C10-008",
         "m_applyNOT": false,
@@ -285,8 +711,6 @@
     "m_applyNOT": false,
     "m_operator": "ROP_AND"
   },
-  "m_prepRequirements": null,
-  "m_pruneRequirements": null,
   "m_prepAlways": false,
   "m_clientTags": [],
   "m_goalLogic": [
@@ -314,37 +738,141 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-KondhaDesert-NPC35_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "You have restored the Solar Arc and rescued the relic's guardian from the web of Shadow.",
+            "m_dialog": "You have restored the Solar Arc and rescued the relic\u0027s guardian from the web of Shadow.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_35.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1240275,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-KondhaDesert-NPC35_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Speak to Elana DarkSun now, to see how she fares.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_36.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1240275,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       },
       {
         "m_dialogTag": "Underway",
@@ -353,20 +881,74 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "KR-KondhaDesert-NPC35_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Speak to Elana DarkSun, Wizard.",
             "m_picture": "",
             "m_soundFile": "|Sound_Dialogue_KH2|WorldData|Sound/Dialogue/EmperorofMooShu_KH2_37.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 1240275,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       }
     ]
   },
@@ -376,5 +958,12 @@
   "m_outdated": false,
   "m_noQuestHelper": false,
   "m_mainline": true,
-  "m_activityType": "ACTIVITY_NotActivity"
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
 }

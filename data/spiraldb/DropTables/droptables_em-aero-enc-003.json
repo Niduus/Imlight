@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERO-ENC-003",
+  "Description": "EM-AERO-ENC-003 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 13600,
+  "MaxGold": 13600,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

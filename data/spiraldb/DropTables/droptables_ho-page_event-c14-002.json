@@ -1,0 +1,13 @@
+{
+  "Name": "HO-PAGE_EVENT-C14-002",
+  "Description": "WizardCity quest The Untold True Story (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 30,
+  "MaxGold": 30,
+  "ExperienceAmount": 10,
+  "TrainingPoints": 0,
+  "Items": []
+}

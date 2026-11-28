@@ -1,0 +1,13 @@
+{
+  "Name": "KR-MOON-C12-001",
+  "Description": "KR-MOON-C12-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1295,
+  "MaxGold": 1295,
+  "ExperienceAmount": 133655,
+  "TrainingPoints": 0,
+  "Items": []
+}

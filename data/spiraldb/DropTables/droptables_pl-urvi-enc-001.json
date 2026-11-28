@@ -1,0 +1,13 @@
+{
+  "Name": "PL-URVI-ENC-001",
+  "Description": "PL-URVI-ENC-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2590,
+  "MaxGold": 2590,
+  "ExperienceAmount": 418480,
+  "TrainingPoints": 0,
+  "Items": []
+}

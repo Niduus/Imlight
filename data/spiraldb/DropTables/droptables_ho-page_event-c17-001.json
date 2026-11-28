@@ -1,0 +1,13 @@
+{
+  "Name": "HO-PAGE_EVENT-C17-001",
+  "Description": "HO-PAGE_EVENT-C17-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 80,
+  "MaxGold": 80,
+  "ExperienceAmount": 15,
+  "TrainingPoints": 0,
+  "Items": []
+}

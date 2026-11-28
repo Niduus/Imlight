@@ -1,0 +1,13 @@
+{
+  "Name": "HG-GAUNT-VOYAGE-004",
+  "Description": "HG-GAUNT-VOYAGE-004 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2510,
+  "MaxGold": 2510,
+  "ExperienceAmount": 12885,
+  "TrainingPoints": 0,
+  "Items": []
+}

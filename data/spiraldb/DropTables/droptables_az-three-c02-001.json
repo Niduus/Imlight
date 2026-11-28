@@ -1,0 +1,13 @@
+{
+  "Name": "AZ-THREE-C02-001",
+  "Description": "AZ-THREE-C02-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1145,
+  "MaxGold": 1145,
+  "ExperienceAmount": 62215,
+  "TrainingPoints": 0,
+  "Items": []
+}

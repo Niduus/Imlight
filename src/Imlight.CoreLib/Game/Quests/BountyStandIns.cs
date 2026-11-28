@@ -70,6 +70,64 @@ internal static class BountyStandIns {
         }
     }
 
+    /// <summary>
+    /// For a "defeat" step that names no creature adjectives at all (quests rebuilt from Wizard404's newer records keep
+    /// only the step's tally, "Defeat 4 Shellions"): a creature counts when its English name is the tally's foe, singular
+    /// or plural. Steps that have adjectives never use this.
+    /// </summary>
+    internal static bool CountsByTally(BountyGoalTemplate goal, ulong creatureTemplateId) {
+        if (goal is null || creatureTemplateId == 0 || goal.m_npcAdjectives is { Count: > 0 }) {
+            return false;
+        }
+
+        var name = FoeNameOf(creatureTemplateId);
+        if (name.Length == 0) {
+            return false;
+        }
+
+        string first = goal.m_tallyCounter?.m_descriptor, second = goal.m_tallyCounter?.m_descriptor2;
+
+        // The second tally text is often the creature's own name key (WizardMobs_00004459): the same key, or its English.
+        if (!string.IsNullOrEmpty(second) && !second.Contains(' ') && second.Contains('_')) {
+            string key = Template(creatureTemplateId)?.m_displayName;
+            if (string.Equals(key, second, StringComparison.Ordinal)) {
+                return true;
+            }
+
+            try {
+                second = Locale.GetEnglishName(second) ?? second;
+            }
+            catch (Exception) {
+                // Compared as it is.
+            }
+        }
+
+        return SameFoe(first, name) || SameFoe(second, name);
+    }
+
+    private static bool SameFoe(string tally, string name) {
+        if (string.IsNullOrWhiteSpace(tally)) {
+            return false;
+        }
+
+        var t = tally.Trim();
+        if (string.Equals(t, name, StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        foreach (var plural in new[] { "s", "es" }) {
+            if (string.Equals(t, name + plural, StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+        }
+
+        // "Ladies" / "Lady", "Wolves" / "Wolf".
+        return (t.EndsWith("ies", StringComparison.OrdinalIgnoreCase) && name.EndsWith("y", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(t[..^3], name[..^1], StringComparison.OrdinalIgnoreCase))
+            || (t.EndsWith("ves", StringComparison.OrdinalIgnoreCase) && name.EndsWith("f", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(t[..^3], name[..^1], StringComparison.OrdinalIgnoreCase));
+    }
+
     private static GameObjectTemplate Template(ulong id) {
         try {
             return CoreObjectFactory.GetCoreTemplate(id) as GameObjectTemplate;

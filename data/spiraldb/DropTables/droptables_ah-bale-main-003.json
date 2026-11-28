@@ -1,0 +1,13 @@
+{
+  "Name": "AH-BALE-MAIN-003",
+  "Description": "Ahmarra quest 3, 2, 1 Ignus-tion! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1090,
+  "MaxGold": 1090,
+  "ExperienceAmount": 137060,
+  "TrainingPoints": 0,
+  "Items": []
+}

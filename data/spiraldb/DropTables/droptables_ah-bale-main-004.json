@@ -1,0 +1,13 @@
+{
+  "Name": "AH-BALE-MAIN-004",
+  "Description": "Ahmarra quest She Fells Sou. Shelli (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1780,
+  "MaxGold": 1780,
+  "ExperienceAmount": 224280,
+  "TrainingPoints": 0,
+  "Items": []
+}
