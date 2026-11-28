@@ -127,7 +127,12 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
 
         // Register every usage goal whose client tags name this object; the object is
         // interactable only while one of those goals is active (see GetServiceOptions).
+        var zone = Entity.Zone?.ZonePath;
         foreach (var (questName, goal) in UsageGoals.Of(gameObjectTemplate)) {
+            if (!IsUsedHere(gameObjectTemplate, goal, zone)) {
+                continue;
+            }
+
             if (!_usageGoalsByQuest.TryGetValue(questName, out var goalList)) {
                 goalList = [];
                 _usageGoalsByQuest[questName] = goalList;
@@ -145,6 +150,43 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
                 goalList.Add(goal);
             }
         }
+    }
+
+    /// <summary>
+    /// False when every option of the object that names this step is for another zone. One Obsidian Chest template
+    /// stands in nine places (Haunted Cave, Hall of Champions, Chelsea Court, ...); each option needs its own zone
+    /// (ReqInZone) and names its own step of "Wizard Tours" (DS-ACAD-C01-001). Every chest counted every open step, so
+    /// the first chest opened gave all the Dragon Rider Staff pieces at once (player report, 2026-11-28).
+    /// </summary>
+    internal static bool IsUsedHere(GameObjectTemplate template, GoalTemplate goal, string zone) {
+        if (template is null || goal is null || string.IsNullOrEmpty(zone)) {
+            return true;
+        }
+
+        var tags = goal.m_clientTags ?? [];
+        var naming = InteractOptions(template).Where(o => OptionTags(o).Any(t => tags.Any(g => string.Equals((string) g, t, StringComparison.Ordinal)))).ToList();
+
+        return naming.Count == 0 || naming.Any(o => OptionFitsZone(o, zone));
+    }
+
+    /// <summary>
+    /// True unless the option needs the wizard to be in certain zones (ReqInZone) and this zone is none of them.
+    /// </summary>
+    internal static bool OptionFitsZone(InteractOptionTemplate option, string zone) {
+        if (string.IsNullOrEmpty(zone) || option is not InteractStateOptionTemplate { m_requirements.m_requirements: { Count: > 0 } requirements }) {
+            return true;
+        }
+
+        var zones = requirements.OfType<ReqInZone>()
+            .Where(r => !r.m_applyNOT)
+            .Select(r => (string) r.m_zoneName)
+            .Where(z => !string.IsNullOrEmpty(z))
+            .ToList();
+        if (zones.Count == 0 || requirements.Any(r => r is not null && r.m_operator == Operator.ROP_OR)) {
+            return true;
+        }
+
+        return zones.Any(z => string.Equals(z, zone, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>

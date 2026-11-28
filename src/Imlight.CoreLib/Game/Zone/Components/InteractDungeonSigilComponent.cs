@@ -124,6 +124,11 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
                         Logger.Args(SigilInfo?.m_zoneTag2, Locale.GetEnglishName(sigilKey), sigilKey));
                     key = sigilKey;
                 }
+                else if (OwnerPlaceKey(sigil.DestinationZone) is { } ownerKey) {
+                    Logger.Information("Dungeon sigil {0}: named '{1}' ({2}) after the one who lives in {3}.",
+                        Logger.Args(SigilInfo?.m_zoneTag2, Locale.GetEnglishName(ownerKey), ownerKey, sigil.DestinationZone));
+                    key = ownerKey;
+                }
                 else {
                     Logger.Information("Dungeon sigil {0}: no SigilText name for {1}; it keeps its area's name '{2}'.",
                         Logger.Args(SigilInfo?.m_zoneTag2, sigil.DestinationZone, Locale.GetEnglishName(key)));
@@ -201,6 +206,67 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             .OrderByDescending(o => o.Key.Length)
             .Select(o => o.Value)
             .FirstOrDefault();
+    }
+
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_ownerPlaceKeys = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// The game's name for a place after the person placed in it: "Milaka Jewelbender's Tower" (WizardZone) for the
+    /// Crystal Grove tower where Milaka Jewelbender is, whose zone is only named "The Crystal Grove" like the other
+    /// towers there. The Crystal Grove pad read "The Crystal Grove" (player report, 2026-11-28). A name from SigilText
+    /// or WizardZone that starts with the full name of a person in the dungeon's zone file and "'s " (or "' "); null
+    /// when there is none, or when two people give two different names.
+    /// </summary>
+    private static string OwnerPlaceKey(string zone) {
+        if (string.IsNullOrEmpty(zone)) {
+            return null;
+        }
+
+        var found = s_ownerPlaceKeys.GetOrAdd(zone, z => {
+            try {
+                var people = PeopleIn(z);
+                if (people.Count == 0) {
+                    return "";
+                }
+
+                var keys = new List<string>();
+                foreach (var table in new[] { "SigilText", "WizardZone" }) {
+                    foreach (var (id, text) in Locale.Table(table) ?? new Dictionary<string, string>()) {
+                        if (!string.IsNullOrEmpty(text) && people.Any(name => text.StartsWith(name + "'s ", StringComparison.OrdinalIgnoreCase)
+                                || text.StartsWith(name + "' ", StringComparison.OrdinalIgnoreCase))) {
+                            keys.Add($"{table}_{id}");
+                        }
+                    }
+                }
+
+                var texts = keys.Select(Locale.GetEnglishName).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                return texts.Count == 1 ? keys[0] : "";
+            }
+            catch (Exception e) {
+                Logger.Debug("Dungeon sigil: could not read who lives in {0}: {1}", Logger.Args(z, e.Message));
+                return "";
+            }
+        });
+
+        return string.IsNullOrEmpty(found) ? null : found;
+    }
+
+    // The English names of the people (NPCs) the zone's own file places, two words or more ("Milaka Jewelbender").
+    private static List<string> PeopleIn(string zone) {
+        if (!ResourceManager.TryLoadArchive(zone, out var wad) || ResourceManager.OpenZoneData(wad)?.ToArray() is not { } bytes
+            || !new Imcodec.ObjectProperty.BindSerializer().Deserialize<WizZoneData>(bytes, 1, out var data) || data?.m_objectList is null) {
+            return [];
+        }
+
+        return data.m_objectList
+            .Where(o => o is not null && o.m_templateID != 0)
+            .Select(o => CoreObjectFactory.GetCoreTemplate(o.m_templateID) as GameObjectTemplate)
+            .Where(t => t?.m_behaviors?.Any(b => b is NPCBehaviorTemplate) == true)
+            .Select(t => Locale.GetEnglishName((string) t.m_displayName))
+            .Where(name => !string.IsNullOrWhiteSpace(name) && name.Trim().Contains(' '))
+            .Select(name => name.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     private static IEnumerable<string> NameCandidates(string padName, string zone) {

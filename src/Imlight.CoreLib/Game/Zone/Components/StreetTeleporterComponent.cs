@@ -123,9 +123,23 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         => template is GameObjectTemplate go
            && go.m_behaviors?.OfType<InteractableBehaviorTemplate>().Any() == true
            && !go.m_behaviors.Any(b => b is NPCBehaviorTemplate)
-           && Parse(go.m_objectName.ToString()) is not null
+           && (Parse(go.m_objectName.ToString()) is not null || IsPairedArch(go))
            // A stone the zone data already sends somewhere is the door component's.
            && !InteractDoorTeleportComponent.ShouldAttachToEntity(template);
+
+    // A teleporter arch whose options teleport without saying where (DS-TeleporterArch and DS-TeleporterArch02, a
+    // pair in each of the Crystal Grove, the Grand Chasm, the Drake Hatchery and the Arena). The game's server
+    // sends each to the other of its pair; ours had nothing to send them to, so pressing X did nothing (player report,
+    // 2026-11-28: "the teleporters that take you back and forth between the 2 areas do not work").
+    // Of the game's ~800 objects with such a bare teleport, only these arches have no other way to go (the rest are
+    // doors, boats and NPCs the zone's own teleport data or triggers send), so only teleporter arches are paired.
+    private static bool IsPairedArch(GameObjectTemplate template)
+        => template.m_objectName.ToString().Contains("TeleporterArch", StringComparison.OrdinalIgnoreCase)
+           && TemplatePromptText.HasBareTeleport(template.m_templateID);
+
+    // The template's name without a trailing number: DS-TeleporterArch02 and DS-TeleporterArch are one pair.
+    private static string ArchFamily(string name)
+        => string.IsNullOrEmpty(name) ? "" : name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').TrimEnd('_', '-');
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard playerCharacter) {
         // A Customs hub stone uses these templates too and goes where Niduus set it.
@@ -189,6 +203,11 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         _partnerLooked = true;
         var me = Parse((Entity.Template as GameObjectTemplate)?.m_objectName.ToString());
         var objects = Entity.Zone?.ZoneData?.m_objectList;
+        if (objects is not null && me is null && Entity.Template is GameObjectTemplate arch && IsPairedArch(arch)) {
+            _partner = ArchPartner(arch, objects);
+            return _partner;
+        }
+
         if (me is not { } mine || objects is null) {
             return null;
         }
@@ -211,6 +230,24 @@ internal sealed partial class StreetTeleporterComponent(ZoneEntity entity) : Zon
         }
 
         return _partner;
+    }
+
+    // The other arch of the pair: the zone's only other placed arch of the same family. With none, or more than one, the
+    // arch has no partner and offers nothing.
+    private CoreObjectInfo ArchPartner(GameObjectTemplate arch, IEnumerable<CoreObjectInfo> objects) {
+        var family = ArchFamily(arch.m_objectName.ToString());
+        var others = objects.Where(o => o is not null && o.m_templateID != 0 && !ReferenceEquals(o, Entity.Info)
+                && (o.m_location.X != Entity.Info?.m_location.X || o.m_location.Y != Entity.Info?.m_location.Y)
+                && string.Equals(ArchFamily(CoreObjectFactory.FileNameOf(o.m_templateID)), family, StringComparison.OrdinalIgnoreCase)
+                && TemplatePromptText.HasBareTeleport(o.m_templateID))
+            .ToList();
+        if (others.Count != 1) {
+            Logger.Debug("Teleporter arch {0} in {1} has {2} partners of its pair, so it goes nowhere.",
+                Logger.Args(arch.m_objectName, Entity.Zone?.ZonePath, others.Count));
+            return null;
+        }
+
+        return others[0];
     }
 
     // A walk point of the zone's own walk grid by the stone, clear of the zone's walls and fountains (some grid points

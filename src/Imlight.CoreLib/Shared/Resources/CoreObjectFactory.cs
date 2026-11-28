@@ -225,6 +225,10 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
             ? System.IO.Path.GetFileNameWithoutExtension(name.ToString().Replace('|', '/'))
             : null;
 
+    /// <summary>The template's game file ("ObjectData/DS/DS_Crate.xml", or "|Dir|WorldData|..."), or null.</summary>
+    public static string FilePathOf(ulong id)
+        => TemplateLocations().TryGetValue(id, out var location) && (string) location.m_filename is { Length: > 0 } name ? name : null;
+
     /// <summary>Whether the game files have a template with this id.</summary>
     public static bool HasTemplate(ulong id) => TemplateLocations().ContainsKey(id);
 

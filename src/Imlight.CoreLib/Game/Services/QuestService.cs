@@ -941,10 +941,24 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                     continue;
                 }
 
+                // A "use 4 of them" step whose objects post the step's own event (Tools of the Trade's crates post
+                // "GetToolCrate", and the step's tag is "GetToolCrate" too): each use already counts one through the
+                // object (InteractQuestSelectComponent). The event finished the whole step at the first crate, and
+                // every other wizard's crate in the area did the same (player report, 2026-11-28). Seven such steps in
+                // the game: crates, Brimstone, Fire Gems, Mooshu's weapons, supplies, towers and mushrooms.
+                if (IsCountedByEachUse(gTemplate, message.EventName)) {
+                    continue;
+                }
+
                 CompleteGoal(qInstance, gTemplate);
             }
         }
     }
+
+    private static bool IsCountedByEachUse(GoalTemplate goal, string eventName)
+        => goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE
+           && (goal.m_tallyCounter?.m_count ?? 1) > 1
+           && goal.m_clientTags?.Any(tag => string.Equals((string) tag, eventName, StringComparison.Ordinal)) == true;
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCEGOALCOMPLETED))]
     private void ReceiveInstanceGoalCompleted(ZONE_102_PROTOCOL.MSG_INSTANCEGOALCOMPLETED message) {
