@@ -154,6 +154,8 @@ App details and installer options: [src/Imlight.Setup/README.md](src/Imlight.Set
 | [`tools/`](tools) | Scripts that build the records in `data/` |
 | [`docs/`](docs) | How the server works, and the patch notes |
 
+Every folder in more detail: [FOLDER-MAP.md](FOLDER-MAP.md). Sending a change: [CONTRIBUTING.md](CONTRIBUTING.md).
+
 </details>
 
 ## Credits
