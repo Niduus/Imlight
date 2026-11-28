@@ -252,6 +252,23 @@ internal static class QuestLeftovers {
     }
 
     /// <summary>
+    /// Whether two object names share a word that names the thing ("Bridge", "Throne"), not its kind ("Collision",
+    /// "Gate") or its place (the world's prefix, zone numbers). Used to keep a by-name removal to the objects a trigger
+    /// meant, instead of every wall of the zone.
+    /// </summary>
+    public static bool SharesNameWord(string a, string b) {
+        var words = NameWords(a);
+        words.ExceptWith(s_blockerKindWords);
+
+        return words.Count > 0 && NameWords(b).Overlaps(words);
+    }
+
+    // Kinds of wall that a trigger's name says nothing particular with.
+    private static readonly HashSet<string> s_blockerKindWords = new(StringComparer.OrdinalIgnoreCase) {
+        "gate", "gates", "barrier", "barriers", "wall", "walls", "door", "doors", "dyna", "teleport",
+    };
+
+    /// <summary>
     /// The way a finished "use" step opens somewhere else on the quest's way: in the zones the quest's steps go to, the
     /// object that shares a rare name word with the used object and has one way out of its start state into a state it
     /// never leaves (a bridge that lowers, a door that opens), and the wall (named collision, blocker or barrier, or a bare

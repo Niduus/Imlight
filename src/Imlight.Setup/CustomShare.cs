@@ -128,6 +128,9 @@ internal static class CustomShare {
         new("garden", "Garden growth", "sparkle", ShareShape.Whole, false, "garden-growth.json"),
         new("announcements", "Announcement words", "chat", ShareShape.Whole, false, "announcements.json"),
         new("dropodds", "Drop odds", "dice", ShareShape.Whole, true, "DropOdds.json", OwnOnly: true),
+        // Made in Blood Moon (Niduus, 2026-11-23).
+        new("customgear", "Blood Moon gear", "star", ShareShape.List, true, "Customs/CustomGear.json", KeyField: "Id", ListProperty: "Gear", NumberField: "Id"),
+        new("customcard", "Blood Moon cards", "sparkle", ShareShape.List, true, "Customs/CustomCards.json", KeyField: "Id", ListProperty: "Cards", NumberField: "Id"),
     ];
 
     internal static ShareKind? KindOf(string id) {

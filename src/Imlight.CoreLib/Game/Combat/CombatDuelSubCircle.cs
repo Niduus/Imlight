@@ -1921,11 +1921,13 @@ public partial class CombatDuelSubCircle {
                 }
             }
 
+            // A Blood Moon card keeps its own look and is never swapped by the randomizer.
+            var customCard = CustomCards.IdOf(tempSpell);
             // Randomizer mode may swap each gear card for another spell of the same type and pip cost.
-            var itemCardId = Randomization.Randomizer.RollItemCard(tempSpell.m_templateID);
+            var itemCardId = customCard != 0 ? tempSpell.m_templateID : Randomization.Randomizer.RollItemCard(tempSpell.m_templateID);
 
             // If the spell data already exists, increase the quantity.. otherwise add it.
-            var existingSpell = temporarySpells.Find(s => s.TemplateId == itemCardId);
+            var existingSpell = temporarySpells.Find(s => s.TemplateId == itemCardId && s.CustomCard == customCard);
             if (existingSpell is not null) {
                 existingSpell.Quantity++;
             }
@@ -1933,7 +1935,8 @@ public partial class CombatDuelSubCircle {
                 temporarySpells.Add(new CombatDeckSpellData {
                     TemplateId = itemCardId,
                     Quantity = 1,
-                    IsItemCard = true
+                    IsItemCard = true,
+                    CustomCard = customCard,
                 });
             }
         }

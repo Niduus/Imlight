@@ -1,0 +1,4 @@
+Fixed: Walls the game turns off still blocked players
+When a quest, puzzle or trigger turned an object off for the whole zone, such as a wall, mist barrier or gate that opens, the server only told the game to switch it off. The object stayed in the game, so its collision could stay behind and players bumped into something they could not see. Anyone who came into the zone afterwards was even sent the object whole, solid and in the way. Now the server takes the object out of every player's game, collision and all, and nobody is sent it again until the zone turns it back on.
+Where: every zone, for any object a trigger or quest turns off.
+Test: open a wall or gate with its puzzle or quest, walk through where it stood, then leave the zone and come back while it is still open and walk through again.

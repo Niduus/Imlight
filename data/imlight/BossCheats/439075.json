@@ -39,14 +39,14 @@
       ],
       "Notes": "Blade Cycle: a single-target trap: Cleanse Ward (1) on that boss." },
 
-    { "When": "EnemyCasts", "Category": "Damage", "OnBoss": true, "HasWho": "Self", "HasKind": "Trap", "HasNot": true, "Mark": "trap cycle", "MarkWho": "Self",
+    { "When": "EnemyCasts", "Category": "Damage", "OnBoss": true, "SingleTarget": true, "HasWho": "Self", "HasKind": "Trap", "HasNot": true, "Mark": "trap cycle", "MarkWho": "Self",
       "Actions": [
         {"Do": "Say", "Line": "WizardBossFights_00000093"},
         {"Do": "Cast", "Spell": "Ra", "SpellID": 389025122, "Target": "", "DispelImmune": false}
       ],
       "Notes": "Trap Cycle: a hit on him while he has no trap: Ra." },
 
-    { "When": "EnemyCasts", "Category": "Damage", "OnBoss": true, "HasWho": "Caster", "HasKind": "Blade", "HasNot": true, "Mark": "blade cycle", "MarkWho": "Self",
+    { "When": "EnemyCasts", "Category": "Damage", "OnBoss": true, "SingleTarget": true, "HasWho": "Caster", "HasKind": "Blade", "HasNot": true, "Mark": "blade cycle", "MarkWho": "Self",
       "Actions": [
         {"Do": "Say", "Line": "WizardBossFights_00000094"},
         {"Do": "Cast", "Spell": "Ra", "SpellID": 389025122, "Target": "", "DispelImmune": false}

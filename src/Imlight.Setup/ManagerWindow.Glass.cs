@@ -201,6 +201,9 @@ internal sealed partial class ManagerWindow {
         var bar = ManagerTheme.GlassPanel(new DockPanel {
             Children = {
                 WithDock(_statusBadge, Dock.Right),
+#if !HELLHOUND
+                WithDock(DiscordButton(), Dock.Right),
+#endif
                 WithDock(JumpBox(), Dock.Right),
                 WithDock(brand, Dock.Left),
                 _updatePanel,
@@ -215,6 +218,10 @@ internal sealed partial class ManagerWindow {
             updateWords.IsVisible = width >= 1180;
             whatsNew.IsVisible = width >= 980;
             _jumpBox.Width = width >= 1100 ? 300 : 180;
+            // A narrow window keeps only the Discord logo.
+            if (_discordWord is not null) {
+                _discordWord.IsVisible = width >= 1100;
+            }
             _jumpBox.Watermark = width >= 1100 ? "Search everything (Ctrl+K)" : "Search (Ctrl+K)";
         };
 

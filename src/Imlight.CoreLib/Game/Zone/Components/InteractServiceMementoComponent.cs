@@ -93,6 +93,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     private readonly float _interactionRadius = 300.0f;
     private readonly Dictionary<ulong, IActorRef> _playersInInteractionRange = [];
     private readonly Dictionary<ulong, IActorRef> _playersInRenderRange = [];
+    // Players who came into the zone already within reach (OnPlayerJoin) and have not moved since: they are sent the
+    // options on the next wizbang round, which has their wizard (see OnPlayerJoin).
+    private readonly HashSet<ulong> _arrivedInReach = [];
     private List<IServiceComponent> _serviceComponents = [];
     private Dictionary<int, IServiceComponent> _optionIndexToComponent = [];
     private readonly Dictionary<IServiceComponent, int> _componentFirstOption = [];
@@ -126,6 +129,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _arrivedInReach.Remove(id);
         _heldPrompts.Remove(playerActor);
         if (_playersInInteractionRange.Any(x => x.Value == playerActor)) {
             var playerObj = _playersInInteractionRange.First(x => x.Value == playerActor).Key;
@@ -145,6 +149,14 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
 
         var playerId = playerObj.m_globalID.Full;
+        _arrivedInReach.Remove(playerId);
+
+        // A volume-held prompt (a ladder) is not the mesh reach. Moving must not open or close it.
+        if (_heldPrompts.Contains(playerActor)) {
+            _playersInInteractionRange[playerId] = playerActor;
+            _playersInRenderRange[playerId] = playerActor;
+            return;
+        }
 
         // A volume-held prompt (a ladder) is not the mesh reach. Moving must not open or close it.
         if (_heldPrompts.Contains(playerActor)) {
@@ -160,8 +172,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         // Handle interaction range (for service options). A large quest object (Zafaria's fallen Zebra Scout Tower)
         // is reached at its edge too, not only near its center (ObjectReach).
-        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
-                      || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach));
+        var inRange = InReach(playerObj);
         if (inRange
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
@@ -191,6 +202,16 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         // The newest session of a wizard replaces an old one (a relog or a trip back into the zone keeps the same
         // object id): the old session no longer answers, and asking it held up this NPC's symbol for everyone.
         _playersInRenderRange[playerId] = playerActor;
+    }
+
+    // Effective interaction radius = the SMALLEST any attached service asks for (default 300).
+    private bool InReach(CoreObject playerObj) {
+        var interactionRadius = (_serviceComponents.Count > 0
+            ? _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS)
+            : _interactionRadius) * SizeFactor();
+
+        return IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
+               || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach));
     }
 
     // Talk steps already opened by walking up to a big NPC, by player and goal: once each.
@@ -334,15 +355,18 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             return;
         }
 
-        var playerId = playerObj.m_globalID.Full;
-        var interactionRadius = _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS) * SizeFactor();
-        if (IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
-            || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach))) {
-            _playersInInteractionRange[playerId] = playerActor;
-            SendActorServiceOptions(playerActor, nextSection: false);
-        }
+        _playersInRenderRange[playerObj.m_globalID.Full] = playerActor;
 
-        _playersInRenderRange[playerId] = playerActor;
+        // Options were only sent when a player moved into reach, so a player who arrived next to something and stood
+        // still never got its "press X": the skip sign on the Krokotopia flying ship stands beside the spot a wizard
+        // lands on deck, and the skip only showed once they took a step (Niduus 2026-11-23: "the Oasis boat doesn't
+        // consistently have the skip boat ride interaction"; his log shows rides of 45 s and 20 s with no skip, then
+        // one skipped after he moved). The same held for Marleybone's airship signs and any door, sign or person next
+        // to where a wizard arrives. Asking the wizard here would wait on the session that is adding the player, so
+        // the next wizbang round (once a second) sends them, and the session keeps them until the game has loaded.
+        if (InReach(playerObj)) {
+            _arrivedInReach.Add(playerObj.m_globalID.Full);
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEINTERACTION))]
@@ -610,8 +634,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             var wizard = result.Wizards[i];
             if (wizard != null) {
                 SendWizBang(result.PlayerActors[i], wizard);
-                // A volume-held Press-X (a ladder) is sent once when the player steps in, as a door's is. Sending it
-                // again on every wizbang tick was dropped (2026-11-25).
+                SendOptionsOnArrival(result.PlayerActors[i], wizard);
 
                 continue;
             }
@@ -623,8 +646,28 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
-    private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0, bool nextSection = false) {
-        if (AskWizard(playerActor) is not { } wizard) {
+    // A player who came into the zone within reach and has not moved yet is sent the options now (see OnPlayerJoin).
+    private void SendOptionsOnArrival(IActorRef playerActor, Wizard wizard) {
+        if (_arrivedInReach.Count == 0) {
+            return;
+        }
+
+        var arrived = _playersInRenderRange.Where(x => x.Value.Equals(playerActor) && _arrivedInReach.Contains(x.Key))
+            .Select(x => x.Key).ToList();
+        foreach (var playerId in arrived) {
+            _arrivedInReach.Remove(playerId);
+            if (_playersInInteractionRange.ContainsKey(playerId)) {
+                continue;
+            }
+
+            _playersInInteractionRange.Add(playerId, playerActor);
+            SendActorServiceOptions(playerActor, nextSection: true, knownWizard: wizard);
+        }
+    }
+
+    private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0, bool nextSection = false,
+                                         Wizard knownWizard = null) {
+        if ((knownWizard ?? AskWizard(playerActor)) is not { } wizard) {
             return;
         }
 
@@ -771,9 +814,13 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         var npcIconOrDefault = string.IsNullOrEmpty(highestPriority?.NpcIcon)
             ? gameObjTemplate?.m_sIcon.ToString()
             : highestPriority.NpcIcon;
-        var npcNameKeyOrDefault = string.IsNullOrEmpty(highestPriority?.NpcNameKey)
-            ? DEFAULT_NAME_KEY
-            : highestPriority.NpcNameKey;
+        // The picture the object's own file gives its prompt (Milaka's crystal, a Crystal Sample, a Flax node), when
+        // nothing else gives one (TemplatePromptText).
+        if (string.IsNullOrEmpty(npcIconOrDefault) && gameObjTemplate is not null) {
+            npcIconOrDefault = TemplatePromptText.Icon(gameObjTemplate.m_templateID);
+        }
+
+        var npcNameKeyOrDefault = PromptNameKey(highestPriority?.NpcNameKey, gameObjTemplate);
         // Only a person is talked to: a lever, chest or portal with no text of its own says "to Interact", as live.
         var isPerson = gameObjTemplate?.m_behaviors?.OfType<NPCBehaviorTemplate>().Any() ?? true;
         var npcTextKeyOrDefault = string.IsNullOrEmpty(highestPriority?.NpcTextKey)
@@ -787,6 +834,30 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             m_serviceOptions = allOptions,
             m_personaMadlibs = _madlibBlock
         };
+    }
+
+    /// <summary>
+    /// The prompt's name. A service that names the object by its template's plain name (or by nothing) gives way to
+    /// the name the zone file gives this placed object (Crystal Grove's hub stones "To Chronius' Tower", "To Spider
+    /// Hive", "To Spiderkeeper's Tower" and its street stones "To Teleport Hub", which all said "Teleport Stone"), then
+    /// to the title the object's own file gives its prompt (Milaka's crystal "Milaka Jewelbender", which had no name).
+    /// A service with a name of its own (a sigil's dungeon, a custom stone) keeps it.
+    /// </summary>
+    private string PromptNameKey(string serviceKey, GameObjectTemplate template) {
+        var plainName = (string) template?.m_displayName;
+        if (!string.IsNullOrEmpty(serviceKey) && !string.Equals(serviceKey, plainName, StringComparison.Ordinal)) {
+            return serviceKey;
+        }
+
+        if (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.OverrideNameKey(Entity.Info) is { } placedName) {
+            return placedName;
+        }
+
+        if (template is not null && TemplatePromptText.Title(template.m_templateID) is { Length: > 0 } title) {
+            return title;
+        }
+
+        return string.IsNullOrEmpty(serviceKey) ? DEFAULT_NAME_KEY : serviceKey;
     }
 
     private void SetMadLibBlock() {

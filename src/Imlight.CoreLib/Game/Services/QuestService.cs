@@ -941,10 +941,24 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                     continue;
                 }
 
+                // A "use 4 of them" step whose objects post the step's own event (Tools of the Trade's crates post
+                // "GetToolCrate", and the step's tag is "GetToolCrate" too): each use already counts one through the
+                // object (InteractQuestSelectComponent). The event finished the whole step at the first crate, and
+                // every other wizard's crate in the area did the same (player report, 2026-11-28). Seven such steps in
+                // the game: crates, Brimstone, Fire Gems, Mooshu's weapons, supplies, towers and mushrooms.
+                if (IsCountedByEachUse(gTemplate, message.EventName)) {
+                    continue;
+                }
+
                 CompleteGoal(qInstance, gTemplate);
             }
         }
     }
+
+    private static bool IsCountedByEachUse(GoalTemplate goal, string eventName)
+        => goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE
+           && (goal.m_tallyCounter?.m_count ?? 1) > 1
+           && goal.m_clientTags?.Any(tag => string.Equals((string) tag, eventName, StringComparison.Ordinal)) == true;
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_INSTANCEGOALCOMPLETED))]
     private void ReceiveInstanceGoalCompleted(ZONE_102_PROTOCOL.MSG_INSTANCEGOALCOMPLETED message) {
@@ -2290,26 +2304,6 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
 
         // The Manager's Spell Quests tab shows which step each wizard is on.
         NoteProgress(wizard);
-        RefreshMawInteractOptions(wizard);
-    }
-
-    private void RefreshMawInteractOptions(Wizard wizard) {
-        if (wizard is null
-            || !wizard.QuestBehavior.CurrentQuestInstances.Any(q =>
-                string.Equals(q.QuestName, "AZ-THREE-C01-002", StringComparison.OrdinalIgnoreCase)
-                && q.GoalProgress.Any(g =>
-                    g.GoalName == "1_WizardQuestGoalsUseItem"
-                    && g.DoesPlayerHaveGoal()
-                    && !g.IsGoalCompleted()))) {
-            return;
-        }
-
-        SessionActor.GetZoneActor()?.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-            EventName = "EnterZone",
-            PlayerActor = SessionActor.ActorRef,
-            PlayerGameObject = GetActiveGameObject(),
-            RetryRefused = true,
-        });
     }
 
     /// <summary>
@@ -2460,27 +2454,11 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             OpenWaysAt(questName, goalName, GetActiveWizard()?.Zone, finishedAt);
         }
         if (goalTemplate?.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
-            if (string.Equals(questName, "AZ-ZOCA-C11-002", StringComparison.OrdinalIgnoreCase)) {
-                string revealTag = goalName switch {
-                    "2_WizardQuestGoals00000006" => "AZ-3POINTS-NPC14",
-                    "3_WizardQuestGoals00000006" => "AZ-PalaceGuard02",
-                    "4_WizardQuestGoals00000006" => "AZ-PalaceGuard03",
-                    "5_WizardQuestGoals00000006" => "AZ-PalaceGuard04",
-                    _ => null,
-                };
-                if (!string.IsNullOrEmpty(revealTag)) {
-                    SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_REMOVEDYNAMOD {
-                        DynaMod = new ResRemoveDynaMod {
-                            m_dynaModClientTag = revealTag + " instance",
-                        },
-                        ContextActor = SessionActor.ActorRef,
-                    });
-                }
-            }
-            else {
             OpenLinkedWays(quest, goalTemplate);
             RideUsedTransport(quest, goalTemplate);
             foreach (var tag in QuestLeftovers.FinishedUsageBlockerTags(goalTemplate.m_destinationZone, goalTemplate)) {
+                Logger.Information("Quest {0} step {1}: {2} looks like a blocker by the used object; it goes for {3} (QuestLeftovers, by name).",
+                    Logger.Args(questName, goalName, tag, GetActiveWizard()?.CharId));
                 zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT {
                     ObjectName = tag,
                 });
@@ -2510,27 +2488,6 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
                         m_persist = true,
                     },
                     ContextActor = SessionActor.ActorRef,
-                });
-            }
-            }
-        }
-
-        if (string.Equals(questName, "AZ-THREE-C01-002", StringComparison.OrdinalIgnoreCase)) {
-            zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_POSTEVENT {
-                EventName = "ExplodeIt",
-                PlayerActor = SessionActor.ActorRef,
-                PlayerGameObject = GetActiveGameObject(),
-            });
-
-            foreach (var objectName in new[] {
-                         "AZ_Rubble-TheMawCollision",
-                         "AZ_Rubble-TheMawCollision instance",
-                         "AZ-MagicalWard_Maw",
-                         "AZ_Rubble-TheMaw",
-                         "AZ_Rubble-TheMaw instance",
-                     }) {
-                zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT {
-                    ObjectName = objectName,
                 });
             }
         }
@@ -2642,22 +2599,6 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             var before = wizard.QuestBehavior.CurrentQuestInstances.Count;
             TryGrantDungeonQuests(wizard);
             if (wizard.QuestBehavior.CurrentQuestInstances.Count == before) break;
-        }
-        if (string.Equals(questInstance.QuestName, "AZ-ZOCA-C16-001", StringComparison.OrdinalIgnoreCase)
-            && wizard.HasQuestRegistryValue("AZ-ZOCA-C16-001", QUEST_COMPLETED_ENTRY)
-            && !wizard.HasQuest("WC-PreKR-C01-001")
-            && !wizard.HasQuestRegistryValue("WC-PreKR-C01-001", QUEST_COMPLETED_ENTRY)
-            && QuestTemplateCollection.GetQuestByName("WC-PreKR-C01-001") is { } khrysalisQuest) {
-            var context = new GenericRequirementContext(
-                requirements: khrysalisQuest.m_requirements,
-                playerRef: SessionActor.ActorRef,
-                playerObj: GetActiveGameObject(),
-                wizard: wizard);
-            if (khrysalisQuest.m_requirements is null
-                || RequirementDispatcher.EvaluateRequirements(khrysalisQuest.m_requirements, context)) {
-                Logger.Information("Cross-world follow-on: WC-PreKR-C01-001 starts after AZ-ZOCA-C16-001.");
-                StartQuest(khrysalisQuest, wizard);
-            }
         }
         TryAutoStartQuests(wizard);
         QuestLeftovers.ReleaseHidesBlockingActiveUsage(wizard);

@@ -409,6 +409,7 @@ internal sealed class WizardSheet {
         if (data is null || info is null || info.Stale || info.Note.Length > 0) {
             _gameMap.Content = null;
             _gameMapNote.Text = info is { Note.Length: > 0 } ? info.Note
+                : OverlayHost.TurnedOff ? "The map shows here while the game overlay is on. It is turned off now (Play > Overlay)."
                 : OverlayHost.IsDrawing ? "The map shows here once the server answers (Ahziael's overlay asks it every second or so)."
                 : "The map shows here while Ahziael draws the overlay (Ahziael Overlay on its own is drawing it now, or the server isn't linked yet).";
 

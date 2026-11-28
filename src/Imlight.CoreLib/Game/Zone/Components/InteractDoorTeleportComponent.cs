@@ -72,7 +72,9 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
     // Ladders and zip-lines offer Press-X exactly as a door does (2026-11-25): the transport-only icon, blank name,
     // own text key, forced option and wizbang kept the game from ever showing their Press-X, while doors worked.
     public string NpcIcon => (Entity.Template as GameObjectTemplate)?.m_sIcon;
-    public string NpcNameKey => (Entity.Template as GameObjectTemplate)?.m_displayName;
+    // The zone file's name for this placed door wins (the Necropolis portal home reads "The Basilica").
+    public string NpcNameKey => Imlight.CoreLib.Shared.Resources.CoreObjectFactory.OverrideNameKey(Entity.Info)
+                                ?? (Entity.Template is GameObjectTemplate template ? (string) template.m_displayName : null);
     // A ladder or zip-line shows its own text (m_interactTextOverride) when its template has one; doors stay on GUI_EnterDoor.
     public string NpcTextKey => IsTransportMesh() && OwnInteractText() is { } ownText ? ownText : DOOR_TEXT_KEY;
     public WizBangs WizBang => WizBangs.None;
@@ -479,8 +481,8 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
 
     /// <summary>
     /// Where a teleporter with no destination in the data takes the wizard: a quest that shows it when it starts (its
-    /// start results bring the object out) goes on somewhere else, so the teleporter takes the wizard to that quest's step
-    /// now under way, where the game's quest arrow points. Diego the Duel Master's quest shows the Solar Arc's
+    /// start results bring the object out) goes on somewhere else, so the teleporter takes the wizard to the zone of that
+    /// quest's step now under way, at the zone's own arrival spot. Diego the Duel Master's quest shows the Solar Arc's
     /// KR_TeleportToKondha_01 ("ToKondhaGate") and asks the wizard to talk to Diego in Kondha Desert.
     /// </summary>
     private bool TryQuestStepTeleport(Wizard wizard, out ResTeleport teleport) {
@@ -512,8 +514,10 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
                     continue;
                 }
 
-                teleport = new ResTeleport { m_destinationZone = spot.Zone, m_destinationLoc = spot.Location };
-                Logger.Information("Teleporter {0} in {1}: no destination in the data; {2} shows it, so it goes to that quest's step {3} in {4} ({5}).",
+                // The zone's own arrival spot, not the step's spot: the teleporter goes to that place, it does not walk the
+                // step for the wizard.
+                teleport = new ResTeleport { m_destinationZone = spot.Zone, m_destinationLoc = "" };
+                Logger.Information("Teleporter {0} in {1}: no destination in the data; {2} shows it, so it goes to the zone of that quest's step {3}, {4} ({5}).",
                     Logger.Args(placed, Entity.Zone?.ZonePath, quest.QuestName, goalName, spot.Zone, spot.How));
 
                 return true;

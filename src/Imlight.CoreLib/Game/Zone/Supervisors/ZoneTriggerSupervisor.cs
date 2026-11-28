@@ -191,6 +191,11 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
                 continue;
             }
 
+            // A walk-in way to where a portal of the zone leads waits for that portal to open (ShutPortals: the Tree of Life).
+            if (LeadsThroughShutPortal(trigger, message)) {
+                continue;
+            }
+
             // With OpenAllDoors, a door goes through as long as its fire limit allows.
             if (s_openAllDoors && HasTeleportResult(trigger)) {
                 // A door the game opens only for a step of a quest the wizard already finished stays shut (FinishedQuestDoors).

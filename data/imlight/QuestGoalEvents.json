@@ -75,6 +75,10 @@
   // the Xibalba Pillar, a step of the dungeon quest AZ-COMET-C01-001 (This Is the Way the World Ends).
   // Azteca-Interiors-AZ_Z02_House02: spawns moon skull zombie for the next step
   { "quest": "AZ-ZOCA-C17-002", "goal": "2_WizardQuestGoals00000253", "when": "complete", "events": ["CallTheZombies"] },
+  // Break Stuff (Three Points): throwing Xipli's Concoction at the rubble in front of the Maw. The zone's "Trigger ExplodeIt"
+  // waits for "ExplodeIt" to blow the rubble and its collision away; nothing sent it, so the rubble stayed until you left
+  // and came back (seen in MoMisGrand's fork, checked against the game's AZ_Z01_ThreePoints triggers, 2026-11-23).
+  { "quest": "AZ-THREE-C01-002", "goal": "1_WizardQuestGoalsUseItem", "when": "complete", "events": ["ExplodeIt"] },
   // Azteca-Interiors-AZ_Z11_Cave03: spawns pachakutiq who shakes the earth, razan bitter blood for the next step
   { "quest": "AZ-TWIN-C02-001", "goal": "6_WizardQuestGoalsUseItem", "when": "complete", "events": ["Twin_CageOpen"] },
   // Azteca-Interiors-AZ_Z11_PyramidFallingStar_Room03: spawns goliath mauler, huracan vicious sky

@@ -591,10 +591,13 @@ public sealed class SessionActor : ReceiveActor, IDisposable {
     // the Oasis) is lost on the loading screen too: the ride back sat at the dock until its trip timer sent the player
     // off (Niduus, 2026-11-04: "Return trip on boat doesn't play"). So is the start of a mini game's script: the player
     // stood frozen in the mini game's empty room with no game window (chest games Shock-a-Lock and Catch-a-Key, Niduus's
-    // log 2026-10-28 to 2026-11-12; reports of "failed mini games to start", 2026-11-14). Messages keep their order.
+    // log 2026-10-28 to 2026-11-12; reports of "failed mini games to start", 2026-11-14). So is an object's "press X"
+    // (its options, and the leave-range that clears them), now sent to a wizard who arrives next to it (the Krokotopia
+    // ship's skip sign, Niduus 2026-11-23). Messages keep their order.
     private static bool HeldUntilZoned(IMessage message)
         => message is WIZARD_12_PROTOCOL.MSG_ACTORDIALOG or GAME_5_PROTOCOL.MSG_DYNAMODBEHAVIOR_UPDATEMODS
-            or GAME_5_PROTOCOL.MSG_START_CLIENT_PROCESS;
+            or GAME_5_PROTOCOL.MSG_START_CLIENT_PROCESS or QUEST_MESSAGES_52_PROTOCOL.MSG_SENDNPCOPTIONS
+            or GAME_5_PROTOCOL.MSG_LEAVESERVICERANGE;
 
     private void NoteClientZoned() {
         if (_clientZoned) {

@@ -1,0 +1,4 @@
+Fixed: One-time lines no longer repeat every time you walk through the same spot
+Some lines in the game are meant to play only once, like the narrator as the Dragonspyre dragon takes off, the "good luck" from the landing zone, and the boss taunts at the door of many dungeons. The server played them again each time you passed the spot that starts them, so going back and forth spammed the same dialog. Now each one plays once per character, the same as the real game, in every world. Lines the game means to repeat, like school books and locked-door notes, still play each time.
+Where: Every world, on spots that start a one-time line (Dragonspyre dragon flight and landing zone, Wizard City dungeon taunts, and more).
+Test: Ride the Dragonspyre Academy dragon flight twice and check the narrator only speaks the first time, then walk into a Wizard City dungeon boss room twice and check the taunt only plays once.

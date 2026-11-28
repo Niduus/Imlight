@@ -123,6 +123,9 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
         return coreObject;
     }
 
+    // The most walls one by-name removal may take (ReceiveRemoveTriggerObject).
+    private const int MAX_BY_NAME = 3;
+
     private const float DUPLICATE_DISTANCE = 15.0f;
 
     private bool IsDuplicatePlacement(CoreObjectInfo objectInfo)
@@ -317,20 +320,32 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT))]
     private void ReceiveRemoveTriggerObject(ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT message) {
+        // A trigger that names a wall by a name no placed object carries ("...Collision" when the zone placed "..._Col"):
+        // the walls of the zone that share a name word with it go instead (MoMisGrand, #1747). Guarded: only walls tied to
+        // the asked name by a word that names the thing, at most MAX_BY_NAME of them, and every one is logged, so a trigger
+        // can never take every gate and wall of a zone away.
         var requested = message.ObjectName?.ToString();
         if (!string.IsNullOrEmpty(requested)
             && QuestLeftovers.LooksLikeBlocker(requested)
             && !_placed.Any(p => IsNamed(p, requested))) {
-            var broad = _placed.Where(p =>
-                p.Info?.m_zoneTag is { Length: > 0 } tag
-                && (tag.ToString().Contains("Collision", StringComparison.OrdinalIgnoreCase)
-                    || tag.ToString().Contains("Barrier", StringComparison.OrdinalIgnoreCase)
-                    || tag.ToString().Contains("Blocker", StringComparison.OrdinalIgnoreCase)
-                    || tag.ToString().Contains("Gate", StringComparison.OrdinalIgnoreCase))
-            ).ToList();
-            foreach (var placed in broad) {
-                placed.TriggerRemoved = true;
-                if (placed.Actor is not null) {
+            var byName = _placed.Where(p =>
+                    p.Actor is not null
+                    && p.Info?.m_zoneTag is { Length: > 0 } tag
+                    && (tag.ToString().Contains("Collision", StringComparison.OrdinalIgnoreCase)
+                        || tag.ToString().Contains("Barrier", StringComparison.OrdinalIgnoreCase)
+                        || tag.ToString().Contains("Blocker", StringComparison.OrdinalIgnoreCase)
+                        || tag.ToString().Contains("Gate", StringComparison.OrdinalIgnoreCase))
+                    && QuestLeftovers.SharesNameWord(requested, tag.ToString()))
+                .ToList();
+            if (byName.Count > MAX_BY_NAME) {
+                Logger.Warning("Zone {0}: a trigger asked to remove {1}, which is not placed; {2} walls share its name, too many to guess, so none goes.",
+                    Logger.Args(Zone.ZonePath, requested, byName.Count));
+            }
+            else {
+                foreach (var placed in byName) {
+                    Logger.Information("Zone {0}: a trigger asked to remove {1}, which is not placed; {2} goes in its place (by name).",
+                        Logger.Args(Zone.ZonePath, requested, placed.Info.m_zoneTag));
+                    placed.TriggerRemoved = true;
                     ZoneRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONEBROADCAST {
                         Message = new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = placed.Object.m_globalID },
                         Targets = ZoneBroadcastTarget.Players,
@@ -342,18 +357,8 @@ internal sealed class ZoneObjectSupervisor(Core.Zone zone) : ZoneEntitySuperviso
                 }
             }
         }
-        foreach (var placed in _placed.Where(p =>
-                     IsNamed(p, message.ObjectName)
-                     || (string.Equals(message.ObjectName, "AZ_DynaTrigger_CloudHoF_DoorCollision", StringComparison.OrdinalIgnoreCase)
-                         && p.Info.m_zoneTag.ToString().Contains("CloudHoF", StringComparison.OrdinalIgnoreCase))
-                     || (string.Equals(message.ObjectName, "AZ_DynaTrigger_CloudHoF_DoorCollision instance", StringComparison.OrdinalIgnoreCase)
-                         && p.Info.m_zoneTag.ToString().Contains("CloudHoF", StringComparison.OrdinalIgnoreCase))
-                     || (string.Equals(message.ObjectName, "AZ_Rubble-TheMawCollision", StringComparison.OrdinalIgnoreCase)
-                         && p.Info.m_templateID.Full == 1546446)
-                     || (string.Equals(message.ObjectName, "AZ_Rubble-TheMawCollision instance", StringComparison.OrdinalIgnoreCase)
-                         && p.Info.m_templateID.Full == 1546446)
-                     || (string.Equals(message.ObjectName, "AZ-MagicalWard_Maw", StringComparison.OrdinalIgnoreCase)
-                         && p.Info.m_templateID.Full == 643381))) {
+
+        foreach (var placed in _placed.Where(p => IsNamed(p, message.ObjectName))) {
             placed.TriggerRemoved = true;
             if (placed.Actor is null) {
                 continue;

@@ -173,7 +173,12 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
         var current = Zone.ScriptState.GetObjectState(ObjectName);
         foreach (var option in GetStateOptions(Entity.Template as GameObjectTemplate)) {
             if (IsGoalOption(option)) {
-                Apply(option, playerActor, playerObject);
+                // An option for another zone is not this placement's (the Obsidian Chest of each world posts only its own
+                // "GotObsidianChestN"; all nine at once finished every step of Wizard Tours).
+                if (InteractQuestSelectComponent.OptionFitsZone(option, Entity.Zone?.ZonePath)) {
+                    Apply(option, playerActor, playerObject);
+                }
+
                 continue;
             }
 
