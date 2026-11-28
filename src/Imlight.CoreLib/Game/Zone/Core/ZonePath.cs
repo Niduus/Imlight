@@ -398,6 +398,20 @@ public sealed class ZonePath : ZoneEntity {
         }
 
         HandleCreatureSpawn(spawnObject, message);
+
+        // A spawner marked "activate at max" fills up to its maximum when switched on, as on live. Morganthe's fight at
+        // Mirror Lake (Zafaria, "Spawn pointSpiders", 4 at most) brought one Starburst Spider instead of four (Niduus,
+        // 2026-11-25). CanSpawn stops it at the maximum.
+        if (spawnObject.m_activateAtMax) {
+            var max = (int) Math.Clamp(spawnObject.m_maxNumberOfSpawns, 1u, MAX_SPAWNS_ALLOWED);
+            for (var i = 1; i < max; i++) {
+                var before = CreatureCount(spawnObject);
+                HandleCreatureSpawn(spawnObject, message);
+                if (CreatureCount(spawnObject) <= before) {
+                    break;
+                }
+            }
+        }
     }
 
     private void HandleCreatureSpawn(SpawnObject spawnObject, ZONE_102_PROTOCOL.MSG_ZONEPATHSPAWN cause) {

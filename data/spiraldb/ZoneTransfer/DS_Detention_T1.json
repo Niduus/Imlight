@@ -1,0 +1,17 @@
+{
+  "ZoneName": "DragonSpire/DS_A2_Battle/Interiors/DS_Detention_T1",
+  "Events": [],
+  "Teleports": [
+    {
+      "TriggerName": "Teleport location (DS_T1 to Detention)",
+      "Teleport": {
+        "m_exitTeleporter": 0,
+        "m_teleporterTag": 0,
+        "m_teleportType": "TELEPORT_STATIC",
+        "m_transitionID": 0,
+        "m_destinationLoc": "11332.54,3546.572,-127.892,1.970003",
+        "m_destinationZone": "DragonSpire/DS_A2_Battle/DS_A2Z3_Detention"
+      }
+    }
+  ]
+}

@@ -116,7 +116,8 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         // used (the staff stands in the Throne Room of Fire's map platform) stays usable for a wizard whose own step
         // still needs it: its state is shared by the whole instance, so the step that came later, or a teammate's,
         // could never be done (Niduus, 2026-11-04).
-        if (!_collectedBy.Contains(playerCharacter.CharId) && HasActiveMatchingUsageGoal(playerCharacter)) {
+        // A teleporter taken away by an older build stays usable (IsTravel): Zoom's Survey Camp stone, 2026-11-25.
+        if ((!_collectedBy.Contains(playerCharacter.CharId) || IsTravel) && HasActiveMatchingUsageGoal(playerCharacter)) {
             yield return new InteractableOption { m_serviceName = ServiceName };
         }
     }
@@ -309,7 +310,7 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         // One use completes every active usage goal that matches this object, across all of the
         // player's quests, each through the normal goal-completion path.
         var activeGoals = FindActiveMatchingGoals(playerCharacter);
-        if (activeGoals.Count == 0 || (playerCharacter is not null && _collectedBy.Contains(playerCharacter.CharId))) {
+        if (activeGoals.Count == 0 || (playerCharacter is not null && _collectedBy.Contains(playerCharacter.CharId) && !IsTravel)) {
             return;
         }
 
@@ -350,7 +351,8 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         // Taken from the whole area, a gemstone in Krokotopia's Hall of Champions ("Get Some Bling") came back only when
         // the area emptied, which a busy area never does: with fifteen wizards there, no gem was left for 45 minutes and
         // nobody could finish the step (Niduus's log, 2026-11-20 20:45-21:30).
-        if (goalMax > 1 && !InteractObjectStateComponent.KeepsStateAfterGoalUse(Entity.Template as GameObjectTemplate)) {
+        if (goalMax > 1 && !InteractObjectStateComponent.KeepsStateAfterGoalUse(Entity.Template as GameObjectTemplate)
+            && !StaysAfterUse(activeGoals, goalMax)) {
             var leaveServiceRangeMsg = new GAME_5_PROTOCOL.MSG_LEAVESERVICERANGE {
                 MobileID = Entity.ActiveGameObject.m_globalID.Full
             };
@@ -365,6 +367,29 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         else {
             ShowUsedLook(playerActor, activeGoals);
         }
+    }
+
+    // A thing that must stay after a use that counts: a teleporter (the area's own way around), or the only thing of its
+    // kind in the area when the step wants more uses than there are things to use. "The Big Guy" (Celestia) asks for 3
+    // uses of Survey Camp's teleport stone, the only one there: the first use took the stone away for the wizard, so the
+    // step stopped at 1 of 3 for good (Zoom's log, 2026-11-25 16:40-17:15).
+    private bool IsTravel => Entity.GetComponentOfType<StreetTeleporterComponent>() is not null
+                             || Entity.GetComponentOfType<InteractDoorTeleportComponent>() is not null
+                             || Entity.GetComponentOfType<WorldTeleportDoorComponent>() is not null
+                             || Entity.GetComponentOfType<CustomTeleporterComponent>() is not null;
+
+    private bool StaysAfterUse(List<(QuestInstance Quest, GoalTemplate Goal, GoalInstance GoalProgress)> activeGoals, int goalMax) {
+        if (IsTravel) {
+            return true;
+        }
+
+        var zone = Entity.Zone?.ZonePath;
+        if (string.IsNullOrEmpty(zone)) {
+            return false;
+        }
+
+        return activeGoals.Any(g => g.Goal is not null
+            && Imlight.CoreLib.Game.Tools.QuestStepSpots.UsageObjects(zone, g.Quest.QuestName, g.Goal.m_goalName) is { Count: > 0 } placed && placed.Count < goalMax);
     }
 
     // A used quest object takes its used look for this wizard and keeps it (UsedQuestObjects): the bubble pops, the

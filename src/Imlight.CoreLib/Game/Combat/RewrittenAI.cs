@@ -271,6 +271,9 @@ internal static class RewrittenAI {
         internal (int Pips, int Damage)[] Tiers = [];
         // A damage-per-pip spell: the damage for each pip of the target's (a power pip is 2); BaseDamage counts 4 of them.
         internal int PerPip;
+        // Part of its damage only goes off when a condition holds (an "if, else if" effect): BaseDamage counts the best
+        // branch, so the estimate checks the conditions against the real caster and target instead.
+        internal bool Conditional;
 
         internal bool Blade;
         internal bool BladeForTeammate;
@@ -319,7 +322,7 @@ internal static class RewrittenAI {
         return new Card {
             Spell = spell, Id = spell.m_templateID, Name = known.Name, Shown = known.Shown, Rank = spell.m_pipCost?.m_spellRank ?? known.Rank,
             School = known.School, Hit = known.Hit, HitsAll = known.HitsAll, BaseDamage = known.BaseDamage, DamageSchool = known.DamageSchool,
-            XPip = known.XPip, Tiers = known.Tiers, PerPip = known.PerPip,
+            XPip = known.XPip, Tiers = known.Tiers, PerPip = known.PerPip, Conditional = known.Conditional,
             Blade = known.Blade, BladeForTeammate = known.BladeForTeammate, BladeOnlyTeammate = known.BladeOnlyTeammate,
             BladeWholeTeam = known.BladeWholeTeam, BladeSchool = known.BladeSchool, BladePercent = known.BladePercent,
             Trap = known.Trap, TrapAll = known.TrapAll, TrapSchool = known.TrapSchool, TrapPercent = known.TrapPercent,
@@ -421,6 +424,7 @@ internal static class RewrittenAI {
         }
 
         card.PerPip = (int) leaves.Where(e => e.m_effectType == kSpellEffects.kDamagePerTotalPipPower && IsEnemy(e.m_effectTarget)).Sum(PerPipOf);
+        card.Conditional = card.Hit && (template.m_effects ?? []).Any(HasConditional);
         if (card.Hit && string.IsNullOrEmpty(card.DamageSchool)) {
             card.DamageSchool = card.School;
         }
@@ -455,6 +459,41 @@ internal static class RewrittenAI {
         _ => 0,
     };
 
+    private static bool HasConditional(SpellEffect effect) => effect switch {
+        null => false,
+        ConditionalSpellEffect => true,
+        RandomSpellEffect random => random.m_effectList?.Any(HasConditional) == true,
+        VariableSpellEffect variable => variable.m_effectList?.Any(HasConditional) == true,
+        EffectListSpellEffect list => list.m_effectList?.Any(HasConditional) == true,
+        CountBasedSpellEffect counted => counted.m_effectList?.Any(HasConditional) == true,
+        _ => false,
+    };
+
+    // As DamageOf, but a conditional counts only the branch that goes off on this target now (the first whose requirements
+    // hold, as CombatActionResolver.ResolveConditional casts it), or nothing when none does. Helephant (a treasure card) was
+    // read at its best branch, "about 23,175" against a Soul Servant (it hit for 635, 2026-11-23), and at 3,350 against
+    // Karolak Nightspinner, where its condition was not met and it hit for 510 (2026-11-25 05:18).
+    private static float DamageAt(SpellEffect effect, CombatDuelSubCircle caster, CombatDuelSubCircle target) => effect switch {
+        null => 0,
+        RandomSpellEffect random => random.m_effectList is { Count: > 0 } list ? list.Average(e => DamageAt(e, caster, target)) : 0,
+        VariableSpellEffect variable => variable.m_effectList is { Count: > 0 } list ? list.Max(e => DamageAt(e, caster, target)) : 0,
+        ConditionalSpellEffect conditional => (conditional.m_elements ?? []).Where(x => x?.m_pEffect is not null)
+            .FirstOrDefault(x => RequirementHolds(x.m_pReqs, caster, conditional.m_effectTarget == kEffectTarget.kSelf ? caster : target))
+            is { } branch ? DamageAt(branch.m_pEffect, caster, target) : 0,
+        EffectListSpellEffect list => list.m_effectList?.Sum(e => DamageAt(e, caster, target)) ?? 0,
+        CountBasedSpellEffect counted => counted.m_effectList?.Sum(e => DamageAt(e, caster, target)) ?? 0,
+        _ => DamageOf(effect),
+    };
+
+    private static bool RequirementHolds(Requirement requirement, CombatDuelSubCircle caster, CombatDuelSubCircle target) {
+        try {
+            return CombatRequirements.Met(requirement, caster, target);
+        }
+        catch (Exception) {
+            return false;
+        }
+    }
+
     private static bool IsEnemy(kEffectTarget target) => target is kEffectTarget.kAtLeastOneEnemy or kEffectTarget.kEnemyTeam
         or kEffectTarget.kEnemyTeamAllAtOnce or kEffectTarget.kEnemySingle or kEffectTarget.kMultiTargetEnemy
         or kEffectTarget.kPreselectedEnemySingle;
@@ -475,6 +514,14 @@ internal static class RewrittenAI {
 
         var school = card.DamageSchool;
         double damage = Math.Max(0, card.BaseDamage);
+        if (card.Conditional && caster is not null && CoreObjectFactory.GetCoreTemplate(card.Id) is SpellTemplate conditionalTemplate) {
+            try {
+                damage = Math.Max(0, (conditionalTemplate.m_effects ?? []).Where(e => e is not null).Sum(e => DamageAt(e, caster, target)));
+            }
+            catch (Exception) {
+                // The best-branch reading stands.
+            }
+        }
         // An X-pip spell hits for the tier the caster's pips reach now, not its best (Niduus, 2026-11-18: "Does he know what
         // X pip spells do and damage per pip?"); a damage-per-pip spell for the target's own pips.
         try {

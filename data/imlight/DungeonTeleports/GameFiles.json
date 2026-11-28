@@ -119,7 +119,7 @@
    {
     "TriggerName": "Sigil-Blue-Dahlia",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_The_Wild",
      "m_destinationZone": "Avalon/Interiors/AV_Z04_TowerBlueDahlia",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -130,8 +130,8 @@
    {
     "TriggerName": "Sigil-WhiteOwlTower",
     "Teleport": {
-     "m_destinationLoc": "Start",
-     "m_destinationZone": "Avalon/Interiors/AV_Z04_WhiteOwlTower",
+     "m_destinationLoc": "From Wyld",
+     "m_destinationZone": "Avalon/Interiors/AV_Z04_WOwlGarden",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",
@@ -168,7 +168,7 @@
    {
     "TriggerName": "To Tomb of the Nameless",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_TheWyrd",
      "m_destinationZone": "Avalon/Interiors/AV_Z05_TombNameless",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -238,7 +238,7 @@
    {
     "TriggerName": "Teleport_DeadKingsCrypt",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_TheCatacombs",
      "m_destinationZone": "Avalon/Interiors/AV_Z10_DeadKingsCrypt",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -254,7 +254,7 @@
    {
     "TriggerName": "Teleport_To_CryingSkyShrine",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zozalo",
      "m_destinationZone": "Azteca/Interiors/AZ_Z00_CryingSkyShrine",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -282,7 +282,7 @@
     "TriggerName": "To AZ_Z01_BlackSunPyramid_Room02",
     "Teleport": {
      "m_destinationLoc": "Start",
-     "m_destinationZone": "Azteca/Interiors/AZ_Z01_BlackSunPyramid_Room02",
+     "m_destinationZone": "Azteca/Interiors/AZ_Z01_BlackSunPyramid_Room05",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",
@@ -395,7 +395,7 @@
    {
     "TriggerName": "Sigil-RiverCave",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromSwamp",
      "m_destinationZone": "Azteca/Interiors/AZ_Z04_CaveByRiver",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -503,7 +503,7 @@
    {
     "TriggerName": "Sigil-CorazonCave",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_PitchBlackLake",
      "m_destinationZone": "Azteca/Interiors/AZ_Z08_CorazonCave",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -514,7 +514,7 @@
    {
     "TriggerName": "Sigil-MakTheKnife",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target-InsideMakCave",
      "m_destinationZone": "Azteca/Interiors/AZ_Z08_MakKnifeCave",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -525,7 +525,7 @@
    {
     "TriggerName": "Sigil-Tzapotec",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "location-InsideTzapotec",
      "m_destinationZone": "Azteca/Interiors/AZ_Z08_CaveOfTzapotec",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -552,7 +552,7 @@
    {
     "TriggerName": "AZ-Sigil-ToSevenStabs",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target-Inside7Stabs",
      "m_destinationZone": "Azteca/Interiors/AZ_Z10_SevenStabs",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -568,7 +568,7 @@
    {
     "TriggerName": "To AZ-ButterflyShrine",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_FromTwinGiants",
      "m_destinationZone": "Azteca/Interiors/AZ_Z11_Butterfly_Shrine",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -670,8 +670,8 @@
    {
     "TriggerName": "CL_Z03i2_District_of_the_Stars_Underground",
     "Teleport": {
-     "m_destinationLoc": "Start",
-     "m_destinationZone": "Celestia/Interiors/CL_Z03i2_District_of_the_Stars",
+     "m_destinationLoc": "CL_District_of_the_Stars_Underground",
+     "m_destinationZone": "Celestia/Interiors/CL_Z03i1_District_of_the_Stars",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",
@@ -745,7 +745,7 @@
    {
     "TriggerName": "CL_Z10i08-Hexfin",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromZ10_CL-CRAB-C03-003",
      "m_destinationZone": "Celestia/Interiors/CL_Z10i8_Kingdom_Of_The_Crabs",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -788,8 +788,8 @@
    {
     "TriggerName": "ToTower4FromDS_CrystalGrove",
     "Teleport": {
-     "m_destinationLoc": "Start",
-     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_CrystalGrove_Gauntlet_7Room",
+     "m_destinationLoc": "Target location (DS_T4 from CrystalGrove)",
+     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_Crystal_T4",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",
@@ -799,8 +799,8 @@
    {
     "TriggerName": "ToTower6FromDS_CrystalGrove",
     "Teleport": {
-     "m_destinationLoc": "Start",
-     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_CrystalGrove_Gauntlet_7Room",
+     "m_destinationLoc": "Target location (DS_T6 from CrystalGrove)",
+     "m_destinationZone": "DragonSpire/DS_A3_Kings/Interiors/DS_Crystal_T6",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",
@@ -902,7 +902,7 @@
    {
     "TriggerName": "Sigil_To_Gatehouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_Gatehouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -913,7 +913,7 @@
    {
     "TriggerName": "Teleport to ByrinsHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_ByrinsHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -924,7 +924,7 @@
    {
     "TriggerName": "Teleport to NuhnesHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_NuhnesHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -935,7 +935,7 @@
    {
     "TriggerName": "Teleport to Palace",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_Palace",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -946,7 +946,7 @@
    {
     "TriggerName": "Teleport to TwylightsHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_TwylightsHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -957,7 +957,7 @@
    {
     "TriggerName": "Teleport to ZigiHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_ZigisHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -968,7 +968,7 @@
    {
     "TriggerName": "Teleport_To_KanesHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_KanesHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -979,7 +979,7 @@
    {
     "TriggerName": "Teleport_To_ShadowHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Zanadu",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_ShadowHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1066,7 +1066,7 @@
    {
     "TriggerName": "Teleport to Interior sigil-Cistern",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target location-InsideCistern",
      "m_destinationZone": "Empyrea/Interiors/EM_Z04_Cistern",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1120,7 +1120,7 @@
    {
     "TriggerName": "Teleport_2_CretanBullField",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_SWPlains",
      "m_destinationZone": "Empyrea/Interiors/EM_Z08_CretanBullField",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1131,7 +1131,7 @@
    {
     "TriggerName": "Teleport_2_DarkCloudBase",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_SWPlains",
      "m_destinationZone": "Empyrea/Interiors/EM_Z08_DarkCloudBase",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1158,7 +1158,7 @@
    {
     "TriggerName": "Teleport_2_HumongishBattleField",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_NEPlains",
      "m_destinationZone": "Empyrea/Interiors/EM_Z09_HumongishfrogBattlefield",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1169,7 +1169,7 @@
    {
     "TriggerName": "Teleport_2_VoltergeistCave",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_NEPlains",
      "m_destinationZone": "Empyrea/Interiors/EM_Z09_VoltergeistCave",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1342,7 +1342,7 @@
    {
     "TriggerName": "Teleport to Z01_MonkeySpiderNest",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_MonkeySpiderCave",
      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MonkeySpiderNest",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1439,8 +1439,8 @@
    {
     "TriggerName": "Teleport to BatCave",
     "Teleport": {
-     "m_destinationLoc": "Start",
-     "m_destinationZone": "Empyrea/Interiors/EM_Z02_BatCave",
+     "m_destinationLoc": "Target_From_Sewers",
+     "m_destinationZone": "Empyrea/Interiors/EM_Z02_SecretEntrance",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",
@@ -1450,7 +1450,7 @@
    {
     "TriggerName": "Teleport to ChargingStation",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Sewers",
      "m_destinationZone": "Empyrea/Interiors/EM_Z02_ChargingStation",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1562,7 +1562,7 @@
    {
     "TriggerName": "Teleport_2_HelenaBattle",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Camp",
      "m_destinationZone": "Empyrea/Interiors/EM_Z09_HelenasBattle",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1712,7 +1712,7 @@
    {
     "TriggerName": "TeleportToHeroT2",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromHeroCamp",
      "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T2",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1723,7 +1723,7 @@
    {
     "TriggerName": "TeleportToHeroT3",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromHeroCamp",
      "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T3",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1734,7 +1734,7 @@
    {
     "TriggerName": "TeleportToHeroT4",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromHeroCamp",
      "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T4",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1745,7 +1745,7 @@
    {
     "TriggerName": "TeleportToHeroT5",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromHeroCamp",
      "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T5",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1756,7 +1756,7 @@
    {
     "TriggerName": "TeleportToHeroT6",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromHeroCamp",
      "m_destinationZone": "Grizzleheim/Interiors/GH_Hero_T6",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1772,7 +1772,7 @@
    {
     "TriggerName": "Teleport_2_SecludedCave",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Raven",
      "m_destinationZone": "Grizzleheim/Interiors/GH_SecludedCave",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1783,7 +1783,7 @@
    {
     "TriggerName": "ToRavenFortressT1",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T1",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1794,7 +1794,7 @@
    {
     "TriggerName": "ToRavenFortressT10",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T10",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1805,7 +1805,7 @@
    {
     "TriggerName": "ToRavenFortressT11",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T11",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1816,7 +1816,7 @@
    {
     "TriggerName": "ToRavenFortressT2",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T2",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1827,7 +1827,7 @@
    {
     "TriggerName": "ToRavenFortressT3",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T3",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1838,7 +1838,7 @@
    {
     "TriggerName": "ToRavenFortressT4",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T4",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1849,7 +1849,7 @@
    {
     "TriggerName": "ToRavenFortressT5",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T5",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1860,7 +1860,7 @@
    {
     "TriggerName": "ToRavenFortressT6",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T6",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1871,7 +1871,7 @@
    {
     "TriggerName": "ToRavenFortressT7",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T7",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1882,7 +1882,7 @@
    {
     "TriggerName": "ToRavenFortressT9",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRavenFortress",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RavenFortress_T9",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1909,7 +1909,7 @@
    {
     "TriggerName": "ToGH_RedClaw_T1",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRedClaw3",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T1",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1920,7 +1920,7 @@
    {
     "TriggerName": "ToGH_RedClaw_T2",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRedClawOutpost",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T2",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -1942,7 +1942,7 @@
    {
     "TriggerName": "ToGH_Redclaw_T3",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "FromRedClawOutpost",
      "m_destinationZone": "Grizzleheim/Interiors/GH_RedClaw_T3",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2033,7 +2033,7 @@
    {
     "TriggerName": "Teleport_To_OrsonOffice",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_TreacleFoundry",
      "m_destinationZone": "Karamelle/Interiors/KM_Z05_OrsonOffice",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2044,7 +2044,7 @@
    {
     "TriggerName": "Teleport_To_PumpRoom",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_FromTreacleFoundry",
      "m_destinationZone": "Karamelle/Interiors/KM_Z05_PumpRoom",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2157,7 +2157,7 @@
    {
     "TriggerName": "To_PipelineCave",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_GumdropForest",
      "m_destinationZone": "Karamelle/Interiors/KM_Z03_I02_PipelineCave",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2222,7 +2222,7 @@
    {
     "TriggerName": "Teleport_To_Choc Shoppe",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Nibbleheim",
      "m_destinationZone": "Karamelle/Interiors/KM_Z05_ChocShoppe",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2233,7 +2233,7 @@
    {
     "TriggerName": "Teleport_To_PipeJunction",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Nibbleheim",
      "m_destinationZone": "Karamelle/Interiors/KM_Z05_PipeJunction",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2244,7 +2244,7 @@
    {
     "TriggerName": "Teleport_To_ToffeeHouse",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "Target_From_Nibbleheim",
      "m_destinationZone": "Karamelle/Interiors/KM_Z05_ToffeeHouse",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2363,7 +2363,7 @@
    {
     "TriggerName": "Sigil_to_GobblertonLibrary",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_Gobblerton",
      "m_destinationZone": "Karamelle/Interiors/KM_Z10_GobblertonLibrary",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2374,7 +2374,7 @@
    {
     "TriggerName": "Sigil_to_ThroneRoomB",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_Gobblerton",
      "m_destinationZone": "Karamelle/Interiors/KM_Z10_ThroneRoom_B",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2385,7 +2385,7 @@
    {
     "TriggerName": "Sigil_to_UnderwaterGrotto",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_Gobblerton",
      "m_destinationZone": "Karamelle/Interiors/KM_Z10_UnderwaterGrotto",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2401,7 +2401,7 @@
    {
     "TriggerName": "Sigil_To_KR_I07_Mausoleum03",
     "Teleport": {
-     "m_destinationLoc": "Start",
+     "m_destinationLoc": "From_Mausoleum",
      "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room03",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
@@ -2424,7 +2424,7 @@
     "TriggerName": "Sigil_To_Mausoleum02",
     "Teleport": {
      "m_destinationLoc": "Start",
-     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room02",
+     "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I07_Mausoleum_Room04",
      "m_exitTeleporter": 0,
      "m_teleporterTag": 0,
      "m_teleportType": "TELEPORT_STATIC",

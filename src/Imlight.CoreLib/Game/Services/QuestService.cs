@@ -50,6 +50,7 @@ using Imlight.CoreLib.Game.Quests;
 using Imlight.CoreLib.Game.Requirements;
 using Imlight.CoreLib.Game.Requirements.Contexts;
 using Imlight.CoreLib.Game.Results;
+using Imlight.CoreLib.Game.Zone.Components;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
@@ -2173,9 +2174,22 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
         var questTemplate = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == questInstance.QuestName);
         var exactSpots = QuestSpotGoals.SpotsFor(questTemplate, goalTemplate, wizard.Zone);
+        // A zone-entry goal with a place (its proximity tag names a volume in this zone) finishes at that place, as in
+        // the game: the volume finishes it when the wizard walks in. Crystal Storage's "grab the crystal" step finished
+        // on reaching the top floor (VolumeComponent, Niduus 2026-11-25). Already standing in it finishes it now.
         if (!string.IsNullOrEmpty(waypointGoal.m_proximityTag)) {
+            var playerObject = GetActiveGameObject();
+            if (playerObject is not null
+                && VolumeComponent.HasGoalVolume(wizard.Zone, questInstance.QuestName, goalTemplate.m_goalName,
+                    playerObject.m_location.X, playerObject.m_location.Y, playerObject.m_location.Z, out var isInside)
+                && !isInside) {
+                return;
+            }
+
+            CompleteGoal(questInstance, goalTemplate);
             return;
         }
+
         // poi.dat marks a step that only means "enter this zone" with no target and the spot 0,0,0. Such a step (or one
         // with no spot at all, in the zone its m_zoneTag names) completes on entry, as m_zoneEntry says. A step with a real
         // spot still waits until the player is near it (QuestSpotGoals.OnPlayerMoved), or here when they arrive there.

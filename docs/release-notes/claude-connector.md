@@ -1,0 +1,4 @@
+New: Claude can look at Ahziael and your game
+Ahziael now has its own Claude connector, so Claude can see what Ahziael sees: whether the server is on, who is online and where each wizard stands, the server's log, the game's own log, the minimap and Quest Tracker the overlay is told, Ahziael's window, and pictures of the Wizard101 windows on this PC. It is off until you turn it on, and only programs on this PC can reach it. A second switch lets Claude also run chat commands, send announcements and change server settings; leave it off and Claude can only look. Ahziael still never reads the game's memory or changes its files, and keys and passwords are never sent. Every switch works at once, with no restart.
+Where: Ahziael, Server > Ahziael > Claude.
+Test: turn on "Let Claude use Ahziael", click "Add Ahziael to Claude desktop", quit Claude desktop fully and open it again, then ask Claude to take a picture of your game window.

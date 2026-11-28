@@ -92,6 +92,9 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     // Players a quest-only object is kept from until their quest (or the zone's script) calls for it, and when each was
     // last checked again.
     private readonly Dictionary<IActorRef, Wizard> _hiddenUntilQuest = [];
+    // Players in the zone who did not meet the object's spawn requirements yet: looked at again as they move, so an
+    // object a quest step brings out shows without leaving the zone (the Young Battledrake on The Final Countdown).
+    private readonly Dictionary<IActorRef, Wizard> _waitingOnRequirements = [];
     private readonly Dictionary<IActorRef, System.DateTime> _questCheckedAt = [];
     private readonly Dictionary<IActorRef, System.DateTime> _spotCheckedAt = [];
     private static readonly System.TimeSpan QUEST_CHECK_INTERVAL = System.TimeSpan.FromSeconds(2);
@@ -287,9 +290,14 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
             return;
         }
 
-        // If the player doesn't meet spawn requirements, nothing to do.
+        // If the player doesn't meet spawn requirements, nothing to do until they do.
         LogMajid("hidden by spawn requirements from", suspect);
         RemoveClientCopy(suspect);
+        if (wizard is not null) {
+            _waitingOnRequirements[suspect] = wizard;
+            _questCheckedAt[suspect] = System.DateTime.UtcNow;
+        }
+
         if (!_doesDistanceCheck) {
             return;
         }
@@ -315,6 +323,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         _lastSeen.Remove(suspect);
         _sentTo.Remove(suspect);
 
+        _waitingOnRequirements.Remove(suspect);
         var hidden = _playerIgnoreBecauseDynamod.Remove(suspect) | _hiddenUntilQuest.Remove(suspect);
         if (!hidden) {
             DespawnObjectForPlayer(suspect);
@@ -346,6 +355,12 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         if (_hiddenUntilQuest.ContainsKey(playerActor)) {
             ShowIfQuestCallsFor(playerActor, playerWizard);
+
+            return;
+        }
+
+        if (_waitingOnRequirements.ContainsKey(playerActor)) {
+            ShowIfRequirementsMet(playerActor, playerObj, playerWizard);
 
             return;
         }
@@ -903,6 +918,33 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         wizard ??= _hiddenUntilQuest[player];
         if (QuestCallsFor(wizard)) {
             Reveal(player, wizard);
+        }
+    }
+
+    // Looked at again every few seconds while the player moves, as for a quest-only object.
+    private void ShowIfRequirementsMet(IActorRef player, CoreObject playerObj, Wizard wizard) {
+        var now = System.DateTime.UtcNow;
+        if (_questCheckedAt.TryGetValue(player, out var last) && now - last < QUEST_CHECK_INTERVAL) {
+            return;
+        }
+
+        _questCheckedAt[player] = now;
+        wizard ??= _waitingOnRequirements[player];
+        var requirements = Entity.Info?.m_spawnRequirements;
+        if (wizard is null || requirements is null || !IsEnabled
+            || !RequirementDispatcher.EvaluateRequirements(requirements,
+                new ZoneRequirementContext(requirements, player, null, wizard, Entity.ZoneRef))) {
+            return;
+        }
+
+        _waitingOnRequirements.Remove(player);
+        _questCheckedAt.Remove(player);
+        _playersWithRequirementsMet[wizard] = player;
+        // Out of reach, the move check sends it once the player comes near (they count as met now).
+        _playersInRange.Remove(player);
+        if (!_doesDistanceCheck || playerObj is null || IsInRadius(playerObj, _renderDistance)) {
+            CreateObjectForPlayer(player);
+            _playersInRange.Add(player);
         }
     }
 

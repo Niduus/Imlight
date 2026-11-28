@@ -837,6 +837,41 @@ internal static class OverlayQuestPath {
         }
     }
 
+    /// <summary>
+    /// The nearest spot on the floor to (x, y) within <paramref name="reach"/>: the few cells round it first, then rings
+    /// outward (30 apart). Null when the area's ground is not known or nothing is floor that near. For quest things whose
+    /// floor is far from their middle: Savannah's Watering Hole of "Off the Boil" (ZF-BAOB-C14-001) stands in a basin with
+    /// no floor, its nearest rim about 830 from it.
+    /// </summary>
+    internal static (float X, float Y)? NearestFloorWithin(string zonePath, float x, float y, float reach) {
+        try {
+            if (GridOf(zonePath) is null) {
+                return null;
+            }
+
+            if (NearestFloor(zonePath, x, y) is { } near) {
+                return near;
+            }
+
+            const float RING_STEP = 30f;
+            for (var radius = RING_STEP; radius <= reach; radius += RING_STEP) {
+                var steps = Math.Max(12, (int) (MathF.Tau * radius / RING_STEP));
+                for (var i = 0; i < steps; i++) {
+                    var angle = i * MathF.Tau / steps;
+                    var (px, py) = (x + (MathF.Cos(angle) * radius), y + (MathF.Sin(angle) * radius));
+                    if (OnFloor(zonePath, px, py)) {
+                        return (px, py);
+                    }
+                }
+            }
+
+            return null;
+        }
+        catch (Exception) {
+            return null;
+        }
+    }
+
     /// <summary>The nearest spot on the floor to (x, y) within a few cells, or null.</summary>
     internal static (float X, float Y)? NearestFloor(string zonePath, float x, float y) {
         try {

@@ -113,7 +113,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
 
         _shape = QuestObjectShape();
-        _offGroundReach = _shape is null ? OffGroundReach() : 0f;
+        _floorReach = FloorReach();
         if (SizeFactor() > 1.5f && _serviceComponents.Any(c => c is InteractPersonaGoalComponent or InteractQuestOfferComponent)) {
             Logger.Information("Reach: {0} ({1}) in {2} is placed {3:0.#} times its size; it is reached from {4:0} away.",
                 Logger.Args(Entity.Info?.m_zoneTag, (Entity.Template as GameObjectTemplate)?.m_objectName, Entity.Zone?.ZonePath,
@@ -160,7 +160,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         // Handle interaction range (for service options). A large quest object (Zafaria's fallen Zebra Scout Tower)
         // is reached at its edge too, not only near its center (ObjectReach).
-        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj);
+        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
+                      || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach));
         if (inRange
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
@@ -270,63 +271,55 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
-    // How far a player may stand from a quest object whose own spot is off the ground players walk on (0: the usual reach).
-    private float _offGroundReach;
+    // A quest object with no floor within the usual reach of its center: offered from the nearest floor instead.
+    private float _floorReach;
 
-    // The furthest a quest object off the walk ground is reached from (its nearest ground further than this is no shore).
-    private const float OFF_GROUND_REACH_MAX = 1500f;
+    // How much past the nearest floor a player still reaches such an object, and how far that floor may be at most.
+    private const float FLOOR_REACH_MARGIN = 80f;
+    // Savannah's Watering Hole of "Off the Boil" (ZF-BAOB-C14-001) sits in a basin with no floor, its nearest rim about 830
+    // away: under the old 800 it was never offered and Zoom stood on the rim for hours (2026-11-25 19:43 on).
+    private const float FLOOR_REACH_MAX = 1000f;
 
     /// <summary>
-    /// A quest object with no collision shape whose spot is not on the ground players walk on (Kondha's BlightedWater, the
-    /// pool "Heal" of KR-KOND-C08-002 asks for: its spot lies in the pool, about 500 past the Water Bug Cave sigil and off
-    /// the zone's walk ground) is reached from the nearest ground instead: from there plus the usual edge reach. Measured
-    /// from its spot alone, nobody could stand close enough to be offered it (2026-11-27).
+    /// The reach of a quest object (not a character) that stands too far from any floor to be offered within the usual
+    /// 300 of its center: the walk to its nearest floor plus a margin, or 0 when the usual reach already works. Stormriven's
+    /// Celestian Generator of "Ghosts of Celestia" (CL-RIVEN-C01-002) stands 363 from the nearest floor, so nobody was ever
+    /// offered "Use" and the step could not be done (Zoom, 2026-11-24 16:22 on); the main story has about 98 such things.
     /// </summary>
-    private float OffGroundReach() {
+    private float FloorReach() {
         try {
             if (!_serviceComponents.Any(c => c is InteractQuestSelectComponent)
                 || Entity.Template is not GameObjectTemplate template
                 || template.m_behaviors?.Any(b => b is NPCBehaviorTemplate) == true
-                || Entity.Zone?.ZonePath is not { Length: > 0 } zone
-                || Entity.ActiveGameObject is not { } self) {
-                return 0f;
+                || Entity.Zone?.ZonePath is not { Length: > 0 } zone) {
+                return 0;
             }
 
-            var at = new System.Numerics.Vector3(self.m_location.X, self.m_location.Y, self.m_location.Z);
-            if (Imlight.CoreLib.Game.Zone.Core.SafeLanding.Problem(zone, at) is not { } why
-                || Imlight.CoreLib.Game.Zone.Core.SafeLanding.Check(zone, at) is not { Moved: true } ground) {
-                return 0f;
+            var at = Entity.ActiveGameObject.m_location;
+            if (Imlight.CoreLib.Game.Tools.OverlayQuestPath.OnFloor(zone, at.X, at.Y)
+                || Imlight.CoreLib.Game.Tools.OverlayQuestPath.NearestFloorWithin(zone, at.X, at.Y, FLOOR_REACH_MAX) is not { } floor) {
+                return 0;
             }
 
-            var dx = ground.Spot.X - at.X;
-            var dy = ground.Spot.Y - at.Y;
-            var reach = MathF.Sqrt((dx * dx) + (dy * dy)) + ObjectReach.EDGE_REACH;
-            if (reach <= _interactionRadius || reach > OFF_GROUND_REACH_MAX) {
-                return 0f;
+            var gap = MathF.Sqrt(((floor.X - at.X) * (floor.X - at.X)) + ((floor.Y - at.Y) * (floor.Y - at.Y)));
+            var reach = gap + FLOOR_REACH_MARGIN;
+            if (reach <= _interactionRadius || gap > FLOOR_REACH_MAX) {
+                return 0;
             }
 
-            Logger.Information("Quest object {0} in {1}: its spot is {2}; it is reached from the nearest ground, {3:0} away (reach {4:0}).",
-                Logger.Args(Entity.Info?.m_zoneTag, zone, why, reach - ObjectReach.EDGE_REACH, reach));
+            Logger.Debug("Object reach: {0} stands {1:0} from the nearest floor; offered within {2:0} of its center",
+                Logger.Args(Entity.Info?.m_zoneTag, gap, reach));
 
             return reach;
         }
         catch (Exception e) {
-            Logger.Debug("Object reach: no ground reach for {0}: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
+            Logger.Debug("Object reach: no floor reach for {0}: {1}", Logger.Args(Entity.Info?.m_zoneTag, e.Message));
 
-            return 0f;
+            return 0;
         }
     }
 
     private bool ReachesShape(CoreObject playerObj) {
-        if (_offGroundReach > 0f && playerObj is not null) {
-            var center = Entity.ActiveGameObject.m_location;
-            var dx = playerObj.m_location.X - center.X;
-            var dy = playerObj.m_location.Y - center.Y;
-            if ((dx * dx) + (dy * dy) <= _offGroundReach * _offGroundReach) {
-                return true;
-            }
-        }
-
         if (_shape is null || playerObj is null) {
             return false;
         }
@@ -343,7 +336,8 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
 
         var playerId = playerObj.m_globalID.Full;
         var interactionRadius = _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS) * SizeFactor();
-        if (IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)) {
+        if (IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
+            || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach))) {
             _playersInInteractionRange[playerId] = playerActor;
             SendActorServiceOptions(playerActor, nextSection: false);
         }
@@ -447,7 +441,17 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             offer.NextOfferChained = reinteract == 2;
         }
 
+        // An object whose own state option took the first "Interact" (an altar that also starts a spawner) runs that, and a
+        // wizard whose step says to use the object gets the step counted too, as one press does in the live game: the Storm
+        // Altar of "Kraken Up" in Storm Lord Temple ran its state and the step never counted (Zoom, 2026-11-25 00:59, 01:07).
+        var questUseToo = serviceComponent is InteractObjectStateComponent && playerCharacter is not null
+                          && _serviceComponents.OfType<InteractQuestSelectComponent>().FirstOrDefault() is { } stepUse
+                          && OptionsFor(stepUse, playerCharacter).Count > 0
+            ? stepUse
+            : null;
+
         serviceComponent.OnServiceInteraction(playerActor, playerCharacter, playerObject, localIndex);
+        questUseToo?.OnServiceInteraction(playerActor, playerCharacter, playerObject, 0);
     }
 
     // A click without a service name (or a component without one) is taken as meant for that component.

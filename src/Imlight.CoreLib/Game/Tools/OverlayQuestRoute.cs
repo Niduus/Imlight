@@ -718,7 +718,11 @@ internal static class OverlayQuestRoute {
                     to = trigger.m_results?.m_results?.OfType<ResTeleport>().Select(r => (string) r.m_destinationZone).FirstOrDefault(z => !string.IsNullOrWhiteSpace(z));
                 }
 
-                if (string.IsNullOrWhiteSpace(to) || trigger.m_fireEvents is null) {
+                // The same doorway's second way while a wizard is on a quest step (a ZoneObjects exit with WhileOnQuest):
+                // Unicorn Way's Arena door into the Archmastery tutorial arena. Only a wizard whose step is in that zone
+                // plans a way there, and the door takes him there on that step.
+                var onQuest = ZoneObjects.QuestExitZoneFor(zonePath, name);
+                if (trigger.m_fireEvents is null || (string.IsNullOrWhiteSpace(to) && string.IsNullOrWhiteSpace(onQuest))) {
                     continue;
                 }
 
@@ -726,7 +730,9 @@ internal static class OverlayQuestRoute {
                     foreach (var volume in volumes.Where(v => v.m_enterEvents?.Any(e => (string) e == fire) == true
                                                               || "Enter_" + (string) v.m_volumeName == fire)) {
                         var reach = volume.m_radius > 0 ? volume.m_radius : MathF.Max(volume.m_length, volume.m_width) / 2;
-                        exits.Add(OnItsFloor(zonePath, new Exit(volume.m_locationX, volume.m_locationY, to.Trim(), reach, volume.m_locationZ)));
+                        foreach (var way in new[] { to, onQuest }.Where(w => !string.IsNullOrWhiteSpace(w))) {
+                            exits.Add(OnItsFloor(zonePath, new Exit(volume.m_locationX, volume.m_locationY, way.Trim(), reach, volume.m_locationZ)));
+                        }
                     }
                 }
             }
@@ -798,9 +804,23 @@ internal static class OverlayQuestRoute {
 
     private static string WorldName(string zone) => OverlayQuestTracker.WorldName(zone);
 
+    // Whether the map holds the zone object files' exits (a map built before they were read gets them on its next use).
+    private static bool s_exitLinksIn;
+
     private static Dictionary<string, HashSet<string>> Links() {
         lock (s_lock) {
             if (s_links is not null) {
+                if (!s_exitLinksIn) {
+                    // A fresh copy with the exits added, so a way being worked out right now keeps reading the old one.
+                    var copy = s_links.ToDictionary(p => p.Key, p => new HashSet<string>(p.Value, StringComparer.OrdinalIgnoreCase),
+                        StringComparer.OrdinalIgnoreCase);
+                    AddExitLinks(copy);
+                    s_links = copy;
+                    s_exitLinksIn = true;
+                    s_backward = null;
+                    s_left.Clear();
+                }
+
                 return s_links;
             }
         }
@@ -830,6 +850,8 @@ internal static class OverlayQuestRoute {
             Logger.Warning("Quest tracker: the areas' doors could not be read: {0}", Logger.Args(ex.Message));
         }
 
+        AddExitLinks(links);
+
         var arrivals = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try {
             foreach (var hub in WorldHubZones.All()) {
@@ -846,9 +868,32 @@ internal static class OverlayQuestRoute {
 
         lock (s_lock) {
             s_arrivals ??= arrivals;
-            s_links ??= links;
+            if (s_links is null) {
+                s_links = links;
+                s_exitLinksIn = true;
+            }
 
             return s_links;
+        }
+    }
+
+    // The ways the zone object files open (an exit into an area no zone record leads to, like the Archmastery arena).
+    private static void AddExitLinks(Dictionary<string, HashSet<string>> links) {
+        try {
+            foreach (var (from, to) in ZoneObjects.ExitLinks()) {
+                if (string.Equals(from, to, StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+
+                if (!links.TryGetValue(from, out var set)) {
+                    links[from] = set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                set.Add(to);
+            }
+        }
+        catch (Exception ex) {
+            Logger.Warning("Quest tracker: the zone object files' exits could not be read: {0}", Logger.Args(ex.Message));
         }
     }
 

@@ -116,5 +116,53 @@
         }
       }
     ]
+  },
+  {
+    "ZoneName": "Celestia/CL_Z06_StormHaven",
+    "Teleports": [
+      {
+        "TriggerName": "CL_Teleport-to-Stormriven_under",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Celestia/CL_Z07_Storm_Lord_Temple",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Celestia/CL_Z07_Storm_Lord_Temple",
+    "Teleports": [
+      {
+        "TriggerName": "CL_Teleport-to-StormrivenTopside",
+        "Teleport": {
+          "m_destinationLoc": "From Zone07 - StormLordTemple",
+          "m_destinationZone": "Celestia/CL_Z06_StormHaven",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
+  },
+  {
+    "ZoneName": "Zafaria/Interiors/ZF_Z04_I02_Nemean_Rock_Cave",
+    "Teleports": [
+      {
+        "TriggerName": "Teleport location (1)",
+        "Teleport": {
+          "m_destinationLoc": "Start",
+          "m_destinationZone": "Zafaria/Interiors/ZF_Z04_I03_Top_of_the_Rock",
+          "m_exitTeleporter": 0,
+          "m_teleporterTag": 0,
+          "m_teleportType": "TELEPORT_STATIC",
+          "m_transitionID": 0
+        }
+      }
+    ]
   }
 ]

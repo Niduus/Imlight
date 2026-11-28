@@ -634,7 +634,8 @@ internal static class QuestGuide {
             name = name[..^"_Persona".Length];
         }
 
-        return name.ToLowerInvariant();
+        // CL_STORM_NPC01 (Vassek Shadowspite's object) and CL-STORM-NPC01_Persona (his quests) are one person.
+        return name.Replace('_', '-').ToLowerInvariant();
     }
 
     // Where each NPC stands, from the "talk to" steps of every quest: the zone named most often for them.

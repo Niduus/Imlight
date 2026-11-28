@@ -1,6 +1,6 @@
 {
   "Zone": "DragonSpire/DS_A3_Kings/DS_A3Hub_Academy",
-  "Notes": "The Fire School doorway (Forged in Fire, DS-ACAD-C01-003: Go to the Fire School, DS_School_Fire, and use the forge). The school's own doorway is the volume 'Teleport location 1' (at -3598, 3081, beside the FromFireSchool landing at -3386, 3077); SpiralDB's capture of the live game has that volume as the dragon flight, and Niduus walked into it on 2026-11-22 18:38 CT and was flown away instead of going into the school. The Exit below sends that doorway into the Fire School's Start, and the school's own exit brings you back out here. The real dragon flight to Dragon's Roost (the way into The Great Spyre for The Final Countdown) is not at that doorway (Niduus 2026-11-23 02:01 CT: 'The flying sequence doesn't happen next to Ashley'): it is the Young Battledrake on the top floor (-5751, 10119), whose use posts DS_BattleDrakeUse, and the flight comes back to FromDragonsRoost (-3109, 10120) right beside it. No trigger in the zone files answers that event (the live server flies you), so EventTeleports sends whoever uses the drake into the flight ride (DS_A3_FlightPath), which lands in Dragon's Roost. A wizard who already used the drake but is still on 'Go to The Great Spyre' (a relog, a lost flight) cannot use it again (its option is only offered for the usage step), so walking up to the drake (its speech volume, radius 1000) on that step flies them too. An extra press-X door (DS_Door_Regular_01, template 126830) stood at -3430, 3078 from 2026-11-22 17:28 CT; it stood loose in the room (Niduus 2026-11-22 22:24 CT: 'weird walls') and was taken out.",
+  "Notes": "The Fire School doorway (Forged in Fire, DS-ACAD-C01-003: Go to the Fire School, DS_School_Fire, and use the forge). The school's own doorway is the volume 'Teleport location 1' (at -3598, 3081, beside the FromFireSchool landing at -3386, 3077); SpiralDB's capture of the live game has that volume as the dragon flight, and Niduus walked into it on 2026-11-22 18:38 CT and was flown away instead of going into the school. The Exit below sends that doorway into the Fire School's Start, and the school's own exit brings you back out here. The real dragon flight to Dragon's Roost (the way into The Great Spyre for The Final Countdown) is not at that doorway (Niduus 2026-11-23 02:01 CT: 'The flying sequence doesn't happen next to Ashley'): it is the Young Battledrake on the top floor (-5751, 10119), whose use posts DS_BattleDrakeUse, and the flight comes back to FromDragonsRoost (-3109, 10120) right beside it. No trigger in the zone files answers that event (the live server flies you), so EventTeleports sends whoever uses the drake into the flight ride (DS_A3_FlightPath), which lands in Dragon's Roost. A wizard who already used the drake but is still on 'Go to The Great Spyre' (a relog, a lost flight) cannot use it again (its option is only offered for the usage step), so walking up to the drake (its speech volume, radius 1000) on that step flies them too, and so does walking up to it on 'Defeat Malistaire Drake' (Goal 3): a wizard who lost the fight or whose Dungeon Recall ran out over a restart has to fly back the same way (Ultimus, 2026-11-23 17:32-18:30 CT, swept the drake 10 times on Goal 3 and was never flown). An extra press-X door (DS_Door_Regular_01, template 126830) stood at -3430, 3078 from 2026-11-22 17:28 CT; it stood loose in the room (Niduus 2026-11-22 22:24 CT: 'weird walls') and was taken out. The drake stands in the zone files with no spawn requirements, but on live it is only there once you reach that part of the story (Niduus 2026-11-25, player report): ShowOnQuest shows it only to wizards who took The Final Countdown (DS-ACAD-C01-005, whose first step is using the drake) or finished it, so it is still there to fly back to Dragon's Roost afterwards; its flight needs that quest too.",
   "Objects": [],
   "Exit": {
     "Zone": "DragonSpire/DS_A3_Kings/Interiors/DS_School_Fire",
@@ -13,7 +13,8 @@
     {
       "Event": "DS_BattleDrakeUse",
       "Zone": "DragonSpire/DS_A3_Kings/DS_A3_FlightPath",
-      "Loc": "0,0,0,0"
+      "Loc": "0,0,0,0",
+      "WhileOnQuest": "DS-ACAD-C01-005"
     },
     {
       "Event": "Enter_DrakeSpeachVolume",
@@ -21,6 +22,12 @@
       "Loc": "0,0,0,0",
       "WhileOnQuest": "DS-ACAD-C01-005",
       "WhileOnGoal": "Goal 2"
+    }
+  ],
+  "ShowOnQuest": [
+    {
+      "Tag": "DS_Young_Battledrake instance",
+      "Quest": "DS-ACAD-C01-005"
     }
   ]
 }
