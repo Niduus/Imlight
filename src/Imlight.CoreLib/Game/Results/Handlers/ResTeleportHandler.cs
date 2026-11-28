@@ -121,12 +121,26 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                 var exitName = (context as GenericResultContext)?.TriggerName;
                 var interiorWayOut = string.IsNullOrEmpty(Result.m_destinationLoc)
                     && (context.GetZonePath() ?? "").Contains("/Interiors/", StringComparison.OrdinalIgnoreCase);
-                // The wizard's step is on another floor of this zone: there, not out (SameZoneStepSpot).
-                if (exitName is not null && interiorWayOut && !exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase) && IsForwardDungeonTrigger(exitName)
+                // The wizard's step is in another room or floor of this zone: there, not out (SameZoneStepSpot). A way on
+                // is told by its name ("(1)", "Room", ...) or by the zone turning it on only partway through (after a
+                // fight): Halls of Confusion's "Trigger" waits for Enable_Trigger, while its way out is on from the start.
+                if (exitName is not null && interiorWayOut && !exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase)
+                    && (IsForwardDungeonTrigger(exitName) || TurnedOnLater(context.GetZonePath(), exitName))
                     && SameZoneStepSpot(context, playerObj) is { } floor) {
                     Logger.Information("Teleport: trigger {0} in {1} names no destination; the wizard's step is in this zone, so it goes to {2}.",
-                        Logger.Args(exitName, context.GetZonePath(), floor));
-                    return RaidResult.MoveTo(context, floor);
+                        Logger.Args(exitName, context.GetZonePath(), floor.Name ?? floor.Spot));
+                    if (floor.Name is not null) {
+                        return RaidResult.MoveTo(context, floor.Name);
+                    }
+
+                    context.GetPlayerRef().Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                        DestinationZone = context.GetZonePath(),
+                        DestinationLocation = floor.Spot,
+                        SendToClient = true,
+                        ByZoneDoor = true,
+                        OwnerCharId = playerObj.m_characterId,
+                    });
+                    return true;
                 }
                 if (exitName is not null
                     && (exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase) || interiorWayOut)) {
@@ -170,9 +184,10 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
     /// A teleport inside an interior that names no destination, while the wizard's step is in this same zone but far from
     /// them (another floor): the zone's named spot nearest that step. Mongu Refuge's "Teleport location (1)" is the way up
     /// to Room02 for MR-RUBA-MAIN-003, but with no destination it counted as the way out and put the wizard outside
-    /// (2026-11-28). Null when no step of the wizard's quests is here, or the nearest spot is where they stand.
+    /// (2026-11-28). When no named spot is near the step (Halls of Confusion has only "Start", MR-RUBA-MAIN-011), the
+    /// step's own spot. Null when no step of the wizard's quests is here, or the spot is where they stand.
     /// </summary>
-    private static string SameZoneStepSpot(IResultContext context, WizClientObject playerObj) {
+    private static (string Name, string Spot)? SameZoneStepSpot(IResultContext context, WizClientObject playerObj) {
         try {
             var zone = context.GetZonePath();
             if (string.IsNullOrEmpty(zone) || context.GetZoneActor() is not { } zoneActor || context.GetPlayerRef() is not { } playerRef) {
@@ -186,7 +201,7 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
             }
 
             var here = playerObj.m_location;
-            (float X, float Y)? target = null;
+            (float X, float Y, float Z)? target = null;
             foreach (var instance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
                 var quest = QuestTemplateCollection.GetQuestByName(instance.QuestName);
                 foreach (var progress in instance.GoalProgress ?? []) {
@@ -199,7 +214,7 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                         var far = ((spot.X - here.X) * (spot.X - here.X)) + ((spot.Y - here.Y) * (spot.Y - here.Y));
                         if (string.Equals(spotZone, zone, StringComparison.OrdinalIgnoreCase)
                             && (MathF.Abs(spot.X) >= 1f || MathF.Abs(spot.Y) >= 1f) && far > 1000f * 1000f) {
-                            target = (spot.X, spot.Y);
+                            target = (spot.X, spot.Y, spot.Z);
                         }
                     }
                 }
@@ -215,18 +230,57 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                 .Where(l => l is not null && !string.IsNullOrEmpty(l.m_locName))
                 .OrderBy(l => ((l.m_location.X - t.X) * (l.m_location.X - t.X)) + ((l.m_location.Y - t.Y) * (l.m_location.Y - t.Y)))
                 .FirstOrDefault();
-            if (best is null) {
-                return null;
+            if (best is not null) {
+                var fromStep = ((best.m_location.X - t.X) * (best.m_location.X - t.X)) + ((best.m_location.Y - t.Y) * (best.m_location.Y - t.Y));
+                var fromHere = ((best.m_location.X - here.X) * (best.m_location.X - here.X)) + ((best.m_location.Y - here.Y) * (best.m_location.Y - here.Y));
+                if (fromStep <= 1000f * 1000f && fromHere > 600f * 600f) {
+                    return ((string) best.m_locName, null);
+                }
             }
 
-            var fromHere = ((best.m_location.X - here.X) * (best.m_location.X - here.X)) + ((best.m_location.Y - here.Y) * (best.m_location.Y - here.Y));
-            return fromHere > 600f * 600f ? (string) best.m_locName : null;
+            // No named spot by the step: the step's own spot (the landing check moves the wizard off any wall there).
+            return (null, string.Join(",", new[] { t.X, t.Y, t.Z, 0f }.Select(v => v.ToString(CultureInfo.InvariantCulture))));
         }
         catch (Exception e) {
             Logger.Debug("Teleport: no step spot in this zone: {0}", Logger.Args(e.Message));
             return null;
         }
     }
+    // Zone path -> its triggers that are off until an event turns them on (not on from "StartZone").
+    private static readonly ConcurrentDictionary<string, HashSet<string>> s_turnedOnLater = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Whether the zone's file has this trigger off at first, turned on only by a later event (a won fight's
+    /// Enable_Trigger). A dungeon's way out works from the start; a way on to the next room opens partway through.
+    /// </summary>
+    private static bool TurnedOnLater(string zone, string triggerName) {
+        if (string.IsNullOrEmpty(zone) || string.IsNullOrEmpty(triggerName)) {
+            return false;
+        }
+
+        var later = s_turnedOnLater.GetOrAdd(zone, z => {
+            var names = new HashSet<string>(StringComparer.Ordinal);
+            try {
+                if (ResourceManager.TryLoadArchive(z, out var wad) && wad.OpenFile("triggers.xml")?.ToArray() is { } bytes
+                    && new BindSerializer().Deserialize<WizZoneTriggers>(bytes, 1, out var triggers) && triggers?.m_triggers is not null) {
+                    foreach (var trigger in triggers.m_triggers.Where(t => t is not null)) {
+                        var on = trigger.m_activateEvents?.Select(e => e.ToString()).Where(e => !string.IsNullOrEmpty(e)).ToList() ?? [];
+                        if (on.Count > 0 && !on.Contains("StartZone", StringComparer.OrdinalIgnoreCase)) {
+                            names.Add((string) trigger.m_triggerName);
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Logger.Debug("Teleport: could not read the triggers of {0}: {1}", Logger.Args(z, e.Message));
+            }
+
+            return names;
+        });
+
+        return later.Contains(triggerName);
+    }
+
     private sealed record DungeonRoomTarget(string Zone, string Location);
 
     private static readonly ConcurrentDictionary<(ulong CharacterId, string Zone, string Trigger), DateTime> s_forwardEvents = new();

@@ -2410,8 +2410,11 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
     /// </summary>
     private void RideUsedTransport(QuestTemplate quest, GoalTemplate used) {
         try {
+            // A transport by its name ("TeleportTo...") or by the step's quest button picture: Ali Baboon's magic carpet in
+            // The Roost (MR-AGGR-MAIN-015) is MR-MagicCarpet, and its step shows Art_Quest_CarpetTeleporter (2026-11-28).
             if (quest?.m_goals is not { Count: > 0 } goals || used is not ScavengeGoalTemplate scavenge
-                || !(scavenge.m_clientTags ?? []).Any(t => ((string) t ?? "").Contains("TeleportTo", StringComparison.OrdinalIgnoreCase))) {
+                || !((scavenge.m_clientTags ?? []).Any(t => ((string) t ?? "").Contains("TeleportTo", StringComparison.OrdinalIgnoreCase))
+                     || ((string) scavenge.m_displayImage1 ?? "").Contains("Teleport", StringComparison.OrdinalIgnoreCase))) {
                 return;
             }
 
