@@ -1,0 +1,13 @@
+{
+  "Name": "AH-PRIM-MAIN-011",
+  "Description": "Ahmarra quest Bug Island Bugaloo (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 990,
+  "MaxGold": 990,
+  "ExperienceAmount": 124600,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1111,6 +1111,16 @@ internal sealed class SetupSteps : IDisposable {
     /// </summary>
     private static void InstallSelf(string target) {
         var self = Environment.ProcessPath;
+        // A server setup or setup-only build must never replace Ahziael. InstallSelf belongs to
+        // ImlightManager/Imlight.exe; ImlightSetup has no manager window and must remain a setup
+        // program. A setup-only --source-folder build copied over Imlight.exe previously, leaving
+        // a launcher-sized executable that exits and breaks every desktop/start-menu shortcut.
+        var editionAssembly = typeof(SetupSteps).Assembly.GetName().Name;
+        if (!string.Equals(editionAssembly, "ImlightManager", StringComparison.OrdinalIgnoreCase)) {
+            SetupLog.Detail($"The setup edition '{editionAssembly}' was not installed as the Ahziael executable.");
+            return;
+        }
+
         var aside = target + ".old";
         foreach (var old in Directory.EnumerateFiles(Path.GetDirectoryName(target)!, Path.GetFileName(target) + ".old*")) {
             try {

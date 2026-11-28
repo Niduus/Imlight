@@ -53,6 +53,8 @@ using Imlight.Common;
 using Imlight.CoreLib.Game.Zone.Supervisors;
 using Imlight.CoreLib.Shared.Networking;
 using Imlight.CoreLib.Shared.Packets;
+using Imlight.CoreLib.Game.Services;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.WizardData.Models.Player;
 
@@ -137,9 +139,305 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
     /// </summary>
     public IReadOnlyDictionary<string, Trigger> TriggersByName { get; set; } = new Dictionary<string, Trigger>();
 
+    // Spawned trigger objects, by trigger name and zone tag, so a volume can address that object. Every zone object's actor
+    // notes itself here from its own thread while the zone loads, so a plain dictionary was corrupted ("Operations that
+    // change non-concurrent collections must have exclusive access", ZoneEntity.ReceiveObjectLoadBegin, 2026-11-26).
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, IActorRef> _namedActors =
+        new(StringComparer.OrdinalIgnoreCase);
+
+    internal void NoteActor(string name, IActorRef actor) {
+        if (string.IsNullOrEmpty(name) || actor is null) {
+            return;
+        }
+
+        _namedActors[name] = actor;
+        const string instanceSuffix = " instance";
+        if (name.EndsWith(instanceSuffix, StringComparison.OrdinalIgnoreCase)) {
+            _namedActors[name[..^instanceSuffix.Length]] = actor;
+        }
+    }
+
+    // Set once by the trigger supervisor and read by the zone and its ladders from their own threads: a whole new list is
+    // swapped in, never one filled in place.
+    private volatile Imlight.CoreLib.Game.Zone.Components.TransportSpot[] _transportSpots = [];
+    private readonly Dictionary<IActorRef, string> _transportPrompt = [];
+    private readonly Dictionary<IActorRef, long> _transportPromptAt = [];
+    // Written by the zone, read by a ladder's own actor (TryPairedTransportEnd).
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Numerics.Vector3> _transportApproach =
+        new(StringComparer.OrdinalIgnoreCase);
+
+    // How far past the other ladder end's mesh to land when nobody has stood there yet (away from this end, off the cliff).
+    private const float TRANSPORT_LANDING_STEP = 150f;
+
+    internal void SetTransportSpots(IReadOnlyList<Imlight.CoreLib.Game.Zone.Components.TransportSpot> spots) {
+        _transportSpots = [.. spots ?? []];
+    }
+
+    internal void OfferTransportAt(CoreObject player, IActorRef playerActor) {
+        if (playerActor is null) {
+            return;
+        }
+
+        if (player is null) {
+            if (_transportPrompt.Remove(playerActor, out var leaving)) {
+                _transportPromptAt.Remove(playerActor);
+                ActorFor(leaving)?.Tell(new Imlight.CoreLib.Game.Zone.Components.TransportVolumePrompt {
+                    Show = false,
+                    PlayerActor = playerActor,
+                    TriggerName = leaving,
+                });
+            }
+
+            return;
+        }
+
+        var x = player.m_location.X;
+        var y = player.m_location.Y;
+        Imlight.CoreLib.Game.Zone.Components.TransportSpot best = null;
+        var bestDistance = float.MaxValue;
+        foreach (var spot in _transportSpots) {
+            var dx = x - spot.X;
+            var dy = y - spot.Y;
+            var inside = spot.Length > 0f && spot.Width > 0f && spot.RadiusSq <= 0f
+                ? InsideSpotBox(dx, dy, spot)
+                : (dx * dx) + (dy * dy) <= spot.RadiusSq;
+            if (inside && spot.UsesHeight && MathF.Abs(player.m_location.Z - spot.Z) > TRANSPORT_END_HEIGHT) {
+                inside = false;
+            }
+            var distance = (dx * dx) + (dy * dy);
+            if (inside && distance < bestDistance) {
+                best = spot;
+                bestDistance = distance;
+            }
+        }
+
+        _transportPrompt.TryGetValue(playerActor, out var current);
+        var same = string.Equals(current, best?.TriggerName, StringComparison.OrdinalIgnoreCase);
+        var now = Environment.TickCount64;
+        if (same && best is not null
+            && _transportPromptAt.TryGetValue(playerActor, out var sentAt)
+            && now - sentAt < 3000) {
+            return;
+        }
+
+        if (same && best is not null) {
+            var again = ActorFor(best.TriggerName, best.ObjectTag);
+            again?.Tell(new Imlight.CoreLib.Game.Zone.Components.TransportVolumePrompt {
+                Show = true,
+                PlayerActor = playerActor,
+                TriggerName = best.TriggerName,
+            });
+            _transportPromptAt[playerActor] = now;
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(current)) {
+            ActorFor(current)?.Tell(new Imlight.CoreLib.Game.Zone.Components.TransportVolumePrompt {
+                Show = false,
+                PlayerActor = playerActor,
+                TriggerName = current,
+            });
+            _transportPrompt.Remove(playerActor);
+            _transportPromptAt.Remove(playerActor);
+        }
+
+        if (best is null) {
+            return;
+        }
+
+        // Where a wizard really stands at this ladder end: the landing spot for anyone coming from the other end.
+        // Only on that end's own level: the prompt check looks at x, y alone, and the ends sit over each other.
+        if (MathF.Abs(player.m_location.Z - best.Z) < 300f) {
+            _transportApproach[StripTransportSpotInstance(best.ObjectTag ?? best.TriggerName)] =
+                new System.Numerics.Vector3(player.m_location.X, player.m_location.Y, player.m_location.Z);
+        }
+
+        var target = ActorFor(best.TriggerName, best.ObjectTag);
+        if (target is null) {
+            Logger.Information("Transport spot {0} ({1}) has no object yet.",
+                Logger.Args(best.TriggerName, best.VolumeName));
+            return;
+        }
+
+        target.Tell(new Imlight.CoreLib.Game.Zone.Components.TransportVolumePrompt {
+            Show = true,
+            PlayerActor = playerActor,
+            TriggerName = best.TriggerName,
+        });
+        _transportPrompt[playerActor] = best.TriggerName;
+        _transportPromptAt[playerActor] = Environment.TickCount64;
+        Logger.Information("Transport prompt {0} for player at {1},{2}.",
+            Logger.Args(best.ObjectTag ?? best.TriggerName, x, y));
+    }
+
+    // How far above or below a ladder end a wizard may stand and still be at it, and how far apart (across) and how far
+    // apart in height the two ends of one ladder are at most and at least.
+    private const float TRANSPORT_END_HEIGHT = 250f;
+    private const float TRANSPORT_PAIR_ACROSS = 900f;
+    private const float TRANSPORT_PAIR_RISE = 150f;
+
+    /// <summary>
+    /// The other end of the ladder the wizard at <paramref name="at"/> stands at, when its ends are not named as a pair
+    /// (The Hive: KR-Hive-StartLadder-1 and KR-Hive-Startbottomladder, HOMToTopladder and HOMToBottomladder): the nearest
+    /// other ladder end across that is well above or below this one. One ladder's ends stand nearly over each other.
+    /// </summary>
+    internal bool TryNearestTransportEnd(System.Numerics.Vector3 at, out string location) {
+        location = null;
+        var ends = _transportSpots.Where(spot => spot.UsesHeight).ToArray();
+        var self = ends
+            .Where(spot => MathF.Abs(at.Z - spot.Z) <= TRANSPORT_END_HEIGHT
+                           && Square(at.X - spot.X) + Square(at.Y - spot.Y) <= spot.RadiusSq)
+            .OrderBy(spot => Square(at.X - spot.X) + Square(at.Y - spot.Y))
+            .FirstOrDefault();
+        if (self is null) {
+            return false;
+        }
+
+        var partner = ends
+            .Where(spot => !ReferenceEquals(spot, self) && MathF.Abs(spot.Z - self.Z) >= TRANSPORT_PAIR_RISE
+                           && Square(spot.X - self.X) + Square(spot.Y - self.Y) <= Square(TRANSPORT_PAIR_ACROSS))
+            .OrderBy(spot => Square(spot.X - self.X) + Square(spot.Y - self.Y))
+            .FirstOrDefault();
+        if (partner is null) {
+            return false;
+        }
+
+        // Land where wizards stand at that end, else a step out from its mesh (away from this end).
+        var (x, y, z) = (partner.X, partner.Y, partner.Z);
+        var partnerName = StripTransportSpotInstance(partner.ObjectTag ?? partner.TriggerName);
+        if (_transportApproach.TryGetValue(partnerName, out var stood)
+            && Square(stood.X - partner.X) + Square(stood.Y - partner.Y) <= partner.RadiusSq
+            && MathF.Abs(stood.Z - partner.Z) <= TRANSPORT_END_HEIGHT) {
+            (x, y, z) = (stood.X, stood.Y, stood.Z);
+        }
+        else {
+            var (dx, dy) = (partner.X - self.X, partner.Y - self.Y);
+            var length = MathF.Sqrt((dx * dx) + (dy * dy));
+            if (length > 1f) {
+                x += dx / length * TRANSPORT_LANDING_STEP;
+                y += dy / length * TRANSPORT_LANDING_STEP;
+            }
+        }
+
+        location = string.Join(",", new[] { x, y, z, 0f }
+            .Select(value => value.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        Logger.Information("Ladder end {0} in {1}: its other end is {2} (nearest end {3:0} across, {4:0} {5}).",
+            Logger.Args(self.ObjectTag, ZonePath, partner.ObjectTag, MathF.Sqrt(Square(partner.X - self.X) + Square(partner.Y - self.Y)),
+                MathF.Abs(partner.Z - self.Z), partner.Z > self.Z ? "up" : "down"));
+
+        return true;
+    }
+
+    private static float Square(float value) => value * value;
+
+    internal bool TryPairedTransportEnd(string objectTag, out string location) {
+        location = null;
+        var name = StripTransportSpotInstance(objectTag);
+        var partnerName = PairedTransportName(name);
+        if (string.IsNullOrEmpty(partnerName)) {
+            return false;
+        }
+
+        var partner = _transportSpots.FirstOrDefault(spot =>
+            string.Equals(StripTransportSpotInstance(spot.ObjectTag), partnerName, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(StripTransportSpotInstance(spot.TriggerName), partnerName, StringComparison.OrdinalIgnoreCase));
+        if (partner is null) {
+            return false;
+        }
+
+        // The ladder end's own mesh sits in the cliff (Tyrian Gorge LadderE 2026-11-25: the landing check found it inside
+        // a wall and moved the wizard back up top). Land where wizards stand at that end, else a step out from its mesh.
+        var (x, y, z) = (partner.X, partner.Y, partner.Z);
+        if (_transportApproach.TryGetValue(partnerName, out var stood)) {
+            (x, y, z) = (stood.X, stood.Y, stood.Z);
+        }
+        else {
+            var self = _transportSpots.FirstOrDefault(spot =>
+                string.Equals(StripTransportSpotInstance(spot.ObjectTag), name, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(StripTransportSpotInstance(spot.TriggerName), name, StringComparison.OrdinalIgnoreCase));
+            if (self is not null) {
+                var (dx, dy) = (partner.X - self.X, partner.Y - self.Y);
+                var length = MathF.Sqrt((dx * dx) + (dy * dy));
+                if (length > 1f) {
+                    x += dx / length * TRANSPORT_LANDING_STEP;
+                    y += dy / length * TRANSPORT_LANDING_STEP;
+                }
+            }
+        }
+
+        location = string.Join(",", new[] { x, y, z, 0f }
+            .Select(value => value.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        return true;
+    }
+
+    private static string StripTransportSpotInstance(string name) {
+        const string suffix = " instance";
+        return !string.IsNullOrEmpty(name) && name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)
+            ? name[..^suffix.Length]
+            : name;
+    }
+
+    private static string PairedTransportName(string name) {
+        name = StripTransportSpotInstance(name);
+        if (string.IsNullOrEmpty(name) || name.Length < 2) {
+            return null;
+        }
+
+        var prefix = name[..^1];
+        var suffix = name[^1];
+        if (char.IsLetter(suffix)) {
+            var upper = char.ToUpperInvariant(suffix);
+            char partner = (upper - 'A') % 2 == 0
+                ? (char) (upper + 1)
+                : (char) (upper - 1);
+            if (char.IsLower(suffix)) {
+                partner = char.ToLowerInvariant(partner);
+            }
+            return prefix + partner;
+        }
+
+        if (char.IsDigit(suffix)) {
+            var digit = suffix - '0';
+            var partner = (char) ('0' + (digit % 2 == 1 ? digit + 1 : digit - 1));
+            return prefix + partner;
+        }
+
+        return null;
+    }
+
+    private static bool InsideSpotBox(float dx, float dy, Imlight.CoreLib.Game.Zone.Components.TransportSpot spot) {
+        var yaw = spot.Yaw;
+        var localX = (dx * MathF.Cos(yaw)) + (dy * MathF.Sin(yaw));
+        var localY = (dy * MathF.Cos(yaw)) - (dx * MathF.Sin(yaw));
+        return MathF.Abs(localX) <= spot.Length / 2f && MathF.Abs(localY) <= spot.Width / 2f;
+    }
+
+    internal IActorRef ActorFor(params string[] names) {
+        foreach (var name in names) {
+            if (string.IsNullOrEmpty(name)) {
+                continue;
+            }
+
+            if (_namedActors.TryGetValue(name, out var actor)) {
+                return actor;
+            }
+
+            const string instanceSuffix = " instance";
+            if (name.EndsWith(instanceSuffix, StringComparison.OrdinalIgnoreCase)
+                && _namedActors.TryGetValue(name[..^instanceSuffix.Length], out actor)) {
+                return actor;
+            }
+        }
+
+        return null;
+    }
+
     public ITimerScheduler Timers { get; set; }
 
     private readonly uint _dynamicZoneId;
+
+    /// <summary>The zone's dynamic id, as the game is sent it (it builds the zone file's objects with ids made from it).</summary>
+    internal uint DynamicZoneId => _dynamicZoneId;
     private readonly Lock _mobileIdLock = new();
     private readonly List<IActorRef> _supervisors = [];
     private readonly IActorRef _sigilSupervisor;
@@ -282,6 +580,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         _heldForOtherRooms = false;
         InformZoneSupervisors(message.PlayerActor, message);
         RestoreRememberedSpawns(message.Wizard);
+        OfferTransportAt(message.PlayerObject, message.PlayerActor);
         
         // Send response to confirm player was added
         var response = new ZONE_102_PROTOCOL.MSG_ADDPLAYERRSP {
@@ -335,6 +634,8 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
         }
 
         // The leaver is counted until the supervisors are told: the Players target is gated on a non-empty set.
+        OfferTransportAt(null, message.PlayerActor);
+        ForgetClientBuiltRemovals(message.PlayerActor);
         InformZoneSupervisors(message.PlayerActor, message);
         NoteBattlegroundPlayerLeft(message.PlayerActor);
         _players.Remove(message.PlayerActor);
@@ -361,6 +662,9 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
 
         _pendingPlayerMoves.Add(message);
         NoteBattlegroundPlayerMoved(message);
+        QuestSpotGoals.OnPlayerMoved(ZonePath, message);
+        OfferTransportAt(message.PlayerObject, message.PlayerActor);
+        RemoveClientBuiltObjects(message);
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_CREATUREMOVE))]
@@ -771,6 +1075,7 @@ public partial class Zone : ReceiveProtocolDispatcher, IWithTimers {
                 _heldForOtherRooms = false;
                 InformZoneSupervisors(playerActor, addPlayer);
                 RestoreRememberedSpawns(addPlayer.Wizard);
+                OfferTransportAt(addPlayer.PlayerObject, playerActor);
                 
                 // Send response to confirm player was added
                 var response = new ZONE_102_PROTOCOL.MSG_ADDPLAYERRSP {

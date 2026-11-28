@@ -1,0 +1,13 @@
+{
+  "Name": "AH-FLOOD-MAIN-001",
+  "Description": "Ahmarra quest Theodolite Up My Life (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1440,
+  "MaxGold": 1440,
+  "ExperienceAmount": 180670,
+  "TrainingPoints": 0,
+  "Items": []
+}

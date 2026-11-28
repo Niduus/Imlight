@@ -282,6 +282,7 @@ internal static class QuestOptions {
         s_changes = kept;
         SpiralDB.UseQuestTemplates(quests);
         Interlocked.Increment(ref s_version);
+        Imlight.CoreLib.Game.Tools.QuestReports.QuestsLoaded();
         if (kept.Count > 0 || changes.Count > 0) {
             Logger.Information("Quest changes in use: {0} quests changed, {1} new.",
                 Logger.Args(kept.Count(p => p.Value.CopyOf.Length == 0), kept.Count(p => p.Value.CopyOf.Length > 0)));

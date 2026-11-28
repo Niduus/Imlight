@@ -1,0 +1,13 @@
+{
+  "Name": "MB-INST1-C01-001",
+  "Description": "MB-INST1-C01-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 166,
+  "MaxGold": 166,
+  "ExperienceAmount": 1565,
+  "TrainingPoints": 0,
+  "Items": []
+}

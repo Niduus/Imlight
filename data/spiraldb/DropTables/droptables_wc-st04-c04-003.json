@@ -1,0 +1,20 @@
+{
+  "Name": "WC-ST04-C04-003",
+  "Description": "WizardCity quest Defeat the Kraken (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 25,
+  "MaxGold": 25,
+  "ExperienceAmount": 250,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160257",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

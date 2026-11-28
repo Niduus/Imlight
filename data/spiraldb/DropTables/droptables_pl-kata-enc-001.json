@@ -1,0 +1,13 @@
+{
+  "Name": "PL-KATA-ENC-001",
+  "Description": "PL-KATA-ENC-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 4760,
+  "MaxGold": 4760,
+  "ExperienceAmount": 1070760,
+  "TrainingPoints": 0,
+  "Items": []
+}

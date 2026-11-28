@@ -1,0 +1,13 @@
+{
+  "Name": "KR-RACH-C08-001",
+  "Description": "KR-RACH-C08-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1520,
+  "MaxGold": 1520,
+  "ExperienceAmount": 156900,
+  "TrainingPoints": 0,
+  "Items": []
+}

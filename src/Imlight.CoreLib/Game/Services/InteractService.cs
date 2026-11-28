@@ -96,6 +96,10 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
     private void ReceiveInteractOption(GAME_5_PROTOCOL.MSG_INTERACTOPTION message)
         => HandleInteraction(message, msg => msg.ObjectID, msg => "Interact", msg => (uint) msg.OptionIndex);
 
+    // Objects pressed that the zone did not find, with the time of the first such press (see HandleInteraction).
+    private readonly System.Collections.Generic.Dictionary<ulong, DateTime> _unknownPresses = [];
+    private static readonly TimeSpan UNKNOWN_AGAIN_AFTER = TimeSpan.FromSeconds(5);
+
     private void HandleInteraction<T>(T message, Func<T, ulong> getObjectId, Func<T, string> getServiceName, Func<T, uint> getServiceIndex,
                                       uint requestedSigilMode = 0) {
         var wizard = GetActiveWizard();
@@ -119,7 +123,17 @@ internal class InteractService(SessionActor sessionActor) : MessageService(sessi
                 return;
             }
 
-            if (unknownId <= 2 || !TryGetOnlinePlayer(unknownId - 2, out _)) {
+            // A zone that is busy (still starting up after a restart) answers too late, which looks the same as no object:
+            // the Brazier of Dawn (PL-FROZ-MAIN-005) was taken off the screen that way and could not be used (2026-11-28).
+            // So only a second press on the same object, a few seconds later, that still finds nothing removes it.
+            var now = DateTime.UtcNow;
+            var pressedBefore = _unknownPresses.TryGetValue(unknownId, out var first) && now - first >= UNKNOWN_AGAIN_AFTER;
+            if (!_unknownPresses.ContainsKey(unknownId)) {
+                _unknownPresses[unknownId] = now;
+            }
+
+            if (pressedBefore && (unknownId <= 2 || !TryGetOnlinePlayer(unknownId - 2, out _))) {
+                _unknownPresses.Remove(unknownId);
                 SendToSocket(new GAME_5_PROTOCOL.MSG_REMOVEOBJECT { GameObjectID = unknownId });
             }
 

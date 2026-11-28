@@ -1,0 +1,13 @@
+{
+  "Name": "MS-SHANG-C03-001",
+  "Description": "MS-SHANG-C03-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 365,
+  "MaxGold": 365,
+  "ExperienceAmount": 4230,
+  "TrainingPoints": 0,
+  "Items": []
+}

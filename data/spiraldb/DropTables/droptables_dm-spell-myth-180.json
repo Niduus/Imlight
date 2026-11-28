@@ -1,0 +1,13 @@
+{
+  "Name": "DM-SPELL-MYTH-180",
+  "Description": "Darkmoor quest The Emperor Strikes Back (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2280,
+  "MaxGold": 2280,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

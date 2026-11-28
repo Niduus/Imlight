@@ -1,0 +1,13 @@
+{
+  "Name": "PA-HousingGauntlet-C01-060",
+  "Description": "PA-HousingGauntlet-C01-060 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2250,
+  "MaxGold": 2250,
+  "ExperienceAmount": 123490,
+  "TrainingPoints": 0,
+  "Items": []
+}

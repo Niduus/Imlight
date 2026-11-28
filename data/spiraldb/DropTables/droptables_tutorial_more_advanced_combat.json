@@ -1,0 +1,20 @@
+{
+  "Name": "Tutorial_More_Advanced_Combat",
+  "Description": "WizardCity quest Arrow to the Knee (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 285,
+  "MaxGold": 285,
+  "ExperienceAmount": 128,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "316093",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

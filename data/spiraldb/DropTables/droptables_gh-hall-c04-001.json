@@ -1,0 +1,13 @@
+{
+  "Name": "GH-HALL-C04-001",
+  "Description": "GH-HALL-C04-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2550,
+  "MaxGold": 2550,
+  "ExperienceAmount": 131110,
+  "TrainingPoints": 0,
+  "Items": []
+}

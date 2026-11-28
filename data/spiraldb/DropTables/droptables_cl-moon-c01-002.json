@@ -1,0 +1,13 @@
+{
+  "Name": "CL-MOON-C01-002",
+  "Description": "CL-MOON-C01-002 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 675,
+  "MaxGold": 675,
+  "ExperienceAmount": 17420,
+  "TrainingPoints": 0,
+  "Items": []
+}

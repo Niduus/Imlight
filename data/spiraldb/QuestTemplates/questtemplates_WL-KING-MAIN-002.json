@@ -1,0 +1,219 @@
+{
+  "m_questName": "WL-KING-MAIN-002",
+  "m_questNameID": 0,
+  "m_questTitle": "Deathly Dependents",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsKillCollect"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "Divining Rods",
+        "m_descriptor2": "Kangaroo Bushwhacker",
+        "m_count": 3,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_Kangaroos_Drover_D_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Wallaru/WL_Z03_Kingsland",
+      "m_locationName": "Kingsland",
+      "m_goalName": "1_WizardQuestGoalsKillCollect",
+      "m_goalTitle": "WizardQuestGoals_KillCollect",
+      "m_goalType": "GOAL_TYPE_BOUNTYCOLLECT",
+      "m_npcAdjectives": [],
+      "m_bountyTotal": 3,
+      "m_bountyType": "BT_MOB_KILL"
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "WL-KING-MAIN-002"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "WL-KING-MAIN-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsKillCollect"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WL-KING-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Spiders made threats that'll haunt me forever! I felt very unsafe! It's not what I signed up for when I, uh, answered my spiritual calling.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_ShamanF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Kanga-guru_WL-KING_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1608155,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WL-KING-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yes, well it's in the past now and we are in the present. Let's get to the reason we've sought you out, oh wise one. My friend seeks the Dreaming.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Gator_Hunter_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Krokodile_Dundara_WL-KING_037.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1608154,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WL-KING-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Right! Of course. Many seek the Dreaming. It clarifies your goals and brings your hopes into being. It is profound inspiration in the purest form.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_ShamanF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Kanga-guru_WL-KING_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1608155,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WL-KING-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Dream Waters are difficult to find. My sacred Divining Rods could lead the way, but they were stolen by the Bushwhackers that roam these lands.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_ShamanF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Kanga-guru_WL-KING_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1608155,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WL-KING-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Now that sounds like an adventure, eh, mate? I know you can do it. The hero always gets the adventure they're ready for. Go find those Divining Rods!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Gator_Hunter_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Krokodile_Dundara_WL-KING_038.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1608154,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "WL-KING-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "My heart is lightened by the return of these sacred Divining Rods, vital tools I need to commune with the spirit energies of the ethos.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_ShamanF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Kanga-guru_WL-KING_007.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1608155,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

@@ -1,0 +1,390 @@
+{
+  "m_questName": "LM-HEAP-MAIN-008",
+  "m_questNameID": 0,
+  "m_questTitle": "Charity for Clarity",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000058"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 17,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Wildland Cherries",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Quest_LM_Cherries.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z01_WildLands",
+      "m_locationName": "Wildlands",
+      "m_goalName": "1_WizardQuestGoals00000058",
+      "m_goalTitle": "WizardQuestGoals_00000058",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Lemuria/LM_Z01_WildLands",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-HEAP-MAIN-008"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-HEAP-MAIN-007",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000058"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "What would that solve? It doesn't fix the desperation that made them what they are. We're not dealing with monsters here, Wizard.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_021.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And yet they chose their path. They elected to be harmful. They weren't mind-controlled into it.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-HEAP_159.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524741,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "People are responsible for the choices they make and the resulting consequences, but you can't dismiss the environment that creates those choices.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_022.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Just look at this place! Everyone here is scared, cold, hungry. Perhaps you need to see that for yourself. Try helping them, not fighting them.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_023.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Gather Fossa Fur to keep them warm and Wildland Cherries to keep them fed. Then maybe I can trust you to help with the Golden Lion.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_024.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I ain't doin' nothin'. Oh, this is for me? Why? Is it poison? You working for Doctor Poisson? Lousy fishman.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cow_GangsterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Renee_Moosso_LM-HEAP_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524757,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If you say so. Look, thanks. Boss ain't exactly been taking care of us since she got locked up. This really takes the edge off.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cow_GangsterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Renee_Moosso_LM-HEAP_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524757,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hey, you the one what made the boss run off blubbering? Good. Guy's a real hard case.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Paul_Cudd_LM-HEAP_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524758,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But I got mouths to feed, you know. And each mouth has four stomachs to go with it. So thanks for this.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Paul_Cudd_LM-HEAP_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524758,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hey, I think we fought in the jail! You ain't here to do it again, are you? Once was enough for me. But work's work. Let's-",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tom_Holstein_LM-HEAP_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524759,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Blankets and fruit, eh? You're a weird one. Most guys here would just whip a Bloodbat at me. But alright.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tom_Holstein_LM-HEAP_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524759,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Mmahaha! Hahaha!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_025.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And so the stranger sees the truth of Heap. Behind the monsters' masks are people, just trying to survive.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_026.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Is... she narrating? That's weird. Boss hates narrators, calls them 'vestigial in a visual medium.' Me, I ain't so myopic.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tom_Holstein_LM-HEAP_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524759,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "At last the Shadoe may have an ally in her campaign, not of crimefighting, but of crime rehabilitation.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_027.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hahahahahahahaha!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-HEAP_028.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524754,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

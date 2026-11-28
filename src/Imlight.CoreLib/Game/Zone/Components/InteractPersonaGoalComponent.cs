@@ -41,9 +41,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.MessageLayer.Generated;
+using Imcodec.Math;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
 using Imlight.CoreLib.Game.WizBang;
+using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Zone.Core;
 using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Networking;
@@ -163,6 +165,20 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         var personaGoalComponent = entity.GetComponentOfType<InteractPersonaGoalComponent>();
 
         return personaGoalComponent != null && personaGoalComponent.GetServiceOptions(wizard).Any();
+    }
+
+    // Only an active talk goal for this persona in its destination zone can override a hide.
+    internal static bool IsActiveTargetInZone(ZoneEntity entity, Wizard wizard) {
+        var component = entity.GetComponentOfType<InteractPersonaGoalComponent>();
+        if (component is null || wizard is null) {
+            return false;
+        }
+
+        if (component._goalsVersion != Imlight.CoreLib.Game.Quests.QuestOptions.Version) {
+            component.CachePersonaGoals();
+        }
+
+        return component.FindActivePersonaGoal(wizard, exactTargetInZone: true).HasValue;
     }
 
     public IEnumerable<ServiceOptionBase> GetServiceOptions(Wizard wizard) {
@@ -355,7 +371,7 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         return quest is not null && quest.IsGoalActive(state.ActiveGoal.m_goalName);
     }
 
-    private (PersonaGoalTemplate Goal, ulong QuestId, ulong GoalId)? FindActivePersonaGoal(Wizard wizard) {
+    private (PersonaGoalTemplate Goal, ulong QuestId, ulong GoalId)? FindActivePersonaGoal(Wizard wizard, bool exactTargetInZone = false) {
         // Find any of the player's current quests that have cached persona goals for this NPC.
         var relevantQuests = wizard.QuestBehavior.CurrentQuestInstances
             .Where(q => _personaGoalsByQuest.ContainsKey(q.QuestName))
@@ -368,6 +384,13 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
             }
 
             foreach (var goal in questPersonaGoals) {
+                if (exactTargetInZone && (!IsPersonaOf(goal.m_personaName, _npcName)
+                    || string.IsNullOrEmpty(goal.m_destinationZone)
+                    || (!string.Equals(goal.m_destinationZone, Entity.Zone?.ZonePath, StringComparison.OrdinalIgnoreCase)
+                        && !string.Equals(goal.m_destinationZone, Entity.Zone?.ZoneData?.m_zoneName, StringComparison.OrdinalIgnoreCase)))) {
+                    continue;
+                }
+
                 var gInstance = quest.GoalProgress.FirstOrDefault(g => g.GoalName == goal.m_goalName);
                 if (gInstance is null || !quest.IsGoalActive(goal.m_goalName)) {
                     continue;

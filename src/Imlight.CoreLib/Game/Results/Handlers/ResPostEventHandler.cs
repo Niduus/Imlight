@@ -24,7 +24,26 @@ namespace Imlight.CoreLib.Game.Results.Handlers;
 
 internal sealed class ResPostEventHandler : BaseResultHandler<ResPostEvent> {
 
+    // A quest built from the game's own files (tools/game-quests) writes the game's ResAddEncounter this way: the server's
+    // type for it has no field for the encounter's name.
+    internal const string START_ENCOUNTER_PREFIX = "ImlightStartEncounter:";
+
     public override bool Execute(IResultContext context) {
+        string eventName = Result?.m_eventName;
+        if (eventName is not null && eventName.StartsWith(START_ENCOUNTER_PREFIX, System.StringComparison.Ordinal)) {
+            var playerRef = context.GetPlayerRef();
+            if (playerRef is null) {
+                return false;
+            }
+
+            playerRef.Tell(new CHARACTER_103_PROTOCOL.MSG_QUESTCOMMAND {
+                Action = "encounter",
+                QuestName = eventName[START_ENCOUNTER_PREFIX.Length..],
+            }, ActorRefs.NoSender);
+
+            return true;
+        }
+
         var zoneActor = context.GetZoneActor();
         if (zoneActor == null) {
             return false;

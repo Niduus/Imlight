@@ -1,0 +1,499 @@
+{
+  "m_questName": "LM-HEAP-MAIN-003",
+  "m_questNameID": 0,
+  "m_questTitle": "Crime and PUNishment",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh, hello there. Did Tracy send you? Busy boy, isn't he? My name is Tessa Truehart. How can I help?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_001.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ask her about the Old One - the frescos and murals that have indicated his Monitoring Stations in past adventures.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-HEAP_143.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524741,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Sorry, there's nothing like that here. We're not big on artistic flourishes. You've seen this place; not exactly a thriving society, are we?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_002.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Story goes a tentacle monster plucked our ancestors from Lemuria and abandoned them here, cut off from Mana and Lifeforces of other regions.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_003.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Why would he do that? Surely, he must have some way of monitoring this experiment.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-HEAP_144.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524741,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Listen, would you do me a favor? Poor Tracy's working himself up about the Gangs. Could you remind him that he still owes me dinner?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_004.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "He's skipping dinner again? Sometimes I wish I were a criminal cow or secret font of Mana, then maybe I could get some attention from Mr. Dog Tracy.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_005.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Secret font of Mana?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-HEAP_145.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524741,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh, yes, Wizard. Years ago, one of the gang bosses - we to this day still don't know which - found one and used it to power up loyal lieutenants.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_006.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC04_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "All the gangs descended, hurling Firecats like stones, and dividing up the town, enforcing their own corrupt order.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Tessa_Truehart_LM-HEAP_007.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524749,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-HEAP-NPC01_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Interesting. Perhaps this mystery boss also discovered secrets of the Old One, like the Water Moles. Let us inquire further with Dog Tracy.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-HEAP_146.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1524741,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z07_Precinct",
+      "m_locationName": "Heap",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-HEAP-NPC04_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-HEAP-MAIN-003"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-HEAP-MAIN-002",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Old One? Sounds new. I'll add him to my list! Heap is under siege. Siege, I tells you. By crime lords! Or lords whose lordship is criminal to my eye.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I'm talking Doctor Prune, the Prim Reaper, Pips Mooless - all supercharged on this fresh mana and ready to pop like zits full of Thunder Snakes!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I have to find these mugs before their feuds erupt into full-scale war. Go ask my lab assistant to fill out a report on this Old One.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Dinner! There's no time for dinner! There's crimes to solve! Mana crimes! I have a blackboard with them all listed.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But there's no time for blackboards! Or walking to other rooms! Just tell Tessa I can't make it to dinner tonight.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_007.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Welcome back, Junior. While you were gone, I infiltrated a bootleg potion distillery and arrested Pips Mooless himself.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_008.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I'll get you for this, Dog Tracy!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Pips_Mooless_LM-HEAP_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524751,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Alright, spill it, you louse. You're making those potions to fight somebody, take their turf! Who is it? Prune? Prim? Happy Haymaker? I want a name!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_009.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Heh, okay. The Golden Lion.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Pips_Mooless_LM-HEAP_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524751,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I don't know that name. But I will. Just need to shake a few trees. What do you say, Junior? Want to come with? Let's go!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-HEAP_010.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524747,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-HEAP-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Look, I don't know where the Mana comes from. One of the bosses, I'd guess. But which one... that's something only they know.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Cow_BullGangster_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stoolie_LM-HEAP_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524752,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

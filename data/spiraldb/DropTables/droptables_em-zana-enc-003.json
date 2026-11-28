@@ -1,0 +1,13 @@
+{
+  "Name": "EM-ZANA-ENC-003",
+  "Description": "EM-ZANA-ENC-003 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2340,
+  "MaxGold": 2340,
+  "ExperienceAmount": 96540,
+  "TrainingPoints": 0,
+  "Items": []
+}

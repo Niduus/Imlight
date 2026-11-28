@@ -36,15 +36,28 @@ public static class QuestTemplateCollection {
     /// </summary>
     /// <param name="questName">The name of the quest to retrieve.</param>
     /// <returns>The quest template if found; otherwise, null.</returns>
-    public static QuestTemplate GetQuestByName(string questName) 
-        => SpiralDB.GetQuestByName(questName);
+    public static QuestTemplate GetQuestByName(string questName) {
+        var quest = SpiralDB.GetQuestByName(questName);
+        if (quest is null) {
+            // A quest the server has no file for: noted in quest-reports.zip (Game/Tools/QuestReports).
+            Imlight.CoreLib.Game.Tools.QuestReports.Missing(questName);
+        }
+
+        return quest;
+    }
 
     /// <summary>
     /// Check if a quest exists by its name.
     /// </summary>
     /// <param name="questName">The name of the quest to check.</param>
     /// <returns>True if the quest exists; otherwise, false.</returns>
-    public static bool DoesQuestExist(string questName) 
-        => SpiralDB.QuestExists(questName);
+    public static bool DoesQuestExist(string questName) {
+        var exists = SpiralDB.QuestExists(questName);
+        if (!exists) {
+            Imlight.CoreLib.Game.Tools.QuestReports.Missing(questName);
+        }
+
+        return exists;
+    }
 
 }

@@ -1,0 +1,13 @@
+{
+  "Name": "GH-NAS-C04-001",
+  "Description": "GH-NAS-C04-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 420,
+  "MaxGold": 420,
+  "ExperienceAmount": 9850,
+  "TrainingPoints": 0,
+  "Items": []
+}

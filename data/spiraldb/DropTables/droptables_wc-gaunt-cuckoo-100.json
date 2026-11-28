@@ -1,0 +1,13 @@
+{
+  "Name": "WC-GAUNT-CUCKOO-100",
+  "Description": "WC-GAUNT-CUCKOO-100 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2380,
+  "MaxGold": 2380,
+  "ExperienceAmount": 500,
+  "TrainingPoints": 0,
+  "Items": []
+}

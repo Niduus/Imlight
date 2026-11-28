@@ -1,0 +1,13 @@
+{
+  "Name": "EM-REV-ENC-001",
+  "Description": "EM-REV-ENC-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 905,
+  "MaxGold": 905,
+  "ExperienceAmount": 69361,
+  "TrainingPoints": 0,
+  "Items": []
+}

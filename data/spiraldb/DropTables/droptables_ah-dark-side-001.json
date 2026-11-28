@@ -1,0 +1,13 @@
+{
+  "Name": "AH-DARK-SIDE-001",
+  "Description": "Ahmarra quest Dead Monk's Chests (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1530,
+  "MaxGold": 1530,
+  "ExperienceAmount": 31,
+  "TrainingPoints": 0,
+  "Items": []
+}

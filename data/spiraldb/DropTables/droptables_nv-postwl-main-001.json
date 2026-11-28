@@ -1,0 +1,13 @@
+{
+  "Name": "NV-PostWL-MAIN-001",
+  "Description": "Lemuria quest Novus, No More (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 580,
+  "MaxGold": 580,
+  "ExperienceAmount": 199200,
+  "TrainingPoints": 0,
+  "Items": []
+}

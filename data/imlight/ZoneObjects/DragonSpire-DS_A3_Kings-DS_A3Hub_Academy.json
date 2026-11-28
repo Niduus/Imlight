@@ -22,13 +22,6 @@
       "Loc": "0,0,0,0",
       "WhileOnQuest": "DS-ACAD-C01-005",
       "WhileOnGoal": "Goal 2"
-    },
-    {
-      "Event": "Enter_DrakeSpeachVolume",
-      "Zone": "DragonSpire/DS_A3_Kings/DS_A3_FlightPath",
-      "Loc": "0,0,0,0",
-      "WhileOnQuest": "DS-ACAD-C01-005",
-      "WhileOnGoal": "Goal 3"
     }
   ],
   "ShowOnQuest": [

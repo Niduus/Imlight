@@ -314,7 +314,12 @@ public static class WizardCollection {
     /// <param name="zoneDisplayName">The display name of the zone.</param>
     public static void UpdateCharacterZone(Wizard character, string zoneName, string zoneDisplayName) {
         UpdateCharacter(character.CharId, existingCharacter => {
-            existingCharacter.PreviousZone = existingCharacter.Zone;
+            // Coming back into the same zone (a log-in, a reconnect) is no trip from somewhere: the zone before stays the
+            // one the wizard came from, so a way back (a dead-end cave's teleporter, a minigame's return) still knows it.
+            if (!string.Equals(existingCharacter.Zone, zoneName, StringComparison.OrdinalIgnoreCase)) {
+                existingCharacter.PreviousZone = existingCharacter.Zone;
+            }
+
             existingCharacter.Zone = zoneName;
             existingCharacter.ZoneDisplayName = zoneDisplayName;
         });

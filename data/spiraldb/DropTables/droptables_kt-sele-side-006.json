@@ -1,0 +1,13 @@
+{
+  "Name": "KT-SELE-SIDE-006",
+  "Description": "Krokotopia quest Sour Grapes of Wrath (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 100,
+  "MaxGold": 100,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

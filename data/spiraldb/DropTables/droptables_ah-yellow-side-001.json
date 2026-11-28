@@ -1,0 +1,13 @@
+{
+  "Name": "AH-YELLOW-SIDE-001",
+  "Description": "Ahmarra quest The Traitor in the Dark (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 890,
+  "MaxGold": 890,
+  "ExperienceAmount": 18,
+  "TrainingPoints": 0,
+  "Items": []
+}

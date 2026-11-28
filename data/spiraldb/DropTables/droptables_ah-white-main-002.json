@@ -1,0 +1,13 @@
+{
+  "Name": "AH-WHITE-MAIN-002",
+  "Description": "Ahmarra quest The Doom That Came to Ahmarra (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 940,
+  "MaxGold": 940,
+  "ExperienceAmount": 118370,
+  "TrainingPoints": 0,
+  "Items": []
+}

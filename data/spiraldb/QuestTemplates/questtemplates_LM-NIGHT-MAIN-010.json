@@ -1,0 +1,363 @@
+{
+  "m_questName": "LM-NIGHT-MAIN-010",
+  "m_questNameID": 0,
+  "m_questTitle": "Ghast of Us",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_CitizenF_B_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Did you get my photo? Splendid! What? Yes, the Malughast turns invisible! Don't be obtuse. Now, there, you see that? Of course you don't.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_CitizenF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Doctor_Witch_LM-NIGHT_013.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520138,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But what we have here is a map of sort of the Malughast's spirit - likes, dislikes, and what releases it. Just need a concoction of let's see...",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_CitizenF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Doctor_Witch_LM-NIGHT_014.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520138,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Some of this, little of this. *Sniff Sniff* None of those. Definitely one of these and that should be that. Solomon, hold out your sword.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_CitizenF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Doctor_Witch_LM-NIGHT_015.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520138,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC07_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "There. With that, you can release the Malughast's spirit to enter the next realm. I'll send you my bill. Well, bills. Be seated when reading them.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_CitizenF_B_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Doctor_Witch_LM-NIGHT_016.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520138,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "LM-NIGHT-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Then we've but one task, Wizard. Confront Hierarch Lucien. When the master is imperiled, the dog will rush to his aid.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-NIGHT_075.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520136,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z03_NightForest",
+      "m_locationName": "Night Forest",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "LM-NIGHT-NPC07_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-NIGHT-MAIN-010"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-NIGHT-MAIN-009",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "This confirms my most dire suspicions. Lucien is behind this. We are not suffering the wrath of an absentee judge, but a puerile old man.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-NIGHT_073.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We shall deal with him in due course. For now, we must return to the Doctor Witch and find the Malughast's weakness.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-NIGHT_074.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520136,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The impertinence! You dare return after your banishment!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Hierarch_Lucien_LM-NIGHT_020.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520132,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Cast no aspersions, Lucien. After all, it is not I who unleashed the Malughast.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-NIGHT_076.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Whatever do you mean, sir? I did not unleash the MALUGHAST!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Hierarch_Lucien_LM-NIGHT_021.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520132,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM_Standin_Malughast_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "ROOOOOOOAAAAARRRRR!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Malughast_Base_A_MOB.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Malughast_LM-NIGHT_008.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520267,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Run, my brothers and sisters, run from the beast these heathens have wrought!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Hierarch_Lucien_LM-NIGHT_022.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520132,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He flees to his home! Pursue him, Wizard. Leave this demon to me.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-NIGHT_077.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-NIGHT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The beast is gone, felled by my hand. Return to your lives, all of you. The Malughast will trouble you no longer.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-NIGHT_078.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520136,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

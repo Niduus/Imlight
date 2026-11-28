@@ -1,0 +1,448 @@
+{
+  "m_questName": "DM-MORT-MAIN-009",
+  "m_questNameID": 0,
+  "m_questTitle": "Seeds of Revolution",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Human_AngryMob_C_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-MORT-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You want a plant that burns the vampires, the zesty seeds of revolution? So garlic? Obviously, it's garlic. Why speak in such roundabout riddles?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Human_AngryMob_C_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Bruno_DM-MORT_017.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1687161,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-MORT-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Of course, I don't have any. To bring such a pungent and forbidden substance would expose me right away.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Human_AngryMob_C_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Bruno_DM-MORT_018.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1687161,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-MORT-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Even the other Great Houses are prohibited from stocking it after the Treaty of the Tipped Cup. The only peoples in Darkmoor who might have garlic...",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Human_AngryMob_C_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Bruno_DM-MORT_019.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1687161,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-MORT-NPC05_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "...Are the Outsiders, the rumored caravans of surviving humans who wander the days and cower in the night. But alas, no one knows where they are...",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Human_AngryMob_C_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Bruno_DM-MORT_020.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1687161,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Darkmoor/DM_Z02_MortalPlain",
+      "m_locationName": "Mortal Plain",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "DM-MORT-NPC05_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "DM-MORT-MAIN-009"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "DM-MORT-MAIN-008",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC18_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Good. That means he will be coming down here to punish the Mortal Plain. I wonder why he hasn't already.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Player_BranchBoss_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Red_Death_DM-MORT_013.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687178,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Something about festivities, right?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_Miranda_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Miranda_Briar_DM-MORT_087.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687162,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC18_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Festivities? At a time when Darkmoor's Houses face their greatest danger? Then perhaps we need to increase our threat.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Player_BranchBoss_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Red_Death_DM-MORT_014.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687178,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC18_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "There is a crop that is likely forbidden here, a plant whose simple odor makes the vampire's blood burn. I don't know where to find the seeds, but-",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Player_BranchBoss_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Red_Death_DM-MORT_015.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687178,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But maybe that shifty informant friend of yours has an idea?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_Miranda_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Miranda_Briar_DM-MORT_088.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687162,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You return! Ha! Splendid. Have you brought me a cure for the Scholomance Curse?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-MORT_015.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hmm. This does not sound like a cure for the Scholomance Curse. This sounds like a drawn out tale of betrayal and biting.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-MORT_016.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You are not seriously trusting Miranda Briar, are you? She killed Sybil and we still don't know why!",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-MORT_037.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Did you try whomping her on the head? Bet that would knock the information out of her.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-MORT_038.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I see your guile at play, Scion. Too aggressive an approach and the Broken Branch may vanish with their cure. You must play Briar's game for now.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-MORT_017.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Look, I'm just saying Briar isn't helping out of the goodness of her rotten heart. She wants something. Watch out for the moment she takes it.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-MORT_039.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Aye. For now, though, talk to Keziah; that old mystic should have some Garlic Seeds hidden in her apothecary.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-MORT_018.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC01B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Oh, the King of Cups stands opposite Death Reversed. And the Magician returns, seeking seeds. Here they are.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-MORT_032.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1675588,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC01B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Beware the Thorned Hermit. She has her own use for seeds and they plant only destruction.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-MORT_033.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1675588,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Garlic! Stranger, that is the forbidden crop!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Human_Outsider_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Edward_Farmer_DM-MORT_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687159,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

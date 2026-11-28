@@ -1,0 +1,13 @@
+{
+  "Name": "TC-GAUNT-MACDEATH-006",
+  "Description": "TC-GAUNT-MACDEATH-006 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 5340,
+  "MaxGold": 5340,
+  "ExperienceAmount": 700,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,422 @@
+{
+  "m_questName": "LM-TELOS-MAIN-009",
+  "m_questNameID": 0,
+  "m_questTitle": "The More You Hero",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000192"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Stone",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Quest_LM_Stone_Ice.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z00_Hub",
+      "m_locationName": "Telos",
+      "m_goalName": "1_WizardQuestGoals00000192",
+      "m_goalTitle": "WizardQuestGoals_00000192",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-TELOS-MAIN-009"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-TELOS-MAIN-008",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000192"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "No new allies to join us on this grand escapade?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Horse_Explorer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stallion_Quartermane_LM-TELOS_044.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, yeah, we're here, we're here. Hold your horses. Oh... Alright then.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-TELOS_050.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521344,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We are the well-fed tick beneath the skin of crime. We are the air fresheners that mintify Heap. We are the Shadoe and Dog Tracy!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-TELOS_053.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521348,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "DOG! You are what a dog is? But you are not a stinking, slavering, three-headed cowardly scavenger of fetid wastes!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Mander_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Mandar_LM-TELOS_083.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521349,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Thanks pal, back at ya.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-TELOS_051.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521344,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ha-ha! We have a mission to complete. To enter the very den of the Old One himself and recover the World Synthesizer.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Horse_Explorer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stallion_Quartermane_LM-TELOS_045.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Now, the Wizard, lead the way. To glory! To discovery! TO ADVENTURE!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Horse_Explorer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stallion_Quartermane_LM-TELOS_046.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We can't stay here. We must find a way through these doors. One must hold the World Synthesizer.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Horse_Explorer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stallion_Quartermane_LM-TELOS_051.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "That's probably this one. Getting it open ain't no piece of cake though, let me tell ya.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-TELOS_052.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521344,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But I think I found something.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-TELOS_053.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521344,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Looks like some kinda recording.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-TELOS_054.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521344,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Old One Screen",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Congratulations, my champion. You did it. By reaching this place, you've proven yourself a Hero, one with the wisdom and skill to create a world...",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/Art_Portrait_Screen_Keyboard.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Old_One_Screen_LM-TELOS_036.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Old One Screen",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "...Almost. There's one aspect you can never possess, one ineffable quality that I've discovered through this experiment is truly essential.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/Art_Portrait_Screen_Keyboard.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Old_One_Screen_LM-TELOS_037.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Old One Screen",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You are not me. You lack my vision, my clarity, my essential me-ness. Thus you'll never be my Scion and can't fulfill my grand design.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/Art_Portrait_Screen_Keyboard.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Old_One_Screen_LM-TELOS_038.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Old One Screen",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But know this wasn't for nothing. You cultivated aspects I needed, traits I scanned in each Station and mapped to my true Scion.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/Art_Portrait_Screen_Keyboard.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Old_One_Screen_LM-TELOS_039.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Old One Screen",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He calibrates the World Synthesizer for its true purpose. Lemuria will end. The Spiral too. And a better First World will emerge from their ashes.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/Art_Portrait_Screen_Keyboard.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Old_One_Screen_LM-TELOS_040.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC10_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "So, he's whacko. We gotta stop him somehow! Any ideas there, Horse Guy?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Dog_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dog_Tracy_LM-TELOS_055.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521344,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ideas? My good detective, I am Stallion Quartermane, I have better than ideas. I have a plan!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Horse_Explorer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stallion_Quartermane_LM-TELOS_052.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

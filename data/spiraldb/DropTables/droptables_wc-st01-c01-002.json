@@ -1,0 +1,13 @@
+{
+  "Name": "WC-ST01-C01-002",
+  "Description": "WC-ST01-C01-002 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 5,
+  "MaxGold": 5,
+  "ExperienceAmount": 45,
+  "TrainingPoints": 0,
+  "Items": []
+}

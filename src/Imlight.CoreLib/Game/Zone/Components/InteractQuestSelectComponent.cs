@@ -43,6 +43,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
+using Imcodec.Math;
 using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.CoreLib.Game.WizBang;
@@ -60,12 +61,15 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
     public string ServiceName => "Interact";
     public string NpcIcon { get; private set; } = null;
     public string NpcNameKey { get; private set; } = null;
-    public string NpcTextKey => "GUI_ChestInteract"; // TODO: Presumably the same for all quest interactables?
-                                                     // Come back to this. If we don't see a problem, leave as is and mark as complete.
+    // The object's own text (m_interactTextOverride), else chest text for a chest, else none: the memento then shows the
+    // plain object "Interact" text. Every quest object said chest text, so Last Wood's fire pits offered the smoke signal
+    // step with a chest's window (2026-11-25).
+    public string NpcTextKey { get; private set; }
     public WizBangs WizBang => WizBangs.None;
     public string StateName => null;
     public string InteractWizBang => null;
     public string DisplayKey => null;
+    public float DEFAULT_INTERACTION_RADIUS => 300f;
 
     private readonly Dictionary<string, List<GoalTemplate>> _usageGoalsByQuest = [];
 
@@ -81,6 +85,7 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         if (playerCharacter?.QuestBehavior?.CurrentQuestInstances == null) {
             yield break;
         }
+
 
         // If we did not find any quests with active usage goals, don't show the interaction option at all.
         if (_usageGoalsByQuest.Count == 0) {
@@ -111,6 +116,14 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
         // Determine icon and name key from template.
         NpcIcon = gameObjectTemplate.m_sIcon;
         NpcNameKey = gameObjectTemplate.m_displayName;
+        var ownText = gameObjectTemplate.m_behaviors?
+            .OfType<InteractableBehaviorTemplate>()
+            .Select(behavior => behavior?.m_interactTextOverride?.ToString())
+            .FirstOrDefault(text => !string.IsNullOrEmpty(text));
+        NpcTextKey = ownText
+            ?? (gameObjectTemplate.m_objectName.ToString().Contains("Chest", StringComparison.OrdinalIgnoreCase)
+                ? "GUI_ChestInteract"
+                : null);
 
         // Register every usage goal whose client tags name this object; the object is
         // interactable only while one of those goals is active (see GetServiceOptions).
@@ -363,6 +376,11 @@ internal sealed class InteractQuestSelectComponent(ZoneEntity entity)
     /// </summary>
     internal static bool IsNamedByUsageGoal(InteractOptionTemplate option)
         => UsageGoals.Names(option);
+
+    private static string NormalizeInstanceTag(string tag)
+        => tag?.EndsWith(" instance", StringComparison.OrdinalIgnoreCase) == true
+            ? tag[..^" instance".Length]
+            : tag;
 
     /// <summary>The usage goals that using this object counts for (the quest checker asks, QuestChecker.cs).</summary>
     internal static IEnumerable<(string Quest, GoalTemplate Goal)> UsageGoalsOf(GameObjectTemplate template)

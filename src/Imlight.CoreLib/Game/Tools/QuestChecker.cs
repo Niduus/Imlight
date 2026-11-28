@@ -179,6 +179,7 @@ internal static class QuestChecker {
         File.WriteAllText(path + ".tmp", JsonSerializer.Serialize(file));
         File.Move(path + ".tmp", path, overwrite: true);
         Progress(folder, $"Done: {results.Count(r => r.Ok)} of {results.Count} quests passed");
+        QuestReports.CheckerResults(results.Select(r => (r.Code, r.Ok, r.Problems ?? [])));
         Logger.Information("Quest checker: {0} of {1} quests passed, {2} have problems; {3} zones could not be read ({4:0} s).",
             Logger.Args(results.Count(r => r.Ok), results.Count, results.Count(r => r.Problems.Count > 0), notRead.Count,
                 timer.Elapsed.TotalSeconds));

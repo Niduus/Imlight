@@ -1,0 +1,13 @@
+{
+  "Name": "EM-OUTER-ENC-005",
+  "Description": "EM-OUTER-ENC-005 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 4310,
+  "MaxGold": 4310,
+  "ExperienceAmount": 215232,
+  "TrainingPoints": 0,
+  "Items": []
+}

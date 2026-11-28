@@ -1,0 +1,13 @@
+{
+  "Name": "AH-YELLOW-SIDE-002",
+  "Description": "Ahmarra quest Shadow Over Grimsen (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 690,
+  "MaxGold": 690,
+  "ExperienceAmount": 14,
+  "TrainingPoints": 0,
+  "Items": []
+}

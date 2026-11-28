@@ -1,0 +1,13 @@
+{
+  "Name": "DD-DS01-C01-040",
+  "Description": "DD-DS01-C01-040 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1180,
+  "MaxGold": 1180,
+  "ExperienceAmount": 300,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AH-WEST-ENC-001",
+  "Description": "Ahmarra quest Pirate Ship Combat (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 2820,
+  "MaxGold": 2820,
+  "ExperienceAmount": 355110,
+  "TrainingPoints": 0,
+  "Items": []
+}

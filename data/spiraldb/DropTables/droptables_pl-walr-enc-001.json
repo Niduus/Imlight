@@ -1,0 +1,13 @@
+{
+  "Name": "PL-WALR-ENC-001",
+  "Description": "PL-WALR-ENC-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 3710,
+  "MaxGold": 3710,
+  "ExperienceAmount": 515200,
+  "TrainingPoints": 0,
+  "Items": []
+}

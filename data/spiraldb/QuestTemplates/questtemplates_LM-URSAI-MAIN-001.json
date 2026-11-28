@@ -1,0 +1,257 @@
+{
+  "m_questName": "LM-URSAI-MAIN-001",
+  "m_questNameID": 0,
+  "m_questTitle": "Welcome to Bearadise",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000352"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Hierarch Juju",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z02_UrsaiVillage",
+      "m_locationName": "Ursai Village",
+      "m_goalName": "1_WizardQuestGoals00000352",
+      "m_goalTitle": "WizardQuestGoals_00000352",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Lemuria/LM_Z02_UrsaiVillage",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-URSAI-MAIN-001"
+      }
+    ]
+  },
+  "m_requirements": null,
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000352"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "At the Killawahoo Ceremony! The Ol' Boi's going to be so impressed by the song I'm working up, he's gonna put the Angry Mountain to sleep forever!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-URSAI_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520122,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "You should stay for the Ceremony! Ooh, but you'll need to clear that with the Hierarch first. She's in her Sanctum of Reflection.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-URSAI_007.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520122,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Don't worry, Juju will totally say yes. She's even more laid back than the Bears. Also my aunt! Worst she'll do is guilt you into doing chores.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tosh_LM-URSAI_008.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520122,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ah! Wake up, Chew'i, you're having a nightmare again! Oh. You're real. Go ahead then, do your worst. I'm too tired to fight back. What's that...?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Chewi_LM-URSAI_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520124,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "...Juju sent you to help with Killawahoo Ceremony preparations? Nice. I'm too tired for follow-up questions. Just collect three bushels of Mangos.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Chewi_LM-URSAI_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520124,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Thing is, someone already ate all the ripe Mangos here in the village. It was probably the Ghost Who Squawks. No need to investigate.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Chewi_LM-URSAI_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520124,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But I hear the Wildlands are lousy with Mango trees. That's no problem for a big strong... whatever you are, right? Great. Good luck!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Chewi_LM-URSAI_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520124,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wow! Those are some funky looking Mangos! You say you plucked them off walking Mango Trees? Which you've dubbed, 'Humangos?'",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Chewi_LM-URSAI_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520124,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I can't tell if you're speaking gibberish, or if I'm too tired to comprehend the words coming out of your weird little face. Either way, thanks.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Chewi_LM-URSAI_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520124,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

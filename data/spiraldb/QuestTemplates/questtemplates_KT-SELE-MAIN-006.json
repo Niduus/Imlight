@@ -1,0 +1,390 @@
+{
+  "m_questName": "KT-SELE-MAIN-006",
+  "m_questNameID": 0,
+  "m_questTitle": "From Moon to the Earth",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000274"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Khonsu's Sanctum",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_Sigil_4_Player.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum",
+      "m_locationName": "Selenopolis",
+      "m_goalName": "1_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Krokotopia/KT_Selenopolis/Interiors/KT_Z04_Sanctum",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "KT-SELE-MAIN-006"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "KT-SELE-MAIN-005",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000274"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "My ship is destroyed beyond repair. I can never leave. I can never have my revenge. But I can channel that energy into my studies.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Celestian_Khonsu_B_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Holo-Khonsu_KT-SELE_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624067,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "This Spiral is unique in the cosmos, bound by laws entirely its own. It must be evaluated as a resource to be plundered or a threat to be contained.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Celestian_Khonsu_B_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Holo-Khonsu_KT-SELE_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624067,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But it cannot be assessed if it is intruded upon by outside variables. Thus, Earthborn, you cannot remain.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Celestian_Khonsu_B_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Holo-Khonsu_KT-SELE_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624067,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Come, face me, so that I may remove you from the equation.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Celestian_Khonsu_B_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Holo-Khonsu_KT-SELE_007.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624067,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Well, since he asked so nicely. Istar, there's a guy called Loon Knight; he's another Khonsu puppet and probably needs guidance.",
+            "m_picture": "GUI/NpcPortraits/Human_Mellori_C_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Mellori_KT-SELE_070.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1634342,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Find him and help him. Wizard, let's go!",
+            "m_picture": "GUI/NpcPortraits/Human_Mellori_C_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Mellori_KT-SELE_071.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1634342,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-GARD-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "On it!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Djinn_MageF_A_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Istar_KT-SELE_015.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1594441,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Hey kid, sorry about... all of it. I'm not sure which me I am now or even which I was originally. I think they were all fragments and now I'm whole?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_014.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But, look, you should know Khonsu's knowledge was vast. He monitored the whole Spiral for... I don't know... ever.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_015.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He saw worlds form and die. He saw the Nothing appear and learn and become. And he saw you grow from a confused kid to a mighty hero.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_016.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And he saw something else. He had to look hard to find it, it didn't want to be seen, but you made him curious. You came from beyond the Spiral... how?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_017.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He tried to follow your path backward, but couldn't. Instead, he found another path, one stretching from the darkest world to... beyond.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_018.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "What I'm saying, kid, is you may be the first Earthborn to reach the Spiral, but you're not the last. There's another one out there now.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_019.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Khonsu considered Earthborns a contamination of the Spiral, but you're the only one he went after. Why?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_020.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I think... I'm not sure, but Khonsu faced down Titans and tyrants and time itself; but this other Earthborn, whatever she is doing... it scared him.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_021.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "KT-SE-SELE-NPC-16_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Be careful out there, kid.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_LoonMoon_NPC.dds",
+            "m_soundFile": "Sound/1.560_Dialogue/Loon_Knight_KT-SELE_022.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1624069,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

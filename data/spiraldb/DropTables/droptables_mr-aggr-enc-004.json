@@ -1,0 +1,13 @@
+{
+  "Name": "MR-AGGR-ENC-004",
+  "Description": "MR-AGGR-ENC-004 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1100,
+  "MaxGold": 1100,
+  "ExperienceAmount": 145000,
+  "TrainingPoints": 0,
+  "Items": []
+}

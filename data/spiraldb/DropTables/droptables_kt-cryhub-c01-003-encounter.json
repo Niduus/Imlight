@@ -1,0 +1,20 @@
+{
+  "Name": "KT-CRYHub-C01-003-Encounter",
+  "Description": "Krokotopia quest The Four Princes (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 55,
+  "MaxGold": 55,
+  "ExperienceAmount": 915,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "5004",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

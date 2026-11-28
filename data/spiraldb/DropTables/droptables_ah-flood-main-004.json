@@ -1,0 +1,13 @@
+{
+  "Name": "AH-FLOOD-MAIN-004",
+  "Description": "Ahmarra quest Watch Your Step (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 990,
+  "MaxGold": 990,
+  "ExperienceAmount": 124600,
+  "TrainingPoints": 0,
+  "Items": []
+}
