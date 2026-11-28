@@ -490,7 +490,9 @@
       "m_clientTags": [
         "AZ-Starfall-Lily"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-StarfallLilly"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z06_HouseOfFlowers",

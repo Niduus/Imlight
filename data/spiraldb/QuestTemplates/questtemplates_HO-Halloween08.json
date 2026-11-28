@@ -41,7 +41,9 @@
         "GetGhostOrange",
         "DDl_WC_CL_OrangeGhost"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotGhostOrange"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_Cyclops",

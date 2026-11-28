@@ -131,7 +131,9 @@
         "AZ_DirtPile",
         "KT_DirtPile"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_DirtPile"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z02_Cenote",

@@ -22,18 +22,7 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": [
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
-            "m_add": true,
-            "m_templateID": 1413142
-          },
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
-            "m_add": true,
-            "m_templateID": 1451147
-          }
-        ]
+        "m_results": []
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

@@ -75,7 +75,9 @@
         "EM-RubbleObject",
         "EM-DebrisObject"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-DebrisObject"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z13_SamsaraDestroyed",

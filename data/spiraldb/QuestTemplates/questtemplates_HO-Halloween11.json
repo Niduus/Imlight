@@ -56,7 +56,9 @@
         "BobForApple04",
         "DDl_WC_HC_Tub04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotApple04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_HauntedCave",

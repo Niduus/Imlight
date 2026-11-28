@@ -93,7 +93,9 @@
       "m_clientTags": [
         "CL-StarfishDoor"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_StarfishDoor_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z02_Crab_Realm",
@@ -479,7 +481,9 @@
       "m_clientTags": [
         "CL-CrabPortalPiece"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_CrabPortalPiece_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z02i1_Crab_Realm",
@@ -731,7 +735,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
@@ -740,7 +744,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
@@ -749,7 +753,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

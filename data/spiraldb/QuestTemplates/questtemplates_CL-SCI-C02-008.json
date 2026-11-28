@@ -43,7 +43,9 @@
         "CL-HydraulicChanneler",
         "CL-HydraulicChanneler2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Hydralic_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -209,7 +211,9 @@
         "CL-HydraulicChanneler",
         "CL-HydraulicChanneler2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Hydralic_Used02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -334,7 +338,9 @@
         "CL-HydraulicChanneler",
         "CL-HydraulicChanneler2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Hydralic_Used03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -511,7 +517,9 @@
         "CL-HydraulicChanneler",
         "CL-HydraulicChanneler2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Hydralic_Used04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -655,7 +663,9 @@
       "m_clientTags": [
         "CL-GateControl"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_GateControl_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z09i5_Science_Center",

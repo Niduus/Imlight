@@ -493,12 +493,21 @@ internal static class Program {
             // Steps, matched by place and checked by kind and title.
             var ourGoals = ours.m_goals ?? [];
             var theirGoals = theirs.m_goals ?? [];
-            for (var i = 0; i < ourGoals.Count && i < theirGoals.Count; i++) {
-                GoalTemplate a = ourGoals[i], b = theirGoals[i];
-                if (a is null || b is null || a.GetType() != b.GetType()
-                    || (S(a.m_goalTitle).Length > 0 && S(b.m_goalTitle).Length > 0 && S(a.m_goalTitle) != S(b.m_goalTitle))) {
-                    if (a is not null && b is not null) {
-                        notes.Add($"step {i + 1} ({S(a.m_goalName)}): not the game's step {S(b.m_goalName)} ({b.GetType().Name} {S(b.m_goalTitle)}); left alone");
+            for (var i = 0; i < ourGoals.Count; i++) {
+                var a = ourGoals[i];
+                // The game's step at the same place, when it is that step (same kind, same title or the same thing, and
+                // never another thing); else the one game step of that kind about the same thing. Xibalba's quest
+                // (AZ-COMET-C01-001) has the game's shard steps between its own, so by place alone its ice stone got
+                // the storm stone's event (2026-11-28).
+                var b = i < theirGoals.Count && SamePlaceStep(a, theirGoals[i]) ? theirGoals[i] : null;
+                if (b is null && a is not null) {
+                    var same = theirGoals.Where(g => g is not null && g.GetType() == a.GetType() && HasTarget(a) && SameTarget(a, g)).ToList();
+                    b = same.Count == 1 ? same[0] : null;
+                }
+
+                if (a is null || b is null) {
+                    if (a is not null && i < theirGoals.Count && theirGoals[i] is { } atPlace) {
+                        notes.Add($"step {i + 1} ({S(a.m_goalName)}): not the game's step {S(atPlace.m_goalName)} ({atPlace.GetType().Name} {S(atPlace.m_goalTitle)}); left alone");
                         Count("step left alone");
                     }
 
@@ -506,6 +515,13 @@ internal static class Program {
                 }
 
                 var stepName = S(a.m_goalName);
+
+                // The events a step finishes on (a quest object's use posts them: the Brazier of Dawn's EVENT-UsedBrazier).
+                if ((a.m_genericEvents?.Count ?? 0) == 0 && (b.m_genericEvents?.Count ?? 0) > 0) {
+                    a.m_genericEvents = b.m_genericEvents;
+                    notes.Add($"step {stepName}: finishes on {string.Join(", ", b.m_genericEvents.Select(x => S(x)))}");
+                    Count("step events");
+                }
                 if (a is WaypointGoalTemplate wa && b is WaypointGoalTemplate wb
                     && S(wa.m_proximityTag).Length == 0 && S(wb.m_proximityTag).Length > 0) {
                     wa.m_proximityTag = wb.m_proximityTag;
@@ -523,10 +539,15 @@ internal static class Program {
                 var gameResults = (b.m_completeResults?.m_results ?? []).Where(r => r is not null && !RewardResults.Contains(r.GetType().Name)
                     && !(r is ResActorDialog ad && (ad.m_dialog?.m_dialogEntries ?? []).OfType<NPCDialogEntry>()
                         .Any(e => ourSounds.Contains(SoundKey(S(e.m_soundFile)))))).ToList();
-                if (gameResults.Count > 0 && (a.m_completeResults?.m_results ?? []).Count == 0) {
-                    a.m_completeResults ??= new ResultList();
-                    a.m_completeResults.m_results = [.. gameResults];
-                    notes.Add($"step {stepName}: {gameResults.Count} results ({string.Join(", ", gameResults.Select(Describe))})");
+                // Merged with what the copy already has: Xibalba's obsidian stones (AZ-COMET-C01-001) kept their ghost event
+                // but never got the game's ResModifyTriggerObject that breaks the stone (2026-11-28).
+                a.m_completeResults ??= new ResultList();
+                a.m_completeResults.m_results ??= [];
+                var have = a.m_completeResults.m_results.Where(r => r is not null).Select(Describe).ToHashSet();
+                var missing = gameResults.Where(r => !have.Contains(Describe(r))).ToList();
+                if (missing.Count > 0) {
+                    a.m_completeResults.m_results.AddRange(missing);
+                    notes.Add($"step {stepName}: {missing.Count} results ({string.Join(", ", missing.Select(Describe))})");
                     Count("step results");
                 }
 
@@ -597,6 +618,62 @@ internal static class Program {
             + string.Join(", ", kinds.OrderByDescending(k => k.Value).Select(k => $"{k.Value} {k.Key}")));
         Report.Insert(1, "");
         return Report[0];
+    }
+
+    /// <summary>
+    /// Two steps of one kind with different titles are still the same step when they are about the same thing: the same
+    /// object (use), the same creatures (defeat), the same NPC (talk), or the same volume or zone (go to). Wizard404 gives
+    /// some steps a title of its own ("Light", "Activate", "Board"), so the game's step at that place was left alone and
+    /// its results were never filled in: the Brazier of Dawn (PL-FROZ-MAIN-005), the Sand Sea's World Door
+    /// (AR-PreMR-MAIN-002), 1,392 steps in all (2026-11-28).
+    /// </summary>
+    private static bool SamePlaceStep(GoalTemplate a, GoalTemplate b) {
+        if (a is null || b is null || a.GetType() != b.GetType()) {
+            return false;
+        }
+
+        // Both name what they are about and it differs: another step, whatever the titles say.
+        if (HasTarget(a) && HasTarget(b) && !SameTarget(a, b)) {
+            return false;
+        }
+
+        return S(a.m_goalTitle).Length == 0 || S(b.m_goalTitle).Length == 0 || S(a.m_goalTitle) == S(b.m_goalTitle) || SameTarget(a, b);
+    }
+
+    private static bool HasTarget(GoalTemplate g) => g switch {
+        ScavengeGoalTemplate s => (s.m_itemAdjectives?.Count ?? 0) > 0 || (s.m_clientTags?.Count ?? 0) > 0,
+        BountyGoalTemplate b => (b.m_npcAdjectives?.Count ?? 0) > 0,
+        PersonaGoalTemplate p => S(p.m_personaName).Length > 0,
+        WaypointGoalTemplate w => S(w.m_proximityTag).Length > 0,
+        _ => false,
+    };
+
+    private static bool SameTarget(GoalTemplate a, GoalTemplate b) {
+        static HashSet<string> Set(IEnumerable<Imcodec.IO.ByteString> v)
+            => (v ?? []).Select(x => S(x).Replace(".AdjRef", "", StringComparison.OrdinalIgnoreCase).Trim())
+                .Where(x => x.Length > 0).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        switch (a) {
+            case ScavengeGoalTemplate sa when b is ScavengeGoalTemplate sb:
+                var mine = Set(sa.m_itemAdjectives);
+                mine.UnionWith(Set(sa.m_clientTags));
+                var theirs = Set(sb.m_itemAdjectives);
+                theirs.UnionWith(Set(sb.m_clientTags));
+                return mine.Overlaps(theirs);
+            case BountyGoalTemplate ba when b is BountyGoalTemplate bb:
+                return Set(ba.m_npcAdjectives).Overlaps(Set(bb.m_npcAdjectives));
+            case PersonaGoalTemplate pa when b is PersonaGoalTemplate pb:
+                return S(pa.m_personaName).Length > 0 && string.Equals(S(pa.m_personaName), S(pb.m_personaName), StringComparison.OrdinalIgnoreCase);
+            case WaypointGoalTemplate wa when b is WaypointGoalTemplate wb:
+                if (S(wa.m_proximityTag).Length > 0 && S(wb.m_proximityTag).Length > 0) {
+                    return string.Equals(S(wa.m_proximityTag), S(wb.m_proximityTag), StringComparison.OrdinalIgnoreCase);
+                }
+
+                return S(wa.m_destinationZone).Length > 0
+                    && string.Equals(S(wa.m_destinationZone), S(wb.m_destinationZone), StringComparison.OrdinalIgnoreCase);
+            default:
+                return false;
+        }
     }
 
     private static string SoundKey(string sound) {

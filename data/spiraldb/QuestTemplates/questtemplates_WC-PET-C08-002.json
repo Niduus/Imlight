@@ -79,7 +79,9 @@
       "m_clientTags": [
         "WC_PetDirtMound"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Shop_Area",
@@ -151,7 +153,9 @@
       "m_clientTags": [
         "WC_PetDirtMound02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Shop_Area",
@@ -223,7 +227,9 @@
       "m_clientTags": [
         "WC_PetDirtMound03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Shop_Area",
@@ -295,7 +301,9 @@
       "m_clientTags": [
         "WC_PetDirtMound04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Shop_Area",
@@ -367,7 +375,9 @@
       "m_clientTags": [
         "WC_PetDirtMound05"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound05"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Hub",
@@ -439,7 +449,9 @@
       "m_clientTags": [
         "WC_PetDirtMound06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound06"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Hub",
@@ -511,7 +523,9 @@
       "m_clientTags": [
         "WC_PetDirtMound07"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound07"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Hub",
@@ -583,7 +597,9 @@
       "m_clientTags": [
         "WC_PetDirtMound08"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC_PetDirtMound08"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Hub",
@@ -1000,7 +1016,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
@@ -1009,7 +1025,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
@@ -1018,7 +1034,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

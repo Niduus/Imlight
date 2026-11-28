@@ -81,7 +81,9 @@
       "m_clientTags": [
         "AV-CATA-Statue-Artorius"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-CRYS-C01-002Artorius"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z11_CrystalCaves",
@@ -338,7 +340,9 @@
       "m_clientTags": [
         "AV-CATA-Statue-Gwen"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-CRYS-C01-002Gwendolyn"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z11_CrystalCaves",
@@ -595,7 +599,9 @@
       "m_clientTags": [
         "AV-CATA-Statue-Morganthe"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-CRYS-C01-002Morganthe"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z11_CrystalCaves",
@@ -919,7 +925,9 @@
       "m_clientTags": [
         "AV-CATA-Statue-Ambrose"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-CRYS-C01-002MerleAmbrose"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z11_CrystalCaves",

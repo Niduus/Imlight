@@ -25,6 +25,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -60,6 +63,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -723,6 +729,13 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyTriggerObject, Imcodec.ObjectProperty",
             "m_triggerObjName": "PA-Gauntlet-Portcullis instance",
             "m_triggerObjState": "Open"
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 3355904,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -751,6 +764,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {

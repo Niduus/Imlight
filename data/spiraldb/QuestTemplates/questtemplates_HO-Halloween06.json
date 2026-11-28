@@ -41,7 +41,9 @@
         "GetGhostRed",
         "DDl_WC_TC_RedGhost"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotGhostRed"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Hub",

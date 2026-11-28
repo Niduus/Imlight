@@ -852,7 +852,9 @@
       "m_clientTags": [
         "KR-Cage-Dyvim"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-Cage-Dyvim"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z00_I05_Bastion_BrokenTower",

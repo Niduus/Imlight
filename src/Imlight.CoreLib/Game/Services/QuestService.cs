@@ -2401,6 +2401,43 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
     }
 
+    /// <summary>
+    /// A "use" step whose object is a "TeleportTo..." boat or portal (PL-TeleportToKabata, the Harbor's dinghy of
+    /// PL-WALR-MAIN-015) takes the wizard on to where the quest's next step is, when that is another zone. On live the
+    /// server's teleport table says where; the server's data has no entry for such objects, and their use only posts an
+    /// event no zone trigger answers, so the wizard stayed on the pier (2026-11-28). The spot is where the game's quest
+    /// arrow points for the next step (QuestStepSpots).
+    /// </summary>
+    private void RideUsedTransport(QuestTemplate quest, GoalTemplate used) {
+        try {
+            if (quest?.m_goals is not { Count: > 0 } goals || used is not ScavengeGoalTemplate scavenge
+                || !(scavenge.m_clientTags ?? []).Any(t => ((string) t ?? "").Contains("TeleportTo", StringComparison.OrdinalIgnoreCase))) {
+                return;
+            }
+
+            var index = goals.FindIndex(g => g is not null && g.m_goalName == used.m_goalName);
+            var wizard = GetActiveWizard();
+            if (index < 0 || index + 1 >= goals.Count || wizard is null
+                || Imlight.CoreLib.Game.Tools.QuestStepSpots.Find(quest, index + 2) is not { } spot
+                || string.IsNullOrEmpty(spot.Zone) || string.Equals(spot.Zone, wizard.Zone, StringComparison.OrdinalIgnoreCase)) {
+                return;
+            }
+
+            Logger.Information("Quest {0} step {1}: the used {2} takes {3} on to the next step in {4} ({5}).",
+                Logger.Args(quest.m_questName, used.m_goalName, string.Join(",", scavenge.m_clientTags.Select(t => (string) t)),
+                    wizard.CharId, spot.Zone, spot.How));
+            SessionActor.ActorRef.Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
+                DestinationZone = spot.Zone,
+                DestinationLocation = spot.Location,
+                SendToClient = true,
+                ByZoneDoor = true,
+                OwnerCharId = wizard.CharId,
+            });
+        }
+        catch (Exception e) {
+            Logger.Warning("Quest {0} step {1}: could not take the wizard on: {2}", Logger.Args(quest?.m_questName, used?.m_goalName, e.Message));
+        }
+    }
     // Zone triggers listen for this event to react to a goal (an NPC walks to a new spot, a barricade falls).
     private void PostGoalCompleteEvent(string questName, string goalName) {
         var zoneActor = SessionActor.GetZoneActor();
@@ -2418,6 +2455,7 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         }
         if (goalTemplate?.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
             OpenLinkedWays(quest, goalTemplate);
+            RideUsedTransport(quest, goalTemplate);
             foreach (var tag in QuestLeftovers.FinishedUsageBlockerTags(goalTemplate.m_destinationZone, goalTemplate)) {
                 Logger.Information("Quest {0} step {1}: {2} looks like a blocker by the used object; it goes for {3} (QuestLeftovers, by name).",
                     Logger.Args(questName, goalName, tag, GetActiveWizard()?.CharId));

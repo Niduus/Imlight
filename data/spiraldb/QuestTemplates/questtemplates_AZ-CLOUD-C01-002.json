@@ -951,7 +951,9 @@
       "m_clientTags": [
         "AZ-Jeweled-Scepter"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZCloudScepter"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z06_Clearing01",

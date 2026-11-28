@@ -95,7 +95,9 @@
         "AV-BirdFeeder-StateObject-Test",
         "AV-BirdFeeder"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-BirdFeeder"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z03_CaerLyon",

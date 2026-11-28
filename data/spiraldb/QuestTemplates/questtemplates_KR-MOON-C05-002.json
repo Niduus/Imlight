@@ -175,7 +175,9 @@
         "KR-SugarGliderPrisoner",
         "KR-SugarGliderPrisoner2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-FreePrisoner"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z02_DetentionBlock",
@@ -331,7 +333,9 @@
         "KR-SugarGliderPrisoner",
         "KR-SugarGliderPrisoner2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-FreePrisoner2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z02_DetentionBlock",

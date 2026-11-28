@@ -82,7 +82,9 @@
       "m_clientTags": [
         "AZ_Cacao_Beans"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_CacaoBeans_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -135,7 +137,9 @@
       "m_clientTags": [
         "AZ_ObsidianKnife"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Obsidian_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",

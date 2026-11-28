@@ -54,9 +54,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/AZ_Z10_FloatingMountains",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume AZ-ZOCA-C22-002",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoals00000058",
       "m_goalNameID": 0,
@@ -564,7 +564,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

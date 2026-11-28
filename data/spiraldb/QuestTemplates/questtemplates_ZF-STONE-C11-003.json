@@ -305,7 +305,9 @@
       "m_clientTags": [
         "ZF_Bill_Lading"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_Bill_Lading_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z08_I01_Stone_Town_Barge",

@@ -793,7 +793,9 @@
       "m_clientTags": [
         "WC-HALLOWEEN-2013-Dynamite"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC-HALLOWEEN-2013-Dynamite"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "",
@@ -1228,7 +1230,9 @@
       "m_clientTags": [
         "HO-Halloween2013-Rubble"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "HO-Halloween2013-Rubble"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "",

@@ -53,7 +53,9 @@
         "CL-PedestalForTranslation",
         "CL-RivenC02001PedistalEvent"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-RivenC02001PedistalEvent"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z06i1_StormHaven",

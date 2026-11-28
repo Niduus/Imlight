@@ -13,9 +13,9 @@
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/AZ_Z10_FloatingMountains",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Volume-EVENT-Transform",
       "m_zoneExit": false,
       "m_goalName": "1_UseItem",
       "m_goalNameID": 0,

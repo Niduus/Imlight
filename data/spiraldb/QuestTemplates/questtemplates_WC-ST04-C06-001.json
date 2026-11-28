@@ -64,7 +64,13 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "GoalComplete_WC-ST04-C06-001_Goal 2",
+            "m_subEventName": ""
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

@@ -1,27 +1,51 @@
 {
+  "$type": "Imcodec.ObjectProperty.TypeCache.QuestTemplate, Imcodec.ObjectProperty",
   "m_questName": "ZF-GRAVE-C01-002",
   "m_questNameID": 0,
   "m_questTitle": "Drum Circle",
-  "m_questInfo": null,
-  "m_questPrep": null,
-  "m_questUnderway": null,
-  "m_questComplete": null,
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
   "m_startGoals": [
     "1_WizardQuestGoals00000192"
   ],
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "ZF_Gravestone_Interactable1.AdjRef",
+        "ZF_Placed_Drum.AdjRef",
+        "ZF_Grave_Drum.AdjRef"
+      ],
+      "m_itemTotal": 1,
+      "m_goalName": "1_WizardQuestGoals00000192",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000192",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Placed_Drum1",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Placed_Drum2",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Placed_Drum3",
+            "m_useQuestAsOriginator": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "Drums on Gravestones",
         "m_descriptor2": "",
         "m_count": 1,
@@ -29,6 +53,7 @@
           "m_results": []
         }
       },
+      "m_locationName": "Elephant Graveyard",
       "m_displayImage1": "GUI/QuestButtons/Location_ZF_Grave_Markers.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -36,35 +61,55 @@
         "ZF_Placed_Drum",
         "ZF_Grave_Drum"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_PlaceDrums1"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/ZF_Z10_Elephant_Graveyard",
-      "m_locationName": "Elephant Graveyard",
-      "m_goalName": "1_WizardQuestGoals00000192",
-      "m_goalTitle": "WizardQuestGoals_00000192",
       "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "ZF_Gravestone_Interactable1.AdjRef",
-        "ZF_Placed_Drum.AdjRef",
-        "ZF_Grave_Drum.AdjRef"
-      ],
-      "m_itemTotal": 1
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "ZF_Gravestone_Interactable2.AdjRef",
+        "ZF_Placed_Drum.AdjRef",
+        "ZF_Grave_Drum.AdjRef"
+      ],
+      "m_itemTotal": 1,
+      "m_goalName": "2_WizardQuestGoals00000192",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000192",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Placed_Drum4",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Placed_Drum5",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Placed_Drum6",
+            "m_useQuestAsOriginator": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "Drums on Gravestones",
         "m_descriptor2": "",
         "m_count": 1,
@@ -72,6 +117,7 @@
           "m_results": []
         }
       },
+      "m_locationName": "Elephant Graveyard",
       "m_displayImage1": "GUI/QuestButtons/Location_ZF_Grave_Markers.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -79,35 +125,35 @@
         "ZF_Placed_Drum",
         "ZF_Grave_Drum"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_PlaceDrums2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Zafaria/ZF_Z10_Elephant_Graveyard",
-      "m_locationName": "Elephant Graveyard",
-      "m_goalName": "2_WizardQuestGoals00000192",
-      "m_goalTitle": "WizardQuestGoals_00000192",
       "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "ZF_Gravestone_Interactable2.AdjRef",
-        "ZF_Placed_Drum.AdjRef",
-        "ZF_Grave_Drum.AdjRef"
-      ],
-      "m_itemTotal": 1
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "ZF-GRAVE-NPC01_Persona",
+      "m_usePatron": false,
+      "m_goalName": "3_WizardQuestGoalsTalkNPC",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
         "m_results": []
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
@@ -115,12 +161,14 @@
           "m_results": []
         }
       },
+      "m_locationName": "Elephant Graveyard",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_ZF_Queen_Elissa_NPC.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
+      "m_destinationZone": "Zafaria/ZF_Z10_Elephant_Graveyard",
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -131,31 +179,84 @@
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "ZF-GRAVE-NPC01_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
                 "m_dialog": "Perfect!",
                 "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Queen_Elissa_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/QueenElissa_ZFA_09.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 466210,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               }
-            ]
+            ],
+            "m_madlibs": [],
+            "m_dialogEvents": [],
+            "m_noAggroWhileDialogIsUp": false,
+            "m_noAggroNoDelay": false
           }
         ]
       },
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Zafaria/ZF_Z10_Elephant_Graveyard",
-      "m_locationName": "Elephant Graveyard",
-      "m_goalName": "3_WizardQuestGoalsTalkNPC",
-      "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "ZF-GRAVE-NPC01_Persona",
-      "m_usePatron": false
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     }
   ],
   "m_startResults": {
@@ -165,7 +266,8 @@
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
-        "m_tableName": "ZF-GRAVE-C01-002"
+        "m_tableName": "ZF-GRAVE-C01-002",
+        "m_maxRolls": 0
       }
     ]
   },
@@ -174,7 +276,7 @@
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
         "m_entryName": "Complete",
-        "m_displayName": null,
+        "m_displayName": "",
         "m_isQuestRegistry": true,
         "m_questName": "ZF-GRAVE-C01-001",
         "m_applyNOT": false,
@@ -184,8 +286,6 @@
     "m_applyNOT": false,
     "m_operator": "ROP_AND"
   },
-  "m_prepRequirements": null,
-  "m_pruneRequirements": null,
   "m_prepAlways": false,
   "m_clientTags": [],
   "m_goalLogic": [
@@ -235,20 +335,74 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "ZF-GRAVE-NPC01_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Take the drums up to the moat and place them in their designated spots.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Queen_Elissa_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/QueenElissa_ZFA_07.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 466210,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       },
       {
         "m_dialogTag": "Underway",
@@ -257,20 +411,74 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "ZF-GRAVE-NPC01_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "I need you to place the drums up near the bridge.",
             "m_picture": "GUI/NpcPortraits/Art_Portrait_ZF_Queen_Elissa_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_ZF|WorldData|Sound/Dialogue/QueenElissa_ZFA_08.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 466210,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       }
     ]
   },
@@ -280,5 +488,12 @@
   "m_outdated": false,
   "m_noQuestHelper": false,
   "m_mainline": true,
-  "m_activityType": "ACTIVITY_NotActivity"
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
 }

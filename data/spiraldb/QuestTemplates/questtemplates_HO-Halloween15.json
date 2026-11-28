@@ -40,7 +40,9 @@
       "m_clientTags": [
         "TritonPumpkin"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "TritonPumpkin"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_Triton",

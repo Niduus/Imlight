@@ -145,9 +145,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/Interiors/AZ_Z00_YacatesHouse",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume AZ-ZOCA-C11-001",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

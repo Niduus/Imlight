@@ -1,83 +1,57 @@
 {
+  "$type": "Imcodec.ObjectProperty.TypeCache.QuestTemplate, Imcodec.ObjectProperty",
   "m_questName": "AZ-ZOCA-C26-001",
   "m_questNameID": 0,
   "m_questTitle": "Count of Days",
-  "m_questInfo": null,
-  "m_questPrep": null,
-  "m_questUnderway": null,
-  "m_questComplete": null,
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
   "m_startGoals": [
     "1_WizardQuestGoals00000018"
   ],
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
-      "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
-      "m_completeResults": {
-        "m_results": []
-      },
-      "m_goalRequirements": null,
-      "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stone",
-        "m_descriptor2": "",
-        "m_count": 1,
-        "m_tallyResults": {
-          "m_results": []
-        }
-      },
-      "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
-      "m_displayImage2": "",
-      "m_clientTags": [
-        "AZ-Stone_AltoAlto",
-        "AZ-Stone_Cenote",
-        "AZ-Stone_Swamp",
-        "AZ-Stone_PitchBlackLake",
-        "AZ-Stone_FloatingMountains",
-        "AZ-Stone_TwinGiants"
+      "m_itemAdjectives": [
+        "AZ-Stone_AltoAlto.AdjRef",
+        "AZ-Stone_Cenote.AdjRef",
+        "AZ-Stone_Swamp.AdjRef",
+        "AZ-Stone_PitchBlackLake.AdjRef",
+        "AZ-Stone_FloatingMountains.AdjRef",
+        "AZ-Stone_TwinGiants.AdjRef"
       ],
-      "m_genericEvents": [],
-      "m_autoQualify": true,
-      "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z02_Tomb01",
-      "m_locationName": "Fire Ant's Tomb",
+      "m_itemTotal": 1,
       "m_goalName": "1_WizardQuestGoals00000018",
-      "m_goalTitle": "WizardQuestGoals_00000018",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "AZ-Stone_AltoAlto.AdjRef",
-        "AZ-Stone_Cenote.AdjRef",
-        "AZ-Stone_Swamp.AdjRef",
-        "AZ-Stone_PitchBlackLake.AdjRef",
-        "AZ-Stone_FloatingMountains.AdjRef",
-        "AZ-Stone_TwinGiants.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Stone_Cenote instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/Interiors/AZ_Z02_Tomb01",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stone",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stone",
         "m_descriptor2": "",
         "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Fire Ant\u0027s Tomb",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -88,45 +62,61 @@
         "AZ-Stone_FloatingMountains",
         "AZ-Stone_TwinGiants"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Stone_Cenote"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_destinationZone": "Azteca/Interiors/AZ_Z02_Tomb01",
+      "m_goalType": "GOAL_TYPE_USAGE",
       "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z03_HallOfPlumage_Room04",
-      "m_locationName": "Hall of Plumage",
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "AZ-Stone_AltoAlto.AdjRef",
+        "AZ-Stone_Cenote.AdjRef",
+        "AZ-Stone_Swamp.AdjRef",
+        "AZ-Stone_PitchBlackLake.AdjRef",
+        "AZ-Stone_FloatingMountains.AdjRef",
+        "AZ-Stone_TwinGiants.AdjRef"
+      ],
+      "m_itemTotal": 1,
       "m_goalName": "2_WizardQuestGoals00000018",
-      "m_goalTitle": "WizardQuestGoals_00000018",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "AZ-Stone_AltoAlto.AdjRef",
-        "AZ-Stone_Cenote.AdjRef",
-        "AZ-Stone_Swamp.AdjRef",
-        "AZ-Stone_PitchBlackLake.AdjRef",
-        "AZ-Stone_FloatingMountains.AdjRef",
-        "AZ-Stone_TwinGiants.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Stone_Swamp instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/Interiors/AZ_Z03_HallOfPlumage_Room04",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stone",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stone",
         "m_descriptor2": "",
         "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Hall of Plumage",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -137,45 +127,61 @@
         "AZ-Stone_FloatingMountains",
         "AZ-Stone_TwinGiants"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Stone_Swamp"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_destinationZone": "Azteca/Interiors/AZ_Z03_HallOfPlumage_Room04",
+      "m_goalType": "GOAL_TYPE_USAGE",
       "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z09_Calmecac_Room01",
-      "m_locationName": "Calmecac Library",
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "AZ-Stone_AltoAlto.AdjRef",
+        "AZ-Stone_Cenote.AdjRef",
+        "AZ-Stone_Swamp.AdjRef",
+        "AZ-Stone_PitchBlackLake.AdjRef",
+        "AZ-Stone_FloatingMountains.AdjRef",
+        "AZ-Stone_TwinGiants.AdjRef"
+      ],
+      "m_itemTotal": 1,
       "m_goalName": "3_WizardQuestGoals00000018",
-      "m_goalTitle": "WizardQuestGoals_00000018",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "AZ-Stone_AltoAlto.AdjRef",
-        "AZ-Stone_Cenote.AdjRef",
-        "AZ-Stone_Swamp.AdjRef",
-        "AZ-Stone_PitchBlackLake.AdjRef",
-        "AZ-Stone_FloatingMountains.AdjRef",
-        "AZ-Stone_TwinGiants.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Stone_AltoAlto instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/Interiors/AZ_Z09_Calmecac_Room01",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stone",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stone",
         "m_descriptor2": "",
         "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Calmecac Library",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -186,45 +192,61 @@
         "AZ-Stone_FloatingMountains",
         "AZ-Stone_TwinGiants"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Stone_AltoAlto"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_destinationZone": "Azteca/Interiors/AZ_Z09_Calmecac_Room01",
+      "m_goalType": "GOAL_TYPE_USAGE",
       "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z08_PyramidMotherMoon_Room03",
-      "m_locationName": "Pitch Black Lake",
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "AZ-Stone_AltoAlto.AdjRef",
+        "AZ-Stone_Cenote.AdjRef",
+        "AZ-Stone_Swamp.AdjRef",
+        "AZ-Stone_PitchBlackLake.AdjRef",
+        "AZ-Stone_FloatingMountains.AdjRef",
+        "AZ-Stone_TwinGiants.AdjRef"
+      ],
+      "m_itemTotal": 1,
       "m_goalName": "4_WizardQuestGoals00000018",
-      "m_goalTitle": "WizardQuestGoals_00000018",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "AZ-Stone_AltoAlto.AdjRef",
-        "AZ-Stone_Cenote.AdjRef",
-        "AZ-Stone_Swamp.AdjRef",
-        "AZ-Stone_PitchBlackLake.AdjRef",
-        "AZ-Stone_FloatingMountains.AdjRef",
-        "AZ-Stone_TwinGiants.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Stone_PitchBlackLake instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/Interiors/AZ_Z08_PyramidMotherMoon_Room03",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stone",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stone",
         "m_descriptor2": "",
         "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Pitch Black Lake",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -235,45 +257,61 @@
         "AZ-Stone_FloatingMountains",
         "AZ-Stone_TwinGiants"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Stone_PitchBlackLake"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_destinationZone": "Azteca/Interiors/AZ_Z08_PyramidMotherMoon_Room03",
+      "m_goalType": "GOAL_TYPE_USAGE",
       "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z10_Well",
-      "m_locationName": "Well",
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "AZ-Stone_AltoAlto.AdjRef",
+        "AZ-Stone_Cenote.AdjRef",
+        "AZ-Stone_Swamp.AdjRef",
+        "AZ-Stone_PitchBlackLake.AdjRef",
+        "AZ-Stone_FloatingMountains.AdjRef",
+        "AZ-Stone_TwinGiants.AdjRef"
+      ],
+      "m_itemTotal": 1,
       "m_goalName": "5_WizardQuestGoals00000018",
-      "m_goalTitle": "WizardQuestGoals_00000018",
-      "m_goalType": "GOAL_TYPE_USAGE",
-      "m_itemAdjectives": [
-        "AZ-Stone_AltoAlto.AdjRef",
-        "AZ-Stone_Cenote.AdjRef",
-        "AZ-Stone_Swamp.AdjRef",
-        "AZ-Stone_PitchBlackLake.AdjRef",
-        "AZ-Stone_FloatingMountains.AdjRef",
-        "AZ-Stone_TwinGiants.AdjRef"
-      ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Stone_FloatingMountains instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/Interiors/AZ_Z10_Well",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stone",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stone",
         "m_descriptor2": "",
         "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Well",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
       "m_displayImage2": "",
       "m_clientTags": [
@@ -284,16 +322,22 @@
         "AZ-Stone_FloatingMountains",
         "AZ-Stone_TwinGiants"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Stone_FloatingMountains"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z11_PyramidFallingStar_Room03",
-      "m_locationName": "Twin Giants",
-      "m_goalName": "6_WizardQuestGoals00000018",
-      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_destinationZone": "Azteca/Interiors/AZ_Z10_Well",
       "m_goalType": "GOAL_TYPE_USAGE",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
       "m_itemAdjectives": [
         "AZ-Stone_AltoAlto.AdjRef",
         "AZ-Stone_Cenote.AdjRef",
@@ -302,242 +346,397 @@
         "AZ-Stone_FloatingMountains.AdjRef",
         "AZ-Stone_TwinGiants.AdjRef"
       ],
-      "m_itemTotal": 1
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemTotal": 1,
+      "m_goalName": "6_WizardQuestGoals00000018",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Stone_TwinGiants instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/Interiors/AZ_Z11_PyramidFallingStar_Room03",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stones",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stone",
         "m_descriptor2": "",
-        "m_count": 0,
+        "m_count": 1,
         "m_tallyResults": {
           "m_results": []
         }
       },
-      "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
+      "m_locationName": "Twin Giants",
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_CalendarStone_Generic.dds",
       "m_displayImage2": "",
-      "m_clientTags": [],
-      "m_genericEvents": [],
-      "m_autoQualify": false,
+      "m_clientTags": [
+        "AZ-Stone_AltoAlto",
+        "AZ-Stone_Cenote",
+        "AZ-Stone_Swamp",
+        "AZ-Stone_PitchBlackLake",
+        "AZ-Stone_FloatingMountains",
+        "AZ-Stone_TwinGiants"
+      ],
+      "m_genericEvents": [
+        "AZ-Stone_TwinGiants"
+      ],
+      "m_autoQualify": true,
       "m_autoComplete": false,
-      "m_dialogList": null,
+      "m_destinationZone": "Azteca/Interiors/AZ_Z11_PyramidFallingStar_Room03",
+      "m_goalType": "GOAL_TYPE_USAGE",
       "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_locationName": "Three Points",
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+      "m_proximityTag": "Enter_Activator Volume Stone01",
+      "m_zoneExit": false,
       "m_goalName": "7_WizardQuestGoalsEncounterExplore",
-      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Altar01 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle",
+            "m_zoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stones",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stones",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Three Points",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_locationName": "Three Points",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+      "m_proximityTag": "Enter_Activator Volume Stone02",
+      "m_zoneExit": false,
       "m_goalName": "8_WizardQuestGoalsEncounterExplore",
-      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Altar02 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle",
+            "m_zoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stones",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stones",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Three Points",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_locationName": "Three Points",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+      "m_proximityTag": "Enter_Activator Volume Stone03",
+      "m_zoneExit": false,
       "m_goalName": "9_WizardQuestGoalsEncounterExplore",
-      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Altar03 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle",
+            "m_zoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stones",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stones",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Three Points",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_locationName": "Three Points",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+      "m_proximityTag": "Enter_Activator Volume Stone04",
+      "m_zoneExit": false,
       "m_goalName": "10_WizardQuestGoalsEncounterExplore",
-      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Altar04 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle",
+            "m_zoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stones",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stones",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Three Points",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_locationName": "Three Points",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+      "m_proximityTag": "Enter_Activator Volume Stone05",
+      "m_zoneExit": false,
       "m_goalName": "11_WizardQuestGoalsEncounterExplore",
-      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
-      "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
-      "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_proximityTag": "",
-      "m_zoneExit": false
-    },
-    {
-      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Altar05 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle",
+            "m_zoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
-        "m_descriptor": "Tzolk'in Stones",
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stones",
         "m_descriptor2": "",
         "m_count": 0,
         "m_tallyResults": {
           "m_results": []
         }
       },
+      "m_locationName": "Three Points",
       "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
-      "m_dialogList": null,
-      "m_noQuestHelper": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_locationName": "Three Points",
-      "m_goalName": "12_WizardQuestGoalsEncounterExplore",
-      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
       "m_goalType": "GOAL_TYPE_WAYPOINT",
-      "m_zoneEntry": true,
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
-      "m_proximityTag": "",
-      "m_zoneExit": false
+      "m_proximityTag": "Enter_Activator Volume Stone06",
+      "m_zoneExit": false,
+      "m_goalName": "12_WizardQuestGoalsEncounterExplore",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_EncounterExplore",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Altar06 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle",
+            "m_zoneName": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Z01-QuestLight_Library",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Z01-QuestLight_Library",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "On",
+            "m_zoneName": "Azteca/AZ_Z01_ThreePoints",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 1,
+        "m_descriptor": "Tzolk\u0027in Stones",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_locationName": "Three Points",
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_AZ_TeocalliStoneStand.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
+      "m_usePatron": false,
+      "m_goalName": "13_WizardQuestGoalsTalkNPC",
       "m_goalNameID": 0,
-      "m_goalUnderway": null,
-      "m_hyperlink": null,
-      "m_completeText": null,
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
       "m_completeResults": {
         "m_results": []
       },
-      "m_goalRequirements": null,
       "m_tallyCounter": {
-        "m_percentChance": 1.0,
+        "m_percentChance": 1,
         "m_descriptor": "",
         "m_descriptor2": "",
         "m_count": 0,
@@ -545,12 +744,14 @@
           "m_results": []
         }
       },
+      "m_locationName": "The Zocalo",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
       "m_displayImage2": "",
       "m_clientTags": [],
       "m_genericEvents": [],
       "m_autoQualify": false,
       "m_autoComplete": false,
+      "m_destinationZone": "Azteca/AZ_Z00_Zocalo",
       "m_dialogList": {
         "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
         "m_dialogs": [
@@ -561,31 +762,84 @@
                 "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
                 "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
                 "m_nameOverride": "",
-                "m_nameSTKey": null,
+                "m_nameSTKey": "",
                 "m_guiDisplay": "",
                 "m_maxTimeSeconds": 0,
                 "m_invisible": false,
-                "m_requirements": null,
-                "m_dialog": "You recovered all six Tzolk'in Stones! Tremendous work, Magician!",
+                "m_dialog": "You recovered all six Tzolk\u0027in Stones! Tremendous work, Magician!",
                 "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
                 "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/TezcatThreestar_AZT_48.mp3",
                 "m_action": "",
                 "m_dialogEvent": "",
                 "m_actorTemplateID": 643254,
-                "m_cameraName": ""
+                "m_cameraName": "",
+                "m_interpolationDuration": 0,
+                "m_cameraOffsetX": 0,
+                "m_cameraOffsetY": 0,
+                "m_cameraOffsetZ": 0,
+                "m_pitch": 0,
+                "m_yaw": 0,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": false,
+                "m_cameraZoneName": "",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
               }
-            ]
+            ],
+            "m_madlibs": [],
+            "m_dialogEvents": [],
+            "m_noAggroWhileDialogIsUp": false,
+            "m_noAggroNoDelay": false
           }
         ]
       },
-      "m_noQuestHelper": false,
-      "m_destinationZone": "Azteca/AZ_Z00_Zocalo",
-      "m_locationName": "The Zocalo",
-      "m_goalName": "13_WizardQuestGoalsTalkNPC",
-      "m_goalTitle": "WizardQuestGoals_TalkNPC",
       "m_goalType": "GOAL_TYPE_PERSONA",
-      "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
-      "m_usePatron": false
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
     }
   ],
   "m_startResults": {
@@ -595,7 +849,8 @@
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
-        "m_tableName": "AZ-ZOCA-C26-001"
+        "m_tableName": "AZ-ZOCA-C26-001",
+        "m_maxRolls": 0
       }
     ]
   },
@@ -604,7 +859,7 @@
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
         "m_entryName": "Complete",
-        "m_displayName": null,
+        "m_displayName": "",
         "m_isQuestRegistry": true,
         "m_questName": "AZ-ZOCA-C03-001",
         "m_applyNOT": false,
@@ -614,8 +869,6 @@
     "m_applyNOT": false,
     "m_operator": "ROP_AND"
   },
-  "m_prepRequirements": null,
-  "m_pruneRequirements": null,
   "m_prepAlways": false,
   "m_clientTags": [],
   "m_goalLogic": [
@@ -775,71 +1028,275 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "Magician, I fear we may be a doomed people, destined to be wiped out by the falling sky, or the Hungry Dead.",
             "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/TezcatThreestar_AZT_43.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 643254,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
             "m_dialog": "It would be tragic if our history was lost forever. I charge you to help us preserve it, if I may be so bold.",
             "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/TezcatThreestar_AZT_44.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 643254,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "There are six great Tzolk'in Stones, or Sacred Rounds, that tell our story. Over the ages they have been scattered.",
+            "m_dialog": "There are six great Tzolk\u0027in Stones, or Sacred Rounds, that tell our story. Over the ages they have been scattered.",
             "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/TezcatThreestar_AZT_45.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 643254,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "I need you to find the six Tzolk'in Stones and bring them back to the Teocalli of Sacred War, in Three Points.",
+            "m_dialog": "I need you to find the six Tzolk\u0027in Stones and bring them back to the Teocalli of Sacred War, in Three Points.",
             "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/TezcatThreestar_AZT_46.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 643254,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       },
       {
         "m_dialogTag": "Underway",
@@ -848,20 +1305,74 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
             "m_personaName": "AZ-ZOCOLO-NPC03_Persona",
             "m_nameOverride": "",
-            "m_nameSTKey": null,
+            "m_nameSTKey": "",
             "m_guiDisplay": "",
             "m_maxTimeSeconds": 0,
             "m_invisible": false,
-            "m_requirements": null,
-            "m_dialog": "Find the six Tzolk'in Stones that are scattered across the land and bring them to the Teocalli of Sacred War in Three Points.",
+            "m_dialog": "Find the six Tzolk\u0027in Stones that are scattered across the land and bring them to the Teocalli of Sacred War in Three Points.",
             "m_picture": "GUI/NpcPortraits/Portrait_Tritops_Warrior_C_NPC.dds",
             "m_soundFile": "|Sound_Dialogue_AZT|WorldData|Sound/Dialogue/TezcatThreestar_AZT_47.mp3",
             "m_action": "",
             "m_dialogEvent": "",
             "m_actorTemplateID": 643254,
-            "m_cameraName": ""
+            "m_cameraName": "",
+            "m_interpolationDuration": 0,
+            "m_cameraOffsetX": 0,
+            "m_cameraOffsetY": 0,
+            "m_cameraOffsetZ": 0,
+            "m_pitch": 0,
+            "m_yaw": 0,
+            "m_roll": 0,
+            "m_cameraShakeType": "",
+            "m_cameraShakeDuration": 0,
+            "m_cameraShakeAmplitude": 0,
+            "m_bypassCameraOnReview": false,
+            "m_cameraZoneName": "",
+            "m_duration": 0,
+            "m_delay": 0,
+            "m_cameraHidePlayers": 0,
+            "m_walkAwayNpcTemplateID": 0,
+            "m_walkAwayExitDirectionInDegrees": 0,
+            "m_walkAwayFadeTime": 0,
+            "m_walkAwayUseCurrentFacing": false,
+            "m_standInPlayerTag": "",
+            "m_fadeOutCamera": false,
+            "m_snapCameraToPlayerAtExit": false,
+            "m_secondaryCameraName": "",
+            "m_secondaryInterpolationDuration": 0,
+            "m_npcStandInList": [],
+            "m_dialogAnimationList": [],
+            "m_dialogTurningList": [],
+            "m_npcYawOffsetInDegrees": 0,
+            "m_allowPlayerToMove": false,
+            "m_soundEffectFile": "",
+            "m_musicFile": "",
+            "m_nonStackableMusic": false,
+            "m_nonRepeatableMusic": false,
+            "m_playMusicAtSFXVolume": false,
+            "m_soundEffectDelay": 0,
+            "m_musicDelay": 0,
+            "m_musicFadeTime": 0,
+            "m_dontReleaseCameraAtExit": false,
+            "m_disableBackButton": false,
+            "m_enableExitButton": false,
+            "m_cameraFadeType": "",
+            "m_cameraFadeTime": 0,
+            "m_idleAnimation": "",
+            "m_spamTime": 0,
+            "m_playSoundIfSpamming": false,
+            "m_playMusicIfSpamming": false,
+            "m_stopMusicFadeTime": 0,
+            "m_restartMusicFadeTime": 0,
+            "m_meetsRequirements": false,
+            "m_secondaryCameraInitalDelay": 0,
+            "m_displayButtonsOnTimedDialog": false
           }
-        ]
+        ],
+        "m_madlibs": [],
+        "m_dialogEvents": [],
+        "m_noAggroWhileDialogIsUp": false,
+        "m_noAggroNoDelay": false
       }
     ]
   },
@@ -871,5 +1382,12 @@
   "m_outdated": false,
   "m_noQuestHelper": false,
   "m_mainline": false,
-  "m_activityType": "ACTIVITY_NotActivity"
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
 }

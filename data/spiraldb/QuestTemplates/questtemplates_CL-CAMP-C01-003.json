@@ -251,7 +251,30 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResEmote, Imcodec.ObjectProperty",
+            "m_emoteName": "Cast",
+            "m_emoteState": "ActionEmoting",
+            "m_loop": false,
+            "m_particleAsset": "",
+            "m_particleNode": "",
+            "m_personaName": "",
+            "m_soundAsset": "",
+            "m_usePersona": false,
+            "m_useTarget": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "CL-WaterLeak01_instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Celestia/CL_Z01_Survey_Camp",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -268,7 +291,9 @@
       "m_clientTags": [
         "CL-WaterLeak01"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Fix_WaterLeak01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",
@@ -333,7 +358,9 @@
       "m_clientTags": [
         "CL-WaterLeak02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Fix_WaterLeak02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",
@@ -398,7 +425,9 @@
       "m_clientTags": [
         "CL-WaterLeak03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Fix_WaterLeak03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",
@@ -463,7 +492,9 @@
       "m_clientTags": [
         "CL-WaterLeak04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Fix_WaterLeak04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",
@@ -612,7 +643,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

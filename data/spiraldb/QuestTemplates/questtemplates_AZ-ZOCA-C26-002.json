@@ -51,7 +51,9 @@
         "AZ-Altar05",
         "AZ-Altar06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Altar01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
@@ -103,7 +105,9 @@
         "AZ-Altar05",
         "AZ-Altar06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Altar02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
@@ -155,7 +159,9 @@
         "AZ-Altar05",
         "AZ-Altar06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Altar03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
@@ -207,7 +213,9 @@
         "AZ-Altar05",
         "AZ-Altar06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Altar04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
@@ -259,7 +267,9 @@
         "AZ-Altar05",
         "AZ-Altar06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Altar05"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",
@@ -327,7 +337,9 @@
         "AZ-Altar05",
         "AZ-Altar06"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Altar06"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z00_TeocalliSacredWar",

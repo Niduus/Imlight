@@ -25,7 +25,18 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Bath_House_Water instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle_Clean",
+            "m_zoneName": "Zafaria/ZF_Z10_Elephant_Graveyard",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -43,7 +54,9 @@
         "ZF_Elephant_Graveyard_Bath_House_Water2",
         "ZF_Elephant_Graveyard_Bath_House_Water"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_SacredPoolClean1"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/ZF_Z10_Elephant_Graveyard",
@@ -150,7 +163,18 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "ZF_Elephant_Graveyard_Bath_House_Water2 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Idle_Clean",
+            "m_zoneName": "Zafaria/ZF_Z10_Elephant_Graveyard",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -168,7 +192,9 @@
         "ZF_Elephant_Graveyard_Bath_House_Water2",
         "ZF_Elephant_Graveyard_Bath_House_Water"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_SacredPoolClean2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/ZF_Z10_Elephant_Graveyard",

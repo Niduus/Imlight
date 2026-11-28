@@ -56,7 +56,9 @@
         "BobForApple02",
         "DDl_WC_SD_Tub02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotApple02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Shop_Area",

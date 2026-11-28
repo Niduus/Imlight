@@ -41,7 +41,9 @@
       "m_clientTags": [
         "KR-KondhaKhactus"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-KondhaKhactus"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z10_KondhaDesert",
@@ -190,7 +192,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

@@ -586,9 +586,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Krokotopia/KT_Pyramid/KT_Chamber",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume MYTH-C03 quest",
       "m_zoneExit": false,
       "m_goalName": "3_MakeRubbingofSkullObelisk",
       "m_goalNameID": 0,
@@ -1095,7 +1095,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

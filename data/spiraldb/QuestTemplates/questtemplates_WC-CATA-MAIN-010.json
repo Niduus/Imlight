@@ -158,9 +158,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "WizardCity/WC_Streets/WC_Catacombs_B",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume WC-CATA-MAIN-011",
       "m_zoneExit": false,
       "m_goalName": "2_Examine",
       "m_goalNameID": 0,
@@ -421,7 +421,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

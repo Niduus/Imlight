@@ -43,7 +43,9 @@
         "AZ-HalleysTelescope",
         "AZ-HalleysTelescopeReuse"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Teletele"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Marleybone/Interiors/MB_PreAZ_HalleysTowerInt",

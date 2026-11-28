@@ -41,7 +41,9 @@
       "m_clientTags": [
         "ImlightCraft:82944"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "Crafting"
+      ],
       "m_autoQualify": false,
       "m_autoComplete": false,
       "m_destinationZone": "DragonSpire/DS_A1_Knowledge/DS_A1Hub_Library",

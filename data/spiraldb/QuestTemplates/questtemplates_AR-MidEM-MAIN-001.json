@@ -13,9 +13,9 @@
   "m_goals": [
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Arcanum/Interiors/AR_Z01_RecoveryRoom",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_AR-MidEM-MAIN-001_Goal_Explore_RecoveryRoom",
       "m_zoneExit": false,
       "m_goalName": "1_Checkon",
       "m_goalNameID": 0,
@@ -24,7 +24,14 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResReInteract, Imcodec.ObjectProperty",
+            "m_delay": 2,
+            "m_personaName": "",
+            "m_source": true
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

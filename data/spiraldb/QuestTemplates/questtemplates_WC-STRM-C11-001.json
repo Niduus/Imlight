@@ -618,7 +618,9 @@
         "ZF_Egg_Clutch",
         "CL_Egg_Clutch"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_EggClutch_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z06i_KrakenCave",
@@ -767,7 +769,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

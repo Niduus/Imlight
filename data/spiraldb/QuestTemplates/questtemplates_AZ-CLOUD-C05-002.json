@@ -99,7 +99,9 @@
         "AZ-Magic-Mirror-03",
         "AZ-Magic-Mirror-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-MagicMirror"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -158,7 +160,9 @@
         "AZ-Magic-Mirror-03",
         "AZ-Magic-Mirror-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-MagicMirror02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -217,7 +221,9 @@
         "AZ-Magic-Mirror-03",
         "AZ-Magic-Mirror-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-MagicMirror03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -276,7 +282,9 @@
         "AZ-Magic-Mirror-03",
         "AZ-Magic-Mirror-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-MagicMirror04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",

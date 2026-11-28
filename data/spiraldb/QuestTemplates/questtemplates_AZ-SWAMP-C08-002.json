@@ -41,7 +41,9 @@
       "m_clientTags": [
         "AZ-BrokenColumns"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-SWAMP-C08-002Column"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z04_SaltmeadowSwamp",

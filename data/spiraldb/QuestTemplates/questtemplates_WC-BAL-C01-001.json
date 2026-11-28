@@ -810,9 +810,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "WizardCity/WC_Hub",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Commons Pond",
       "m_zoneExit": false,
       "m_goalName": "5_Visit",
       "m_goalNameID": 0,
@@ -821,7 +821,13 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "CallJudgment",
+            "m_subEventName": ""
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -1267,7 +1273,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

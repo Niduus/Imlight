@@ -40,7 +40,9 @@
       "m_clientTags": [
         "FirecatPumpkin"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "FirecatPumpkin"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_Firecat",

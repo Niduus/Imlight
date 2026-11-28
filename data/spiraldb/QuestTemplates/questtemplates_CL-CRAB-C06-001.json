@@ -129,7 +129,9 @@
       "m_clientTags": [
         "CL-BookPedestalCrabFortress01"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-CRAB-C06-001PedestalUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z10_Kingdom_Of_The_Crabs",
@@ -326,7 +328,9 @@
       "m_clientTags": [
         "CL-BookPedestalCrabFortress02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-CRAB-C06-001PedestalUse02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z10_Kingdom_Of_The_Crabs",

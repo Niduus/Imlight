@@ -54,7 +54,9 @@
         "CL-TabletObject01",
         "CL-WaterBreathingObject"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Tablet_Rubbed2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",

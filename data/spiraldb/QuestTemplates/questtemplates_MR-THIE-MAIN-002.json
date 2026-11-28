@@ -328,9 +328,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z07_UnderDen",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume Room02",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -911,9 +911,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z07_UnderDen",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume Room03",
       "m_zoneExit": false,
       "m_goalName": "5_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

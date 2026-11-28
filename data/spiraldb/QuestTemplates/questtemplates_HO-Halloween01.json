@@ -41,7 +41,9 @@
         "GetTreat",
         "DDl_WC_TC_JackOLantern"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GetTreat"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Hub",

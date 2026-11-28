@@ -487,7 +487,9 @@
         "EM-BlastingRods",
         "EM-BlastingRods-Object"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EN-OUTER-SIDE-001_UseBlastingRods"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z03_IceSupplyCave",
@@ -743,7 +745,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

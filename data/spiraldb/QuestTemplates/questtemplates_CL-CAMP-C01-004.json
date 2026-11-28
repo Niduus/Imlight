@@ -45,7 +45,9 @@
         "CL-CLUE02",
         "CL-CLUE03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Clue01_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",
@@ -172,7 +174,9 @@
         "CL-CLUE02",
         "CL-CLUE03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Clue02_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",
@@ -299,7 +303,9 @@
         "CL-CLUE02",
         "CL-CLUE03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Clue03_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z01_Survey_Camp",

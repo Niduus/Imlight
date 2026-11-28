@@ -53,7 +53,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-TapestryPiece01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z02_TowerRedThorn",
@@ -107,7 +109,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-TapestryPiece02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z03_Froudling01",
@@ -161,7 +165,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-TapestryPiece03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z04_WhiteOwlTower",
@@ -215,7 +221,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-TapestryPiece04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z05_TombNameless",
@@ -269,7 +277,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-TapestryPiece05"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z06_TowerBelleRegard",
@@ -323,7 +333,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-TapestryPiece06"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z10_CptnChamber",

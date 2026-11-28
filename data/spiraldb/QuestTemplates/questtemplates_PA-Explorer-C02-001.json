@@ -330,7 +330,9 @@
       "m_clientTags": [
         "PA_Pigswick_Papers"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA_Pigswick_Papers01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/Interiors/PA_Crystal_Tower",
@@ -661,7 +663,9 @@
       "m_clientTags": [
         "PA_Pigswick_Papers"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA_Pigswick_Papers02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/Interiors/PA_Tournament_Entry",
@@ -1059,7 +1063,9 @@
       "m_clientTags": [
         "PA_Pigswick_Papers"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA_Pigswick_Papers03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/Interiors/PA_Library_Archive",
@@ -1457,7 +1463,9 @@
       "m_clientTags": [
         "PA_Pigswick_Papers"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA_Pigswick_Papers04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/Interiors/PA_Lord_Bramble_Tower",

@@ -316,6 +316,14 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
                     partner = System.Text.RegularExpressions.Regex.Replace(name, "TeleportTo", "TeleportFrom",
                         System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                 }
+                else if (name.Contains("PortalTo", StringComparison.OrdinalIgnoreCase)) {
+                    partner = System.Text.RegularExpressions.Regex.Replace(name, "PortalTo", "PortalFrom",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                }
+                else if (name.Contains("PortalFrom", StringComparison.OrdinalIgnoreCase)) {
+                    partner = System.Text.RegularExpressions.Regex.Replace(name, "PortalFrom", "PortalTo",
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                }
                 else if (name.Contains("TeleportFrom", StringComparison.OrdinalIgnoreCase)) {
                     partner = System.Text.RegularExpressions.Regex.Replace(name, "TeleportFrom", "TeleportTo",
                         System.Text.RegularExpressions.RegexOptions.IgnoreCase);
@@ -323,7 +331,8 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
 
                 var world = zonePath.Split('/')[0];
                 if (partner is null
-                    || Imlight.CoreLib.Game.Zone.Core.ZoneObjectTags.FindInWorld(world, zonePath, partner) is not { } found) {
+                    || Imlight.CoreLib.Game.Zone.Core.ZoneObjectTags.FindInWorld(world, zonePath, partner) is not { } found
+                    || string.Equals(found.Zone, zonePath, StringComparison.OrdinalIgnoreCase)) {
                     continue;
                 }
 
@@ -455,7 +464,8 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
     /// </summary>
     private static bool IsBareTeleporter(GameObjectTemplate template) {
         var name = template.m_objectName.ToString();
-        if (!name.Contains("Teleport", StringComparison.OrdinalIgnoreCase)) {
+        // "Portal" too: the Sand Sea's AR-PortalFromSandSea (AR-PreMR-MAIN-002) names no destination either (2026-11-28).
+        if (!name.Contains("Teleport", StringComparison.OrdinalIgnoreCase) && !name.Contains("Portal", StringComparison.OrdinalIgnoreCase)) {
             return false;
         }
 

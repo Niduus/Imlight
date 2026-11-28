@@ -196,7 +196,9 @@
       "m_clientTags": [
         "PL-DufresnesVolcanicGlass"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PL-DufresnesVolcanicGlass"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Polaris/PL_Z02_ForlornTaig",

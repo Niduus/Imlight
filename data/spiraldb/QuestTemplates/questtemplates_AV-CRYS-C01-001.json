@@ -93,7 +93,9 @@
       "m_clientTags": [
         "AV-CRYS-Root"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-CRYS-C01-001Root"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z11_CrystalCaves",
