@@ -66,7 +66,9 @@
       "m_clientTags": [
         "AZ_Cacoon_Cage"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Cacoon_Free1"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z09_AltoAlto",
@@ -91,7 +93,28 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-ALTO-NPC10 instance (1)",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/AZ_Z09_AltoAlto",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ_Cacoon_Cage2 instance",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Azteca/AZ_Z09_AltoAlto",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -108,7 +131,9 @@
       "m_clientTags": [
         "AZ_Cacoon_Cage2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Cacoon_Free2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z09_AltoAlto",
@@ -171,7 +196,9 @@
       "m_clientTags": [
         "AZ_Cacoon_Cage3"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Cacoon_Free3"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z09_AltoAlto",
@@ -234,7 +261,9 @@
       "m_clientTags": [
         "AZ_Cacoon_Cage4"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Cacoon_Free4"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z09_AltoAlto",
@@ -297,7 +326,9 @@
       "m_clientTags": [
         "AZ_Cacoon_Cage5"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Cacoon_Free5"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z09_AltoAlto",
@@ -446,7 +477,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

@@ -325,6 +325,21 @@ internal class ZoneService(SessionActor sessionActor) : MessageService(sessionAc
             message.OwnerCharId = leaving.CharId;
         }
 
+        // A way into another zone that names no spot of it (nothing, "Start", or a name the zone does not have) lands at
+        // the zone's spot named after the place the player leaves, when it has one: leaving the Princess's Hovel lands at
+        // Yakhal Mountain's From_PrincessHovel, not the mountain's start (MR-YAKH-MAIN-005).
+        if (!message.LeaveInstance && GetActiveWizard()?.Zone is { Length: > 0 } fromZone
+            && !string.IsNullOrEmpty(message.DestinationZone) && !HouseZoneIndex.IsHouseZone(message.DestinationZone)) {
+            var named = message.DestinationLocation?.ToString() ?? "";
+            var isSpot = named.Length > 0 && !string.Equals(named, "Start", StringComparison.OrdinalIgnoreCase)
+                && (named.Contains(',') || ArrivalSpots.Locations(message.DestinationZone).Contains(named, StringComparer.OrdinalIgnoreCase));
+            if (!isSpot && ArrivalSpots.ComingFrom(message.DestinationZone, fromZone) is { } arrival) {
+                Logger.Information("Session {0}: the way from {1} into {2} names {3}; arriving at {4}, the spot for coming from there.",
+                    Logger.Args(SessionActor.SessionID, fromZone, message.DestinationZone, named.Length > 0 ? named : "no spot", arrival));
+                message.DestinationLocation = arrival;
+            }
+        }
+
         // A zone (or world) the On and Off tab turned off (TurnedOff) cannot be gone into: the player is told and stays put.
         // A move inside the zone they are in is still fine.
         if (message.SendToClient && Imlight.CoreLib.Game.World.TurnedOff.IsZoneOff(message.DestinationZone)

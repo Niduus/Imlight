@@ -395,9 +395,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Khrysalis/Interiors/KR_Z10_I17_BloodStoneCave",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_KR-KOND-C07-002Goal02Volume",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoals00000165",
       "m_goalNameID": 0,

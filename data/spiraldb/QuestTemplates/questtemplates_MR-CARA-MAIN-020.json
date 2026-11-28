@@ -387,7 +387,9 @@
       "m_clientTags": [
         "MR-Chronocle"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "MR-Chronocle"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z09_ChronocleChamber",

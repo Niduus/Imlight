@@ -22,6 +22,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -204,6 +207,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -520,6 +526,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -635,6 +644,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -866,6 +878,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -900,6 +915,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -1178,6 +1196,27 @@
             "m_spawnID": 914507,
             "m_despawnEffect": false,
             "m_templateID": 0
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 913991,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 913993,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 920035,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
@@ -1752,6 +1791,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {

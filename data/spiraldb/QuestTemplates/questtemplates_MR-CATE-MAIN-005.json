@@ -462,9 +462,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z03_CavernOfTheWurm",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator VolumeMR-CATE-MAIN-00_Goal04",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -1000,7 +1000,12 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 1
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

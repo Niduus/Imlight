@@ -21,6 +21,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "WizQst94EE_00000005",
@@ -61,6 +64,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 10,
         "m_descriptor": "WizQst94EE_00000007",
@@ -95,6 +101,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -201,12 +210,24 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
         "m_tableName": "WC-ST01-C01-003",
         "m_maxRolls": 0
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 38431,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": ""
       }
     ]
   },

@@ -320,7 +320,9 @@
       "m_clientTags": [
         "AZ-DawnOfDayAxe"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-DawnDayAxe"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z11_Cave02",
@@ -705,7 +707,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

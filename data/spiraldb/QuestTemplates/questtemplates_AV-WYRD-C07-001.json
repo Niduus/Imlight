@@ -83,7 +83,9 @@
         "AV-TapestryPiece04 instance",
         "AV-TapestryPiece04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MalroyPlaque"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z05_TombNameless",
@@ -126,7 +128,9 @@
         "AV-Malroy-Plaque instance",
         "AV-Malroy-Plaque"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MalroyPlaque"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z05_TombNameless",

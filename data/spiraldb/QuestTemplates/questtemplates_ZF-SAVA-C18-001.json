@@ -139,7 +139,9 @@
       "m_clientTags": [
         "ZF_Weapon_Stick"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_Weapon_Stick_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/ZF_Z03_Savannah",
@@ -279,7 +281,9 @@
       "m_clientTags": [
         "ZF_Weapon_Blade"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_Weapon_Blade_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/ZF_Z03_Savannah",
@@ -419,7 +423,9 @@
       "m_clientTags": [
         "ZF_Weapon_Rawhide"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_Weapon_Rawhide_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/ZF_Z03_Savannah",

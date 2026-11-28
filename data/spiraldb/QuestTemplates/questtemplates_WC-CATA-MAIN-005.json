@@ -1385,7 +1385,9 @@
         "WC-KnowledgeCrystal_Blocker_05",
         "WC-KnowledgeCrystal_Blocker"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC-CATA-MAIN-005_Use_KnowlegeCrystal_03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Catacombs_WhisperingSepulcher",
@@ -1575,7 +1577,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

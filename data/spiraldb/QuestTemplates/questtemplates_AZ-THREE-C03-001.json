@@ -41,7 +41,9 @@
       "m_clientTags": [
         "AZ-Flowers_Xochiya"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Xochiya_Flowers_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z01_ThreePoints",
@@ -136,9 +138,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/AZ_Z01_ThreePoints",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume AZ-THREE-C03-001",
       "m_zoneExit": false,
       "m_goalName": "2_Bathein",
       "m_goalNameID": 0,
@@ -147,7 +149,18 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-Z01-QuestLight-Palace",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Quest",
+            "m_zoneName": "Azteca/AZ_Z01_ThreePoints",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

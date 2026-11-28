@@ -1042,6 +1042,20 @@
             "m_activate": true,
             "templateID": 0,
             "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 5910447,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 5910446,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -1868,6 +1882,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {

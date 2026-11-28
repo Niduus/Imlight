@@ -296,9 +296,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/Interiors/AZ_Z04_TreeOfSecrets02",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume AZ-ZOCA-C13-001 Goal 2",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsKill",
       "m_goalNameID": 0,
@@ -646,9 +646,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/Interiors/AZ_Z04_TreeOfSecrets03",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume AZ-ZOCA-C13-001 Goal 4",
       "m_zoneExit": false,
       "m_goalName": "5_WizardQuestGoalsKill",
       "m_goalNameID": 0,
@@ -657,7 +657,18 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AZ-QuestLight AZ-Z04_TreeOfSecrets03",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Quest",
+            "m_zoneName": "Azteca/AZ_Z04_SaltmeadowSwamp",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -1122,7 +1133,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResAddTreasureSpell, Imcodec.ObjectProperty"

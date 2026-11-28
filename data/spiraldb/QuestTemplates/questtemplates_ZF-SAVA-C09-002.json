@@ -201,9 +201,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Zafaria/ZF_Z03_Savannah",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_AV_Outside_Snaketongues_Hut",
       "m_zoneExit": false,
       "m_goalName": "3_Exit",
       "m_goalNameID": 0,
@@ -465,7 +465,18 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "Ddl_ZF_Certorr",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

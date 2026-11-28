@@ -52,7 +52,9 @@
       "m_clientTags": [
         "EM-Urn_Black"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-Urn_Black"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z12_SamsaraVillage",
@@ -105,7 +107,9 @@
       "m_clientTags": [
         "EM-Urn_Red"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-Urn_Red"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z12_SamsaraVillage",
@@ -158,7 +162,9 @@
       "m_clientTags": [
         "EM-Urn_Gold"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-Urn_Gold"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z12_SamsaraVillage",

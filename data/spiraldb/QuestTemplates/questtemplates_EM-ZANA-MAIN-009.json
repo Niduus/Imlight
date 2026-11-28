@@ -495,7 +495,9 @@
       "m_clientTags": [
         "EM-Wood"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-Wood"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z02_Zanadu",
@@ -509,9 +511,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Empyrea/EM_Z02_Zanadu",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_AV_ZANA-MAIN-009_1-3",
       "m_zoneExit": false,
       "m_goalName": "3_Bring",
       "m_goalNameID": 0,
@@ -520,7 +522,18 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "EM-SignalFire instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Add_Cart",
+            "m_zoneName": "Empyrea/EM_Z02_Zanadu",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -601,7 +614,23 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "EM-SignalFire instance",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "EM-SignalFire instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Cart_Fire",
+            "m_zoneName": "Empyrea/EM_Z02_Zanadu",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -618,7 +647,9 @@
       "m_clientTags": [
         "EM-SignalFire"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-SignalFire"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z02_Zanadu",

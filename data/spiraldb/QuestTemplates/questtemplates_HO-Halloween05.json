@@ -56,7 +56,9 @@
         "BobForApple01",
         "DDl_WC_GC_Tub01"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotApple01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Golem_Tower",

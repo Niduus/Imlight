@@ -52,7 +52,9 @@
       "m_clientTags": [
         "KR-EclipseTowerMoonShrine"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EVENT-UseMoonShrine"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z02_MoonCliffs_Int01_03",

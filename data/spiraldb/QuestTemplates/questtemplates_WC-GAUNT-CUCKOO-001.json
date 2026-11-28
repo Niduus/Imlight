@@ -663,6 +663,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "WizQst151298_00000005",
@@ -893,6 +896,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1381027",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_GuineaPig_Steward_A_NPC.dds",
       "m_displayImage2": "",
@@ -1398,6 +1404,13 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
             "m_addEffect": true,
             "m_effectName": "Bernado"
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7500256,
+            "m_activate": false,
+            "templateID": 0,
+            "nodes": []
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
@@ -3030,6 +3043,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {

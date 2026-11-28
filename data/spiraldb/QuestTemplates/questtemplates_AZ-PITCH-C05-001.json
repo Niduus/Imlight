@@ -64,7 +64,9 @@
         "AZ-MoonDoor",
         "AZ-MoonDoorBlocker"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-MoonDoor"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z08_PitchBlackLake",
@@ -159,9 +161,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/Interiors/AZ_Z08_PyramidMotherMoon_Room03",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator-PITCH-C05-001",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -564,7 +566,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

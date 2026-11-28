@@ -699,9 +699,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z05_VipersDen",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume-Room2",
       "m_zoneExit": false,
       "m_goalName": "4_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -1148,9 +1148,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z05_VipersDen",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume-Room3",
       "m_zoneExit": false,
       "m_goalName": "6_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -2001,7 +2001,9 @@
         "MR-Chronoshard",
         "MR-YakhalChronoshard"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "MR-Chronoshard"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z05_VipersDen",

@@ -41,7 +41,9 @@
         "GotGhostBlue",
         "DDl_WC_SD_BlueGhost"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotGhostBlue"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Shop_Area",

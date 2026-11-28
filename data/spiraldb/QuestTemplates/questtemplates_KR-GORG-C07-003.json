@@ -543,9 +543,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Khrysalis/Interiors/KR_Z04_I08_WampyCave",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_KR-GORG-C07-003Taunt",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoals00000022",
       "m_goalNameID": 0,

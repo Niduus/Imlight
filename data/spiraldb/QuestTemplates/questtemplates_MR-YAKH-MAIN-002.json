@@ -167,7 +167,12 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 1
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -466,9 +471,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z06_RebelHQ_02",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_MR-YAKH-MAIN-002Goal04Volume",
       "m_zoneExit": false,
       "m_goalName": "4_WizardQuestGoals00000165",
       "m_goalNameID": 0,
@@ -477,7 +482,12 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 0.5
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

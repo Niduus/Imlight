@@ -734,9 +734,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Empyrea/EM_Z16_Husk",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_AV_HUSK-MAIN-001_Goal4",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoals00000165",
       "m_goalNameID": 0,

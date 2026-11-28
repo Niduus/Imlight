@@ -47,7 +47,9 @@
       "m_clientTags": [
         "CL-StrangeDevice"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-DIST-C04-002UseStrangeDevice"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
@@ -450,7 +452,9 @@
       "m_clientTags": [
         "CL-DIST-C04-003Pedestal"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-DIST-C04-003UsePedestal"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z03i2_District_of_the_Stars",
@@ -718,7 +722,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

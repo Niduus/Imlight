@@ -95,9 +95,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Khrysalis/Interiors/KR_Z05_I04_MessHall",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_HisserTaunt",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoals00000022",
       "m_goalNameID": 0,
@@ -437,7 +437,9 @@
       "m_clientTags": [
         "KR-Rachias-Lever"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-RachiasLever"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z05_I04_MessHall",

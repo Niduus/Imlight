@@ -1399,6 +1399,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "WizQst1614A7_00000029",
@@ -1447,6 +1450,15 @@
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
         "m_tableName": "WC-BIRTHDAY-TEN-001B",
         "m_maxRolls": 0
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 1441327,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": ""
       }
     ]
   },

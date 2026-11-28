@@ -22,7 +22,13 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "DS_Library_Building03_Win",
+            "m_useQuestAsOriginator": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

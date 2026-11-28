@@ -47,7 +47,9 @@
       "m_clientTags": [
         "KR_DiamondMythForge"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR_DiamondMythForge"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/KR_IsleOfArachnis",

@@ -58,7 +58,9 @@
         "AZ-Cloud-Youngling-03",
         "AZ-Cloud-Youngling-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Cloud-Youngling03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -117,7 +119,9 @@
         "AZ-Cloud-Youngling-03",
         "AZ-Cloud-Youngling-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Cloud-Youngling02"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -176,7 +180,9 @@
         "AZ-Cloud-Youngling-03",
         "AZ-Cloud-Youngling-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Cloud-Youngling04"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -342,7 +348,9 @@
         "AZ-Cloud-Youngling-03",
         "AZ-Cloud-Youngling-04"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-Cloud-Youngling01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",

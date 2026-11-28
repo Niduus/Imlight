@@ -87,7 +87,9 @@
       "m_clientTags": [
         "CL-Treasure"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-CRAB-C04-001TreasureGet"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z10_Kingdom_Of_The_Crabs",

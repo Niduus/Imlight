@@ -69,7 +69,9 @@
         "AZ-Starfall-Lily2",
         "AZ-Starfall-Lily"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-CloudLilly2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z06_CloudburstIsland",
@@ -387,7 +389,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

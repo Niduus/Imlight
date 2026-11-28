@@ -41,7 +41,9 @@
       "m_clientTags": [
         "ImlightCraft:179569"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "Crafting"
+      ],
       "m_autoQualify": false,
       "m_autoComplete": false,
       "m_destinationZone": "",

@@ -355,7 +355,9 @@
       "m_clientTags": [
         "PL_PebbleGem"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PL_PebbleGem"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z05_PebbleTrough",

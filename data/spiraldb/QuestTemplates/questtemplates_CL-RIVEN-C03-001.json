@@ -56,7 +56,9 @@
       "m_clientTags": [
         "CL-MagicItemRepair"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-RIVEN-C03-001MagicDeviceUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
@@ -191,7 +193,9 @@
         "CL-DeviceItemRepair",
         "CL-DevicesPort"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-RIVEN-C03-001DeviceRepairUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
@@ -243,7 +247,9 @@
       "m_clientTags": [
         "CL-RepairPedestal"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-RIVEN-C03-001RepairPedestalUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",

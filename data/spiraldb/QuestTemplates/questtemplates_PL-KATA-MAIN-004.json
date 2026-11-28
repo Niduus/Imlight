@@ -638,7 +638,27 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "PL-KATA-NPC04-GollumGarden",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "PL-KATA-NPC04-GollumGarden",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Polaris/Interiors/PL_Z06_GolemGarden",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 1
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

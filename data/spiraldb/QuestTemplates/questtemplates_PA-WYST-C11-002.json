@@ -335,7 +335,9 @@
         "PA_SpiralCup",
         "PA_SpiralCup_Interactable"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA_SpiralCup_Interactable-Use"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/Interiors/PA_Lord_Bramble_Tower",

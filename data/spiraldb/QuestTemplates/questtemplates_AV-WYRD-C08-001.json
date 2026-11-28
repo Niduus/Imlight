@@ -52,7 +52,9 @@
       "m_clientTags": [
         "AV_White_Hart"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV_White_Hart_Free"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",

@@ -267,7 +267,9 @@
         "CL-PedestalForTranslation",
         "CL-RivenC02001PedistalEvent"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_PedestalForTranslations"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z02_Crab_Realm",

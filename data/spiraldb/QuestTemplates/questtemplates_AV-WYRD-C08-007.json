@@ -405,7 +405,9 @@
         "AV_Captive_Traveler_Cage2",
         "AV_Captive_Traveler_Cage3"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV_Cage_Open1"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",
@@ -471,7 +473,9 @@
         "AV_Captive_Traveler_Cage2",
         "AV_Captive_Traveler_Cage3"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV_Cage_Open2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",
@@ -543,7 +547,9 @@
         "AV_Captive_Traveler_Cage2",
         "AV_Captive_Traveler_Cage3"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV_Cage_Open3"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",

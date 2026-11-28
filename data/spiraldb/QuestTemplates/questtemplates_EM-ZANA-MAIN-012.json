@@ -320,7 +320,9 @@
       "m_clientTags": [
         "EM-TeleporterOuterAthanor"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-TeleporterOuterAthanor"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z00_ArkHold",

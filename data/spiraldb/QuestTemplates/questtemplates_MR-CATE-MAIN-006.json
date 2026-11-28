@@ -534,9 +534,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z03_VassalManse",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator MR-CATE-MAIN-006_Goal02",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -782,9 +782,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z03_VassalManse",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator MR-CATE-MAIN-006_Goal04",
       "m_zoneExit": false,
       "m_goalName": "5_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

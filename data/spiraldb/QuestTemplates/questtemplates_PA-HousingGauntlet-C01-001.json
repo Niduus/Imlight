@@ -4246,6 +4246,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "WizQst129376_00000052",
@@ -5050,6 +5053,13 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
             "m_eventName": "EVENT-SpawnBoss",
             "m_subEventName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 6771819,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -5184,6 +5194,20 @@
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveTriggerObject, Imcodec.ObjectProperty",
             "m_triggerObjName": "PA-HousingGauntlet-NPC02"
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 6771806,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 6771807,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
@@ -5486,6 +5510,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {

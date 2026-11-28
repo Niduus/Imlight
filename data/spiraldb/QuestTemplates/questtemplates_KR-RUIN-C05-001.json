@@ -52,7 +52,9 @@
       "m_clientTags": [
         "KR-RadianceRebornTeleporter"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EVENT-KR-RRTeleporter"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z07_RuinedAlcazar",

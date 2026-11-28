@@ -186,7 +186,28 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "MS_Hub_Window_Palace_01",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "MS_Hub_Window_Pagoda_01",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AV-ScrollsOfLight",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "MooShu/Interiors/MS_GardenDojo_T1",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -203,7 +224,9 @@
       "m_clientTags": [
         "AV-ScrollsOfLight"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-ScrollsOfLight"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "MooShu/Interiors/MS_GardenDojo_T1",

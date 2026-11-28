@@ -1183,6 +1183,13 @@
             "m_broadcastToZone": false,
             "m_displayInQuestList": true,
             "m_oneShot": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7425061,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -1846,6 +1853,13 @@
             "m_broadcastToZone": false,
             "m_displayInQuestList": true,
             "m_oneShot": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7425067,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -2779,6 +2793,13 @@
             "m_broadcastToZone": false,
             "m_displayInQuestList": true,
             "m_oneShot": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7425076,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -3518,6 +3539,20 @@
             "m_broadcastToZone": false,
             "m_displayInQuestList": true,
             "m_oneShot": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7425086,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7425087,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -4008,12 +4043,24 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
         "m_tableName": "AV-GAUNT-C01-060",
         "m_maxRolls": 0
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 1350258,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": ""
       }
     ]
   },

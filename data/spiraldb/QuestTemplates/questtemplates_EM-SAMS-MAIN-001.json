@@ -94,9 +94,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Empyrea/Interiors/EM_Z12_I09_Clearing_C",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume EM-SAMS-MAIN-001_Goal_03",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -175,9 +175,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Empyrea/Interiors/EM_Z12_I09_Clearing_C",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume EM-SAMS-MAIN-001_Goal_05",
       "m_zoneExit": false,
       "m_goalName": "5_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

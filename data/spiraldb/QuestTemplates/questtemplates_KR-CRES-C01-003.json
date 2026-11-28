@@ -289,7 +289,28 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-Zarozinia-Object_InTent",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Khrysalis/Interiors/KR_Z06_I03_UmbraTentLarge",
+            "m_bShowsObject": true,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-QuestLight-Umbra_Mazarine the StormWind",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Quest",
+            "m_zoneName": "Khrysalis/KR_Z06_CrescentBeach",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 80,
@@ -410,7 +431,43 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+            "m_add": false,
+            "m_templateID": 1206091
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-QuestLight-Umbra_Mazarine the StormWind",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-QuestLight-Umbra_Mazarine the StormWind",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "On",
+            "m_zoneName": "Khrysalis/KR_Z06_CrescentBeach",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-CrescentBeach-NPC23 instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Khrysalis/KR_Z06_CrescentBeach",
+            "m_bShowsObject": true,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-Zarozinia-Object instance",
+            "m_useQuestAsOriginator": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

@@ -133,6 +133,13 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
                 var exitName = (context as GenericResultContext)?.TriggerName;
                 var interiorWayOut = string.IsNullOrEmpty(Result.m_destinationLoc)
                     && (context.GetZonePath() ?? "").Contains("/Interiors/", StringComparison.OrdinalIgnoreCase);
+                // The wizard's step is on another floor of this zone: there, not out (SameZoneStepSpot).
+                if (exitName is not null && interiorWayOut && !exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase) && IsForwardDungeonTrigger(exitName)
+                    && SameZoneStepSpot(context, playerObj) is { } floor) {
+                    Logger.Information("Teleport: trigger {0} in {1} names no destination; the wizard's step is in this zone, so it goes to {2}.",
+                        Logger.Args(exitName, context.GetZonePath(), floor));
+                    return RaidResult.MoveTo(context, floor);
+                }
                 if (exitName is not null
                     && (exitName.Contains("Exit", StringComparison.OrdinalIgnoreCase) || interiorWayOut)) {
                     context.GetPlayerRef().Tell(new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
@@ -165,6 +172,67 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
         return true;
     }
 
+    /// <summary>
+    /// A teleport inside an interior that names no destination, while the wizard's step is in this same zone but far from
+    /// them (another floor): the zone's named spot nearest that step. Mongu Refuge's "Teleport location (1)" is the way up
+    /// to Room02 for MR-RUBA-MAIN-003, but with no destination it counted as the way out and put the wizard outside
+    /// (2026-11-28). Null when no step of the wizard's quests is here, or the nearest spot is where they stand.
+    /// </summary>
+    private static string SameZoneStepSpot(IResultContext context, WizClientObject playerObj) {
+        try {
+            var zone = context.GetZonePath();
+            if (string.IsNullOrEmpty(zone) || context.GetZoneActor() is not { } zoneActor || context.GetPlayerRef() is not { } playerRef) {
+                return null;
+            }
+
+            var wizard = playerRef.Ask<CHARACTER_103_PROTOCOL.MSG_CHARACTER>(new CHARACTER_103_PROTOCOL.MSG_QUERYACTIVEWIZARD(),
+                TimeSpan.FromMilliseconds(750)).Result?.Wizard;
+            if (wizard?.QuestBehavior?.CurrentQuestInstances is null) {
+                return null;
+            }
+
+            var here = playerObj.m_location;
+            (float X, float Y)? target = null;
+            foreach (var instance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+                var quest = QuestTemplateCollection.GetQuestByName(instance.QuestName);
+                foreach (var progress in instance.GoalProgress ?? []) {
+                    if (!instance.IsGoalActive(progress.GoalName)
+                        || quest?.m_goals?.FirstOrDefault(g => g is not null && g.m_goalName == progress.GoalName) is not { } goal) {
+                        continue;
+                    }
+
+                    foreach (var (spotZone, spot) in Imlight.CoreLib.Game.Services.QuestArrowGoals.GetSpots(quest, goal)) {
+                        var far = ((spot.X - here.X) * (spot.X - here.X)) + ((spot.Y - here.Y) * (spot.Y - here.Y));
+                        if (string.Equals(spotZone, zone, StringComparison.OrdinalIgnoreCase)
+                            && (MathF.Abs(spot.X) >= 1f || MathF.Abs(spot.Y) >= 1f) && far > 1000f * 1000f) {
+                            target = (spot.X, spot.Y);
+                        }
+                    }
+                }
+            }
+
+            if (target is not { } t) {
+                return null;
+            }
+
+            var zoneData = zoneActor.Ask<ZONE_102_PROTOCOL.MSG_QUERYZONEDATARSP>(new ZONE_102_PROTOCOL.MSG_QUERYZONEDATA(),
+                TimeSpan.FromSeconds(2)).Result?.ZoneData;
+            var best = zoneData?.m_locationList?
+                .Where(l => l is not null && !string.IsNullOrEmpty(l.m_locName))
+                .OrderBy(l => ((l.m_location.X - t.X) * (l.m_location.X - t.X)) + ((l.m_location.Y - t.Y) * (l.m_location.Y - t.Y)))
+                .FirstOrDefault();
+            if (best is null) {
+                return null;
+            }
+
+            var fromHere = ((best.m_location.X - here.X) * (best.m_location.X - here.X)) + ((best.m_location.Y - here.Y) * (best.m_location.Y - here.Y));
+            return fromHere > 600f * 600f ? (string) best.m_locName : null;
+        }
+        catch (Exception e) {
+            Logger.Debug("Teleport: no step spot in this zone: {0}", Logger.Args(e.Message));
+            return null;
+        }
+    }
     private sealed record DungeonRoomTarget(string Zone, string Location);
 
     private static readonly ConcurrentDictionary<(ulong CharacterId, string Zone, string Trigger), DateTime> s_forwardEvents = new();

@@ -151,7 +151,43 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AV-Shrine-Relic-01",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Avalon/Interiors/AV_Z03_Froudling01",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "Ddl_AV_CL_Nosebiter",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AV-NoseBiter-QuestLight",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AV-NoseBiter-QuestLight",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "On",
+            "m_zoneName": "Avalon/AV_Z03_CaerLyon",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -168,7 +204,9 @@
       "m_clientTags": [
         "AV-Shrine-Relic-01"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-ShrineRelic01"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z03_Froudling01",
@@ -275,7 +313,13 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AV-Shrine-Hospitality-02",
+            "m_useQuestAsOriginator": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -293,7 +337,9 @@
         "AV-Shrine-Hospitality",
         "AV-Shrine-Hospitality-02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-ShrineFix"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z03_CaerLyon",
@@ -558,7 +604,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

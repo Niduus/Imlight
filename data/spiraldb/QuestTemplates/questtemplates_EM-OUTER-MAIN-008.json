@@ -179,7 +179,9 @@
       "m_clientTags": [
         "EM-TreasuryCabinet"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-OUTER-ENC-004_UseTreasuryCabinet"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z03_Vault",

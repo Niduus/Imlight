@@ -67,7 +67,9 @@
         "AZ-HiddenDoor",
         "AZ-HiddenDoorCollision"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-HiddenDoor"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z11_TwinGiants",
@@ -337,17 +339,8 @@
         "m_ignoreBankLimit": false,
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
-        "m_sendLootMessage": true,
-        "m_sourceType": "QuestItemLoot"
-      },
-      {
-        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
-        "m_itemTemplateID": 220266,
-        "m_ignoreBankLimit": false,
-        "m_zoneLevelMin": 0,
-        "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
@@ -356,7 +349,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

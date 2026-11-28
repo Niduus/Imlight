@@ -41,7 +41,9 @@
       "m_clientTags": [
         "CL-EngineeringTools"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Tools_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -267,7 +269,9 @@
         "CL-PowerGenerator",
         "CL-PowerGenerator2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_PowerGen_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",

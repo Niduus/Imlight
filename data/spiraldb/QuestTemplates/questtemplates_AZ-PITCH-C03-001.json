@@ -400,9 +400,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Azteca/Interiors/AZ_Z08_CaveOfTzapotec",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_AZ-Volume-TauntTzapotec",
       "m_zoneExit": false,
       "m_goalName": "4_WizardQuestGoalsKill",
       "m_goalNameID": 0,

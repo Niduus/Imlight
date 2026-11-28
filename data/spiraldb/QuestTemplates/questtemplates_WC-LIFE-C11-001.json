@@ -630,7 +630,9 @@
         "ZF_Gnome_Plant",
         "ZF_Gome_Plant1"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_Gnome_Plant1_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z05_I05_Jungle_Clearing_04",
@@ -846,7 +848,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },
