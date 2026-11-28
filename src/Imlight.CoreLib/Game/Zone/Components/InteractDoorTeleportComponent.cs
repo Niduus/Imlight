@@ -67,7 +67,9 @@ internal sealed class InteractDoorTeleportComponent(ZoneEntity entity)
 
     public string ServiceName => "Interact";
     public string NpcIcon => (Entity.Template as GameObjectTemplate)?.m_sIcon;
-    public string NpcNameKey => (Entity.Template as GameObjectTemplate)?.m_displayName;
+    // The zone file's name for this placed door wins (the Necropolis portal home reads "The Basilica").
+    public string NpcNameKey => Imlight.CoreLib.Shared.Resources.CoreObjectFactory.OverrideNameKey(Entity.Info)
+                                ?? (Entity.Template is GameObjectTemplate template ? (string) template.m_displayName : null);
     public string NpcTextKey => DOOR_TEXT_KEY;
     public WizBangs WizBang => WizBangs.None;
     public string StateName => null;

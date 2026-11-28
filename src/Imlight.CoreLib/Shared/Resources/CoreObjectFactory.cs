@@ -383,7 +383,24 @@ public class CoreObjectFactory : RootSingleResourceSingleton<CoreObjectFactory>,
             obj.m_debugName = englishName;
         }
 
+        // The name the zone file gives this placed object over its template's (m_overrideName): the Drake Hatchery's blue
+        // teleport stone reads "To The Necropolis", not "Teleport Stone", and the Necropolis portal home "The Basilica"
+        // (Mitsu, 2026-11-24). The game shows m_displayKey over the template's name, as it does for reagents.
+        if (OverrideNameKey(objInfo) is { } nameKey) {
+            obj.m_displayKey = nameKey;
+        }
+
         return obj;
+    }
+
+    /// <summary>
+    /// The text key the zone file names a placed object by (its m_overrideName), or null when it gives none or one the
+    /// game's text does not have (a spawn's "NoAggro" is no name).
+    /// </summary>
+    public static string OverrideNameKey(CoreObjectInfo objInfo) {
+        var key = (string) objInfo?.m_overrideName;
+
+        return !string.IsNullOrWhiteSpace(key) && Locale.GetEnglishName(key) is { Length: > 0 } ? key : null;
     }
 
     private static ClientObject CreateCoreObjectFromTemplate(CoreTemplate template)
