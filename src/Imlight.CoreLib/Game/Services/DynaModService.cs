@@ -394,7 +394,10 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
     // The wire carries no zone, and the game applies the mods in order: two mods for one tag fight, and the later wins.
     // Saved sets may hold both a zone's mod and an older "any zone" one for the same object. Each tag goes once, from the
     // mods that apply to the current zone: the latest (saved mods are kept in the order they were set, and this zone's
-    // trigger states and a look on the way come after them). Tags with no mod for this zone are sent as before.
+    // trigger states and a look on the way come after them). Mods for other zones are not sent: the game gets the whole list
+    // again each time one mod changes, and a wizard far into the game carries hundreds (MoMi, 2026-11-28: 551, most of them
+    // in other worlds, sent after every quest that changed one object, and the game lagged each time). They are sent with
+    // the rest when the wizard comes to their zone.
     private static List<Dynamod> OnePerObject(IEnumerable<Dynamod> mods, string zone, bool preferLater) {
         var list = mods.ToList();
         var chosen = new Dictionary<string, Dynamod>(StringComparer.OrdinalIgnoreCase);
@@ -409,7 +412,8 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
             }
         }
 
-        return list.Where(mod => string.IsNullOrEmpty(mod.ClientTag)
+        return list.Where(mod => AppliesHere(mod.ZoneName, zone))
+            .Where(mod => string.IsNullOrEmpty(mod.ClientTag)
             || !chosen.TryGetValue(mod.ClientTag, out var best) || ReferenceEquals(best, mod)).ToList();
     }
 
