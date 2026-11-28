@@ -374,3 +374,6 @@ src/Imlight.Setup/Assets/patch-notes.json
 # Ultimus's AI keys (Ahziael's Ultimus AI Chat page): kept only on the PC that runs the server, never in the repo.
 ultimus-ai-keys.json
 **/Config/ultimus-ai-keys.json
+
+# JetBrains Rider settings
+.idea/

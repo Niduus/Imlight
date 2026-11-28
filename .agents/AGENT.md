@@ -6,12 +6,14 @@ disagree, **the tree wins**: update this file, don't churn the code.
 
 ## 1. Project snapshot
 
-- **Repo:** `Revive101/Imlight`, an independent private server project, written
-  entirely in C# for a modern client. Mainline branch:
+- **Repo:** `Niduus/Imlight` (the Ahziael fork of `Revive101/Imlight`), an
+  independent private server project, written entirely in C# for a modern client.
+  Work only on `Niduus/Imlight`; never open PRs or issues on Revive101. Mainline branch:
   `quality-assurance`.
 - **Stack:** .NET 10 (`net10.0`), Akka.NET actors, RavenDB (player data), SpiralDB
   (world data), Imcodec submodule (wire types, generated from the client's own
-  type system). See `README.md` and the docs book at `docs/docs/`.
+  type system). See `README.md`, `FOLDER-MAP.md`,
+  `CONTRIBUTING.md` and the docs book at `docs/docs/`.
 - **Philosophy:** BYOD. The server distributes no copyrighted game data. Content
   lives in SpiralDB and the client's WADs; the server is a framework.
 
@@ -27,7 +29,7 @@ disagree, **the tree wins**: update this file, don't churn the code.
 
 ## 3. External references
 
-- **Imcodec submodule:** pinned to `Revive101/Imcodec` main.
+- **Imcodec submodule:** `Jooty/Imcodec` (see `.gitmodules`).
 
 ## 4. Code style: brackets & layout
 
@@ -247,8 +249,7 @@ truly needs it. No paragraphs on self-evident lines, ever.
 
 ## 9. Commits & PRs
 
-- Conventional commits: `feat:`, `fix:`, `ref:`, `chore:`, `docs:` (per README
-  contributing notes).
+- Conventional commits: `feat:`, `fix:`, `ref:`, `chore:`, `docs:` (see `CONTRIBUTING.md`).
 - Feature branches merge into `quality-assurance` (merge style: `` `Branch` ->
   `quality-assurance` (#NN) ``).
 - Milestone commits use the KALI scheme: `KALI 26Q2.14c | Feature (#NN)`.

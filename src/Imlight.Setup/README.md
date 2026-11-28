@@ -1,8 +1,43 @@
-# ImlightSetup.exe
+# Ahziael (Imlight.Setup)
 
-A one-click installer for **original Imlight** ([Revive101/Imlight](https://github.com/Revive101/Imlight)), for people with no development tools.
+This project is the **Ahziael** app. One program does three jobs: it installs and updates the server, it builds the
+server from this repository's source, and it is the app window with every page (Play, Quests, Progress, Database,
+Create, Game Rules, Server, Help).
 
-The same program also builds as **ImlightManager.exe**, which installs this fork (randomizer mode, ID lookup) into `%LOCALAPPDATA%\ImlightManager` instead. The two can be installed side by side.
+It builds as two programs from the same code:
+
+- **ImlightManager.exe** (`-p:ImlightEdition=Manager`): installs this fork, Niduus/Imlight, into
+  `%LOCALAPPDATA%\ImlightManager`. This is the one every release ships.
+- **ImlightSetup.exe** (no edition): a one-click installer for original Imlight
+  ([Revive101/Imlight](https://github.com/Revive101/Imlight)). Only built by hand.
+
+## Finding your way in the code
+
+All the code files sit in this one folder, named so that related files sort together.
+
+| Files | What they are |
+|---|---|
+| `Program.cs`, `ManagerApp.cs`, `Edition.cs` | Where the program starts, and which edition it is. |
+| `ManagerWindow.cs` | The main window. |
+| `ManagerWindow.<Page>.cs` | One file per page or panel of the app, for example `ManagerWindow.Quests.cs`, `ManagerWindow.Bosses.cs`, `ManagerWindow.CrownShop.cs`. Start here to change a page. |
+| `ManagerWindow.Glass.cs`, `ManagerWindow.SideBar.cs`, `ManagerWindow.Navigation.cs`, `ManagerTheme.cs` | The window's header, side bar, page list and colours. |
+| `ManagerWindow.SearchWindow.cs`, `ManagerWindow.SearchFilters.cs`, `SearchText.cs` | The search box that finds any page, setting, command or game thing. |
+| `Setup*.cs`, `InstallInfo.cs`, `SelfUpdate.cs`, `ServerSource.cs`, `ServerUpdate.cs`, `LiveUpdate.cs`, `SourceParts.cs` | Installing, updating and building the server from source, and live updates. |
+| `ServerManager.cs`, `ServerBackup.cs`, `ProcessRunner.cs`, `PortCheck.cs` | Starting and stopping the server, backups. |
+| `Game*.cs`, `Aurorium.cs` | Finding the game, reading its files, the built-in game file server, starting the game. |
+| `Overlay*.cs` | The in-game overlay and its add-ons. |
+| `Spell*.cs`, `Card*.cs`, `PetCastCards.cs` | Drawing spell cards the way the game draws them. |
+| `Cheat*.cs`, `Boss*.cs`, `Custom*.cs` | Boss cheats, custom creatures and custom areas. |
+| `Blocks/` | The block editor used for cheats and customs. |
+| `Claude/` | The optional Claude connector (Server > Ahziael > Claude). |
+| `Assets/` | Pictures, icons and data files built into the app (some are made by scripts in `tools/`). |
+| `RemoteSession.cs`, `FriendAccess.cs`, `PlayerAccounts.cs` | Managing a server on another PC, and accounts. |
+
+Some files are shared with the server: `SpellSupport.cs` here is also built into the server, and the project file
+links a few server files in (see `Imlight.Setup.csproj`). Don't rename `SpellSupport.cs`; the live patch steps use its
+path.
+
+The rest of this page describes what setup does for a player.
 
 ## What it does
 
