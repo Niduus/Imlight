@@ -62,6 +62,9 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
     private readonly HashSet<string> _unenforceableTriggers = [];
     // EnterZone triggers a player was refused on entry, checked again once the quest has updated its goals.
     private readonly Dictionary<IActorRef, HashSet<string>> _refusedOnEntry = [];
+    // When a refused teleport trigger was last said in the log, by trigger, event and player.
+    private readonly Dictionary<(string Trigger, string Event, IActorRef Player), DateTime> _refusalLoggedAt = [];
+    private static readonly TimeSpan REFUSAL_LOG_EVERY = TimeSpan.FromMinutes(1);
 
     // The objects that enabled triggers own (walls, gates, collision), by trigger name.
     private readonly Dictionary<string, (IActorRef Actor, CoreObject Object, string Tag)> _triggerObjects = new(StringComparer.OrdinalIgnoreCase);
@@ -231,9 +234,16 @@ internal sealed partial class ZoneTriggerSupervisor(Core.Zone zone) : ZoneEntity
             if (!EvaluateRequirements(trigger, message)) {
                 // A door that stays shut is otherwise silent ("friend can not enter Hedge Maze", 2026-10-22).
                 if (HasTeleportResult(trigger)) {
-                    Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met ({4}).",
-                        Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name,
-                            Imlight.CoreLib.Game.Sigils.SigilRequirements.Describe(trigger.m_requirements)));
+                    // Once a minute for the same trigger, event and player: Xibalba's "TeleportPlayer" answers every
+                    // creature a battle defeats (Monster_Killed) and wrote a line for each (MoMi, 2026-11-28).
+                    var refusalKey = (trigger.m_triggerName.ToString(), message.EventName.ToString(), message.PlayerActor);
+                    var now = DateTime.UtcNow;
+                    if (!_refusalLoggedAt.TryGetValue(refusalKey, out var loggedAt) || now - loggedAt >= REFUSAL_LOG_EVERY) {
+                        _refusalLoggedAt[refusalKey] = now;
+                        Logger.Debug("Zone {0}: teleport trigger {1} on event {2} refused {3}: requirements not met ({4}).",
+                            Logger.Args(Zone.ZonePath, trigger.m_triggerName, message.EventName, message.PlayerActor?.Path.Name,
+                                Imlight.CoreLib.Game.Sigils.SigilRequirements.Describe(trigger.m_requirements)));
+                    }
                     // The bots learn it at once: this way opens with the quests its needs name (BotGates).
                     if (message.PlayerActor is not null && BotDoor.Side is { } bots && bots.GateNamesQuests(trigger)) {
                         bots.GateRefused(ZoneTrigger.QueryWizard(message.PlayerActor), Zone.ZonePath, trigger);
