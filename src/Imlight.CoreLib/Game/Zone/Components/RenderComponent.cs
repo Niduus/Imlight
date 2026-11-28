@@ -105,6 +105,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private const string SHOW_CHECK_TIMER = "EnemyShowCheck";
     private readonly HashSet<IActorRef> _sentTo = [];
     private readonly Dictionary<IActorRef, (CoreObject Object, Wizard Wizard)> _lastSeen = [];
+    private readonly Dictionary<IActorRef, System.DateTime> _spotCheckedAt = [];
     // A trigger or animation took the object away from everyone (ZoneEntity.DespawnObject); the check leaves it away.
     private bool _removedByScript;
     // The zone turned the object Off for everyone (a trigger, a quest or a puzzle, such as a wall or gate that opens).
@@ -348,6 +349,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
     public override void OnPlayerMove(CoreObject playerObj, IActorRef playerActor, Wizard playerWizard) {
         _lastSeen[playerActor] = (playerObj, playerWizard ?? _lastSeen.GetValueOrDefault(playerActor).Wizard);
+        SyncSpot(playerActor);
         if (playerWizard is not null && Entity.Info?.m_spawnRequirements is null && _joinedPlayers.Add(playerActor)) {
             if (IsQuestOnly) {
                 // This player was in the zone before the object was made, so OnStart did not send it to them.
@@ -764,7 +766,8 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     }
 
     private bool IsQuestOnly
-        => _isQuestOnly ??= Entity.Info is { m_bUndetectable: true, m_spawnRequirements: null } info
+        => _isQuestOnly ??= Entity.Info is { m_spawnRequirements: null } info
+           && (info.m_bUndetectable || IsDungeonStepNpc())
            && info.GetType() == typeof(CoreObjectInfo)
            && !IsAlwaysShown(info)
            && Entity.ActiveGameObject is not WizClientPet
@@ -803,6 +806,20 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
     private static bool IsQuestService(IServiceComponent service)
         => service is InteractPersonaGoalComponent or InteractQuestOfferComponent or InteractQuestUnderwayComponent
            or InteractQuestSelectComponent;
+
+    // A dungeon's NPC who only takes part in quest steps (a talk step, no quest of its own to give) shows only to the
+    // wizards whose quest needs it, as in the game's dungeons and some towers (MoMisGrand, #1747; Niduus 2026-11-28).
+    private bool IsDungeonStepNpc() {
+        var step = Entity.Zone?.IsInstance == true
+           && Entity.GetComponentOfType<InteractPersonaGoalComponent>() is not null
+           && Entity.GetComponentOfType<InteractQuestOfferComponent>() is null;
+        if (step) {
+            Logger.Debug("Object {0} in {1}: a dungeon step NPC, shown only to wizards whose quest needs it.",
+                Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath));
+        }
+
+        return step;
+    }
 
     private bool CharacterOfferedByQuest(Wizard wizard) {
         if (!Entity.Template.m_behaviors.Any(b => b is NPCBehaviorTemplate)) return false;
@@ -1070,6 +1087,40 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
         }
     }
 
+    private Vector3? UpdateSpot(IActorRef player) {
+        if (!_lastSeen.TryGetValue(player, out var seen) || seen.Wizard is null) return null;
+        var spot = InteractPersonaGoalComponent.ActiveGoalSpot(Entity, seen.Wizard);
+        if (!spot.HasValue
+            && QuestArrowGoals.GetExactActiveSpot(seen.Wizard) is { } exact
+            && string.Equals(exact.Zone, Entity.Zone?.ZonePath, System.StringComparison.OrdinalIgnoreCase)
+            && Entity.Info is not null
+            && !string.IsNullOrEmpty(Entity.Info.m_zoneTag)
+            && string.Equals(Entity.Info.m_zoneTag, exact.Tag, System.StringComparison.OrdinalIgnoreCase)) {
+            spot = exact.Spot;
+        }
+        var fullId = seen.Object?.m_globalID.Full;
+        if (fullId is not null && spot.HasValue) Entity.PlayerSpots[fullId.Value] = spot.Value;
+        else if (fullId is not null) Entity.PlayerSpots.TryRemove(fullId.Value, out _);
+        return spot;
+    }
+
+    private void SyncSpot(IActorRef player) {
+        var utcNow = System.DateTime.UtcNow;
+        if (!_sentTo.Contains(player)
+            || (_spotCheckedAt.TryGetValue(player, out var last) && utcNow - last < System.TimeSpan.FromSeconds(2))
+            || !_lastSeen.TryGetValue(player, out var seen)
+            || seen.Object is null) return;
+        _spotCheckedAt[player] = utcNow;
+        var hadSpot = Entity.PlayerSpots.ContainsKey(seen.Object.m_globalID.Full);
+        if (UpdateSpot(player) is var moved && moved.HasValue != hadSpot) {
+            Logger.Information("Object {0} in {1}: {2} for {3}, where the game's quest arrow puts it for their step.",
+                Logger.Args(Entity.Info?.m_zoneTag, Entity.Zone?.ZonePath, moved.HasValue ? $"moved to {moved.Value}" : "back at its own spot",
+                    seen.Wizard?.CharId));
+            DespawnObjectForPlayer(player);
+            CreateObjectForPlayer(player);
+        }
+    }
+
     private void SendObjectTo(IActorRef player) {
         // Every path that sends this object one player at a time ends here: none sends it to a wizard a dynamod hides it from.
         if (player is null || _playerIgnoreBecauseDynamod.ContainsKey(player)) {
@@ -1083,6 +1134,7 @@ internal sealed class RenderComponent(ZoneEntity entity) : ZoneEntityComponent(e
 
         // Serialize the client object.
         var clientObj = Entity.GetClientObject();
+        if (UpdateSpot(player) is { } spot) clientObj.m_location = spot;
         if (!_serializer.Serialize(clientObj, _propertyFlags, out var serializedData)) {
             Logger.Error("Failed to serialize object data.");
 

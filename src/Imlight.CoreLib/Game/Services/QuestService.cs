@@ -214,6 +214,9 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         // Exiting the previous zone may have triggered waypoint goals for quests.
         CheckForWaypointGoalZoneExit(wizard);
 
+        // Gates finished go-to steps opened here stay open (QuestLeftovers.OpenedWays).
+        ReopenFinishedWays(wizard);
+
         // A quest with nothing to do, or a step that needs something turned off, is put right (QuestSafety).
         RepairActiveQuests(wizard, fromCommand: false);
 
@@ -2289,6 +2292,101 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
         NoteProgress(wizard);
     }
 
+    /// <summary>
+    /// A go-to step finished at a gate with a wall by it opens that gate and takes the wall away for this wizard
+    /// (QuestLeftovers.OpenedWays). The mods are kept, so the way stays open after a zone change or a log-in.
+    /// </summary>
+    private void OpenWaysAt(string questName, string goalName, string zone, Imcodec.Math.Vector3 at) {
+        if (string.IsNullOrEmpty(zone)) {
+            return;
+        }
+        foreach (var (tag, state, remove) in QuestLeftovers.OpenedWays(zone, at)) {
+            Logger.Information("Quest {0} step {1}: {2} {3} where the step was finished ({4}).",
+                Logger.Args(questName, goalName, tag, remove ? "goes, a wall at the gate," : $"opens to {state}", zone));
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                DynaMod = new ResAddDynaMod {
+                    m_dynaModClientTag = tag,
+                    m_dynaModState = state,
+                    m_zoneName = zone,
+                    m_bShowsObject = false,
+                    m_dynaModRemove = remove,
+                    m_persist = true,
+                },
+                ContextActor = SessionActor.ActorRef,
+            });
+        }
+    }
+
+    /// <summary>
+    /// A finished "use" step opens the way it works on the quest's road, in whichever zone it is (QuestLeftovers.LinkedWays):
+    /// a lever's bridge lowers and the wall on it goes, for this wizard. The mods are kept, so a way in another zone is
+    /// there on arrival. With <paramref name="onlyZone"/>, only the ways in that zone (on arrival, for steps finished
+    /// before this rule existed).
+    /// </summary>
+    private void OpenLinkedWays(QuestTemplate quest, GoalTemplate goal, string onlyZone = null) {
+        List<(string Zone, string Tag, string State, bool Remove)> ways;
+        try {
+            ways = QuestLeftovers.LinkedWays(quest, goal);
+        }
+        catch (Exception e) {
+            Logger.Warning("Quest {0} step {1}: the ways it opens could not be worked out: {2}",
+                Logger.Args(quest?.m_questName, goal?.m_goalName, e.Message));
+            return;
+        }
+        foreach (var (zone, tag, state, remove) in ways) {
+            if (onlyZone is not null && !string.Equals(zone, onlyZone, StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
+            Logger.Information("Quest {0} step {1}: {2} {3} in {4} (the used object works it).",
+                Logger.Args(quest.m_questName, goal.m_goalName, tag, remove ? "goes, a wall on the way," : $"goes to {state}", zone));
+            SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                DynaMod = new ResAddDynaMod {
+                    m_dynaModClientTag = tag,
+                    m_dynaModState = state,
+                    m_zoneName = zone,
+                    m_bShowsObject = false,
+                    m_dynaModRemove = remove,
+                    m_persist = true,
+                },
+                ContextActor = SessionActor.ActorRef,
+            });
+        }
+    }
+
+    /// <summary>
+    /// On arrival: the ways finished go-to steps of the wizard's current quests opened in this zone, for steps finished
+    /// before this rule existed. Each is placed at the step's own arrow spot; mods the wizard already has are not resent.
+    /// </summary>
+    private void ReopenFinishedWays(Wizard wizard) {
+        var zone = wizard?.Zone;
+        if (string.IsNullOrEmpty(zone)) {
+            return;
+        }
+        foreach (var instance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+            var quest = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == instance.QuestName);
+            foreach (var goal in quest?.m_goals ?? []) {
+                if (goal is null
+                    || instance.GoalProgress.FirstOrDefault(g => g.GoalName == goal.m_goalName) is not { } progress
+                    || !progress.IsGoalCompleted()) {
+                    continue;
+                }
+                if (goal.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
+                    OpenLinkedWays(quest, goal, onlyZone: zone);
+                    continue;
+                }
+                if (goal.m_goalType != GOAL_TYPE.GOAL_TYPE_WAYPOINT) {
+                    continue;
+                }
+                foreach (var (spotZone, spot) in QuestArrowGoals.GetSpots(quest, goal)) {
+                    if (string.Equals(spotZone, zone, StringComparison.OrdinalIgnoreCase)
+                        && (MathF.Abs(spot.X) >= 1f || MathF.Abs(spot.Y) >= 1f)) {
+                        OpenWaysAt(quest.m_questName, goal.m_goalName, zone, spot);
+                    }
+                }
+            }
+        }
+    }
+
     // Zone triggers listen for this event to react to a goal (an NPC walks to a new spot, a barricade falls).
     private void PostGoalCompleteEvent(string questName, string goalName) {
         var zoneActor = SessionActor.GetZoneActor();
@@ -2301,7 +2399,29 @@ internal partial class QuestService(SessionActor sessionActor) : MessageService(
             g is not null && string.Equals(g.m_goalName, goalName, StringComparison.OrdinalIgnoreCase));
         QuestLeftovers.ReleaseHidesBlockingActiveUsage(GetActiveWizard());
         QuestLeftovers.ReleaseHidesBlockingActivePersonaGoals(GetActiveWizard());
+        if (goalTemplate?.m_goalType == GOAL_TYPE.GOAL_TYPE_WAYPOINT && GetActiveGameObject()?.m_location is { } finishedAt) {
+            OpenWaysAt(questName, goalName, GetActiveWizard()?.Zone, finishedAt);
+        }
         if (goalTemplate?.m_goalType == GOAL_TYPE.GOAL_TYPE_USAGE) {
+            OpenLinkedWays(quest, goalTemplate);
+            foreach (var tag in QuestLeftovers.FinishedUsageBlockerTags(goalTemplate.m_destinationZone, goalTemplate)) {
+                Logger.Information("Quest {0} step {1}: {2} looks like a blocker by the used object; it goes for {3} (QuestLeftovers, by name).",
+                    Logger.Args(questName, goalName, tag, GetActiveWizard()?.CharId));
+                zoneActor.Tell(new ZONE_102_PROTOCOL.MSG_REMOVETRIGGEROBJECT {
+                    ObjectName = tag,
+                });
+                SessionActor.ActorRef.Tell(new CHARACTER_103_PROTOCOL.MSG_ADDDYNAMOD {
+                    DynaMod = new ResAddDynaMod {
+                        m_dynaModClientTag = tag,
+                        m_dynaModState = "Off",
+                        m_zoneName = (string)goalTemplate.m_destinationZone,
+                        m_bShowsObject = false,
+                        m_persist = true,
+                    },
+                    ContextActor = SessionActor.ActorRef,
+                });
+            }
+
             // A used object that is itself a wall is the way through: it goes for this wizard (QuestLeftovers).
             foreach (var tag in QuestLeftovers.UsedBareBlockerTags(goalTemplate.m_destinationZone, goalTemplate)) {
                 Logger.Information("Quest {0} step {1}: {2} is a wall that was used as the way through; it goes for {3}.",

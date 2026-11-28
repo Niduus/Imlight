@@ -157,6 +157,33 @@ internal sealed class InteractPersonaGoalComponent(ZoneEntity entity)
         }
     }
 
+    public static Vector3? ActiveGoalSpot(ZoneEntity entity, Wizard wizard) {
+        var component = entity.GetComponentOfType<InteractPersonaGoalComponent>();
+        var placed = entity.ActiveGameObject?.m_location;
+        if (component is null || wizard is null || !placed.HasValue) return null;
+
+        try {
+            var state = component.GetOrUpdatePlayerState(wizard);
+            if (!state.HasActiveGoal || state.ActiveGoal is null) return null;
+            var questName = wizard.QuestBehavior.CurrentQuestInstances
+                .FirstOrDefault(q => q.ID == state.ActiveQuestId)?.QuestName;
+            var quest = questName is null ? null : QuestTemplateCollection.GetQuestByName(questName);
+            if (quest is null) return null;
+
+            foreach (var (zone, spot) in QuestArrowGoals.GetSpots(quest, state.ActiveGoal)) {
+                var destination = state.ActiveGoal.m_destinationZone;
+                if (!string.IsNullOrEmpty(destination)
+                    && !string.Equals(zone, destination, StringComparison.OrdinalIgnoreCase)) continue;
+                var dx = spot.X - placed.Value.X;
+                var dy = spot.Y - placed.Value.Y;
+                var distance = Math.Sqrt(dx * dx + dy * dy);
+                if (distance > 600d && distance < 8000d) return spot;
+            }
+        } catch {
+        }
+        return null;
+    }
+
     /// <summary>
     /// True when the wizard has an active quest goal whose persona is this entity. Such an NPC shows
     /// the goal instead of his quest offers and underway entries.
