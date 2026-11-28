@@ -52,6 +52,9 @@ internal sealed partial class ManagerWindow {
     private readonly TextBlock _ovStatus = Sub("");
     private readonly DispatcherTimer _ovTimer = new() { Interval = TimeSpan.FromSeconds(1) };
 
+    // The whole overlay on or off on this PC (Niduus, 2026-11-24: "add a setting to Ahziael to turn off the Overlay").
+    private readonly ToggleSwitch _ovOn = new() { OnContent = "On", OffContent = "Off" };
+
     // The server's rule.
     private readonly ToggleSwitch _ovRequired = new() { OnContent = "On", OffContent = "Off" };
     private readonly NumericUpDown _ovGrace = new() { Minimum = 3, Maximum = 300, Increment = 5, FormatString = "0", Width = 120 };
@@ -65,7 +68,14 @@ internal sealed partial class ManagerWindow {
 
     private Control OverlayTab() {
         _ovEditorPage = new OverlayEditor(this, (text, error) => Say(text, error), () => _manager.IsInstalled || RemoteSession.Current is not null ? Path.Combine(_manager.CustomsFolder, OverlayDesign.SERVER_FILE) : null);
-        _ovTimer.Tick += (_, _) => _ovStatus.Text = OverlayStatus();
+        _ovTimer.Tick += (_, _) => {
+            _ovStatus.Text = OverlayStatus();
+            // Turned on or off from the other copy (or the file): the switch follows.
+            var on = !OverlayHost.IsTurnedOff(_manager.InstallFolder);
+            if (_ovOn.IsChecked != on) {
+                _ovOn.IsChecked = on;
+            }
+        };
         _ovTimer.Start();
         _ovStatus.Text = OverlayStatus();
         // The button on the game opens this tab.
@@ -103,6 +113,28 @@ internal sealed partial class ManagerWindow {
             SelectTab(OVERLAY);
         }
 
+        // The whole overlay: on (the start) or off, right away, no restart. Both Ahziael and Ahziael Overlay on its own
+        // follow it.
+        _ovOn.IsChecked = !OverlayHost.IsTurnedOff(_manager.InstallFolder);
+        _ovOn.IsCheckedChanged += (_, _) => {
+            var on = _ovOn.IsChecked == true;
+            if (on == !OverlayHost.TurnedOff && on == !OverlayHost.IsTurnedOff(_manager.InstallFolder)) {
+                return;
+            }
+
+            if (!OverlayHost.SetTurnedOff(!on)) {
+                Say("Couldn't save the overlay switch (the install folder can't be written to just now). Try again in a moment.", isError: true);
+                _ovOn.IsChecked = !on;
+
+                return;
+            }
+
+            _ovStatus.Text = OverlayStatus();
+            Say(on ? "Game overlay turned on. It shows on the game again within a second."
+                : "Game overlay turned off. Nothing is drawn on the game now, no restart needed."
+                  + (OverlayHost.ServerRequires ? " The server you play on requires the overlay, so it will disconnect you after a few seconds while it is off." : ""));
+        };
+
         // The server's switch.
         _ovRequired.IsEnabled = false;
         _ovRequired.IsCheckedChanged += async (_, _) => {
@@ -123,6 +155,11 @@ internal sealed partial class ManagerWindow {
         // overlay on its own; the longer words sit behind the "?".
         return WidePage(
             Fold("sparkle", "Play", "Game overlay", "What Ahziael draws over the Wizard101 window.",
+                SwitchRow("Game overlay", _ovOn,
+                    "On (the start): Ahziael draws its overlay on every Wizard101 window. Off: nothing at all is drawn on the game " +
+                    "(no Ahziael line, no buttons, no add-ons, no sparkle button) and the overlay keeps no link to the server. " +
+                    "Works right away, no restart, and Ahziael Overlay on its own follows it too. A server that requires the overlay " +
+                    "disconnects you while it is off."),
                 _ovEditorPage.EnabledRow(),
                 _ovStatus,
                 WithHint(Row(Action(Plain("Start the overlay on its own"), StartStandaloneOverlayAsync)),
@@ -157,6 +194,10 @@ internal sealed partial class ManagerWindow {
     internal static string OverlayStatus() {
         if (!OperatingSystem.IsWindows()) {
             return "The overlay works on Windows only.";
+        }
+
+        if (OverlayHost.TurnedOff) {
+            return "The overlay is turned off: nothing is drawn on the game and it keeps no link to the server.";
         }
 
         if (!OverlayHost.IsDrawing) {
