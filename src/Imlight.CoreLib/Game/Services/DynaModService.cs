@@ -210,7 +210,7 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
     // carry the tag take the state for this player too.
     private void SendObjectLook(string zoneName, string clientTag, string state, bool toClient) {
         if (toClient && !IsDeferredHide(clientTag, zoneName, state, GetActiveWizard().Zone)) {
-            SendCurrentMods(GetActiveWizard(), new Dynamod { ZoneName = zoneName, ClientTag = clientTag, ModState = state });
+            SendOneMod(GetActiveWizard(), new Dynamod { ZoneName = zoneName, ClientTag = clientTag, ModState = state });
         }
 
         // Broadcast the state change to the zone.
@@ -271,7 +271,7 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
         }
 
         _zoneStates[message.ObjectName] = message.StateName;
-        SendCurrentMods(wizard);
+        SendOneMod(wizard, new Dynamod { ZoneName = wizard?.Zone, ClientTag = message.ObjectName, ModState = message.StateName });
     }
 
     // States zone triggers gave named objects in the zone the player is in (MSG_SENDDYNAMODSTATE): not saved, but part of
@@ -301,7 +301,7 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
             return;
         }
 
-        SendCurrentMods(wizard);
+        SendModRemoved(wizard, dynaModClientTag);
 
         ZoneBroadcastNoPlayers(new ZONE_102_PROTOCOL.MSG_ENTERSTATE {
             ObjectName = dynaModClientTag,
@@ -361,9 +361,67 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
             && (string.IsNullOrEmpty(zone) || string.Equals(zone, currentZone, StringComparison.OrdinalIgnoreCase))
             && _deferredPersonaHides.TryGetValue(currentZone, out var tags) && tags.Contains(tag);
 
-    // Every change goes to the game as the whole list (with <paramref name="look"/>, a look on the way to a quest's state,
-    // in place of its object's saved mod), never as a single added mod, so the game's list always matches the wizard's mods
-    // and the zone's trigger states.
+    // What the game's list holds since the last whole list: each object's mod by the number it has there, the zone that
+    // list was for, and the last number used. A single change goes as that one mod (SendOneMod).
+    private readonly Dictionary<string, int> _sentIndex = new(StringComparer.OrdinalIgnoreCase);
+    private string _sentZone;
+    private int _lastIndex;
+
+    /// <summary>
+    /// One mod changed: the game gets that mod alone (Add with NewMod, as its own handler ClientDynaModBehavior::
+    /// MSG_DynaModBehavior_UpdateMods takes it). The game applies its mods in order and the later one for an object wins,
+    /// so the earlier one is left in its list (until the next zone's whole list) rather than removed by number, whose
+    /// meaning in the game is not known. Sending the whole list for every change made the game apply hundreds of mods
+    /// after each quest that changed one object, and it lagged (MoMi, 2026-11-28). With no list sent for this zone yet,
+    /// the whole list goes. A mod for another zone is only saved; it goes with that zone's list.
+    /// </summary>
+    private void SendOneMod(Wizard wizard, Dynamod mod) {
+        if (wizard is null || mod is null || string.IsNullOrEmpty(mod.ClientTag)) {
+            return;
+        }
+
+        if (!string.Equals(_sentZone, wizard.Zone, StringComparison.OrdinalIgnoreCase)) {
+            SendCurrentMods(wizard, mod);
+            return;
+        }
+
+        if (!AppliesHere(mod.ZoneName, wizard.Zone)) {
+            return;
+        }
+
+        if (!TrySerialize(ToWireMod(mod, _lastIndex + 1), out var data)) {
+            SendCurrentMods(wizard, mod);
+            return;
+        }
+
+        _lastIndex++;
+        _sentIndex[mod.ClientTag] = _lastIndex;
+        SendToSocket(new GAME_5_PROTOCOL.MSG_DYNAMODBEHAVIOR_UPDATEMODS {
+            GlobalID = wizard.GameObjectID,
+            UpdateAll = 0,
+            Add = 1,
+            NewMod = data,
+        });
+    }
+
+    /// <summary>
+    /// A mod that hid an object was taken off: the object only comes back when no mod in the game's list hides it, so this
+    /// zone's whole list goes (rare: an NPC walking back, a quest object brought back). A mod the game never had needs nothing.
+    /// </summary>
+    private void SendModRemoved(Wizard wizard, string clientTag) {
+        if (wizard is null || string.IsNullOrEmpty(clientTag)) {
+            return;
+        }
+
+        if (string.Equals(_sentZone, wizard.Zone, StringComparison.OrdinalIgnoreCase) && !_sentIndex.ContainsKey(clientTag)) {
+            return;
+        }
+
+        SendCurrentMods(wizard);
+    }
+
+    // The whole list (with <paramref name="look"/>, a look on the way to a quest's state, in place of its object's saved
+    // mod): when the wizard comes into a zone, and when something changes many mods at once. Single changes go alone.
     private void SendCurrentMods(Wizard wizard, Dynamod look = null) {
         if (wizard is null) {
             return;
@@ -388,6 +446,18 @@ internal class DynaModService(SessionActor sessionActor) : MessageService(sessio
         var message = BuildUpdateAll(wizard.GameObjectID, sent);
         if (message is not null) {
             SendToSocket(message);
+
+            // The numbers BuildUpdateAll gave them: the sentinel is 1, the mods follow in order.
+            _sentIndex.Clear();
+            _lastIndex = SENTINEL_INDEX;
+            foreach (var mod in sent.Where(m => m is not null)) {
+                _lastIndex++;
+                if (!string.IsNullOrEmpty(mod.ClientTag)) {
+                    _sentIndex[mod.ClientTag] = _lastIndex;
+                }
+            }
+
+            _sentZone = wizard.Zone;
         }
     }
 
