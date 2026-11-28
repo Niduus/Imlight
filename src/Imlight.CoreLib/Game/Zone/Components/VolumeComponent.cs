@@ -37,8 +37,10 @@
  */
 
 using Akka.Actor;
+using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Game.DailyAssignments;
 using Imlight.CoreLib.Game.Services;
 using Imlight.CoreLib.Game.Zone.Core;
@@ -121,7 +123,8 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
                     || string.IsNullOrEmpty(waypointGoal.m_proximityTag)
                     || (waypointGoal.m_proximityTag != volumeName
                         && WithoutCopyNumber(volumeName) != waypointGoal.m_proximityTag
-                        && _volume.m_enterEvents?.Any(e => (string) e == waypointGoal.m_proximityTag) != true)) {
+                        && _volume.m_enterEvents?.Any(e => (string) e == waypointGoal.m_proximityTag) != true
+                        && !IsRenamedGoalVolume(zonePath, waypointGoal, volumeName))) {
                     continue;
                 }
 
@@ -140,6 +143,58 @@ internal sealed class VolumeComponent(ZoneEntity entity) : ZoneEntityComponent(e
                 RememberGoalVolume(zonePath, quest.m_questName, goal.m_goalName);
             }
         }
+    }
+
+    // Zone path -> the names of its volumes (volumes.xml), read once.
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, HashSet<string>> s_zoneVolumeNames
+        = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Whether this volume is the step's volume under a later name: the step names a volume its zone does not have, and
+    /// this is the zone's one volume called that name and a suffix. Thieves' Den's "Activator Volume MR-CATE-MAIN-013" is
+    /// "Activator Volume MR-CATE-MAIN-013_Goal02" in the zone file, so the step (MR-CATE-MAIN-013) never finished
+    /// (2026-11-28).
+    /// </summary>
+    private static bool IsRenamedGoalVolume(string zonePath, WaypointGoalTemplate goal, string volumeName) {
+        string tag = goal.m_proximityTag;
+        if (string.IsNullOrEmpty(zonePath) || string.IsNullOrEmpty(tag)
+            || !string.IsNullOrEmpty(goal.m_zoneTag) && !string.Equals(goal.m_zoneTag, zonePath, StringComparison.OrdinalIgnoreCase)) {
+            return false;
+        }
+
+        var wanted = tag.StartsWith("Enter_", StringComparison.Ordinal) ? tag["Enter_".Length..] : tag;
+        if (wanted.Length < 8 || !volumeName.StartsWith(wanted + "_", StringComparison.Ordinal)) {
+            return false;
+        }
+
+        var names = s_zoneVolumeNames.GetOrAdd(zonePath, zone => {
+            var found = new HashSet<string>(StringComparer.Ordinal);
+            try {
+                if (ResourceManager.TryLoadArchive(zone, out var wad) && wad.OpenFile("volumes.xml")?.ToArray() is { } bytes
+                    && new BindSerializer().Deserialize<WizZoneVolumes>(bytes, 1, out var volumes) && volumes?.m_volumes is not null) {
+                    foreach (var volume in volumes.m_volumes.Where(v => v is not null && !string.IsNullOrEmpty(v.m_volumeName))) {
+                        found.Add((string) volume.m_volumeName);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                Logger.Debug("Volumes: could not read the volumes of {0}: {1}", Logger.Args(zone, ex.Message));
+            }
+
+            return found;
+        });
+
+        if (names.Any(n => n == wanted || WithoutCopyNumber(n) == wanted)) {
+            return false;
+        }
+
+        if (names.Count(n => n.StartsWith(wanted + "_", StringComparison.Ordinal)) != 1) {
+            return false;
+        }
+
+        Logger.Information("Volumes: {0} in {1} counts for quest step {2}, which names {3} (not in the zone file).",
+            Logger.Args(volumeName, zonePath, goal.m_goalName, wanted));
+        return true;
     }
 
     /// <summary>
