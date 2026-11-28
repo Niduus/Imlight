@@ -94,6 +94,7 @@ public class ZoneEntity(
     internal void ReleaseLateDuelJoin() => System.Threading.Volatile.Write(ref _lateDuelClaim, 0);
     public IActorRef ZoneRef { get; protected set; } = zoneRef;
     public bool NoTransfer { get; set; } = false;
+    internal ConcurrentDictionary<ulong, Imcodec.Math.Vector3> PlayerSpots { get; } = new();
     public ushort MobileID { 
         get => ActiveGameObject.m_nMobileID; 
         private set => ActiveGameObject.m_nMobileID = value; 
