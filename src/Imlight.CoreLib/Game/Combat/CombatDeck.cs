@@ -125,6 +125,7 @@ internal class CombatDeck {
                 Quantity = originalSpellData.Quantity,
                 IsBattleCard = originalSpellData.IsBattleCard,
                 IsItemCard = originalSpellData.IsItemCard,
+                CustomCard = originalSpellData.CustomCard,
                 IsTreasureCard = false
             });
         }
@@ -137,6 +138,7 @@ internal class CombatDeck {
                 Quantity = vaultCard.Quantity,
                 IsBattleCard = vaultCard.IsBattleCard,
                 IsItemCard = vaultCard.IsItemCard,
+                CustomCard = vaultCard.CustomCard,
                 IsTreasureCard = true
             });
         }
@@ -182,6 +184,7 @@ internal class CombatDeck {
                 ?? throw new InvalidOperationException("Spell could not be created from template id.");
             spell.m_itemCard = spellData.IsItemCard;
             spell.m_battleCard = spellData.IsBattleCard;
+            CustomCards.Mark(spell, spellData.CustomCard);
 
             newCards.Add(spell);
 
@@ -249,20 +252,21 @@ internal class CombatDeck {
                 continue;
             }
 
-            var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
+            var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID && s.CustomCard == CustomCards.IdOf(spell));
             if (spellData is not null) {
                 spellData.Quantity++;
                 continue;
             }
 
             // Only cards of the deck go back: one added straight to the hand has no deck entry.
-            var original = _spellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
+            var original = _spellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID && s.CustomCard == CustomCards.IdOf(spell));
             if (original is not null) {
                 _usedUpSpellData.Add(new CombatDeckSpellData() {
                     TemplateId = original.TemplateId,
                     Quantity = 1,
                     IsBattleCard = original.IsBattleCard,
                     IsItemCard = original.IsItemCard,
+                    CustomCard = original.CustomCard,
                     IsTreasureCard = false
                 });
             }
@@ -293,13 +297,14 @@ internal class CombatDeck {
             return;
         }
 
-        var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID);
+        var spellData = _usedUpSpellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID && s.CustomCard == CustomCards.IdOf(spell));
         if (spellData is not null) {
             spellData.Quantity++;
         }
-        else if (_spellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID) is { } original) {
+        else if (_spellData.FirstOrDefault(s => s.TemplateId == spell.m_templateID && s.CustomCard == CustomCards.IdOf(spell)) is { } original) {
             _usedUpSpellData.Add(new CombatDeckSpellData() {
                 TemplateId = original.TemplateId, Quantity = 1, IsBattleCard = original.IsBattleCard, IsItemCard = original.IsItemCard,
+                    CustomCard = original.CustomCard,
                 IsTreasureCard = false,
             });
         }
@@ -340,6 +345,7 @@ internal class CombatDeck {
 
             spell.m_itemCard = spellData.IsItemCard;
             spell.m_battleCard = spellData.IsBattleCard;
+            CustomCards.Mark(spell, spellData.CustomCard);
             LastGivenHand.Add(spell);
             if (--spellData.Quantity == 0) {
                 _usedUpSpellData.Remove(spellData);
@@ -518,6 +524,7 @@ internal class CombatDeck {
                 Quantity = originalSpellData.Quantity,
                 IsBattleCard = originalSpellData.IsBattleCard,
                 IsItemCard = originalSpellData.IsItemCard,
+                CustomCard = originalSpellData.CustomCard,
                 IsTreasureCard = false
             });
         }

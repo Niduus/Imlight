@@ -377,6 +377,11 @@ public partial class CombatResolver(Duel duel, CombatDuelSubCircle[] actorSubCir
                 return;
             }
 
+            // A Blood Moon card casts as itself (its own numbers and effects) while the game shows the card it looks like.
+            if (CustomCards.TemplateFor(spell) is { } custom) {
+                spellTemplate = custom;
+            }
+
             // An enchanted card casts with the enchantment's changes.
             if (spell.m_enchantment != 0 && CoreObjectFactory.GetCoreTemplate(spell.m_enchantment) is SpellTemplate enchantment) {
                 spellTemplate = CombatEnchantments.Apply(spellTemplate, enchantment, out _);

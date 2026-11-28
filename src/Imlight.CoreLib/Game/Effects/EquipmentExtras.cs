@@ -26,6 +26,7 @@ using Imcodec.MessageLayer.Generated;
 using Imcodec.ObjectProperty;
 using Imcodec.ObjectProperty.TypeCache;
 using Imlight.Common;
+using Imlight.CoreLib.Game.Equipment;
 using Imlight.CoreLib.Game.Pet;
 using Imlight.CoreLib.Game.Spells;
 using Imlight.CoreLib.Shared.Items;
@@ -68,6 +69,8 @@ internal static class EquipmentExtras {
         wizard.AppliedPetEffects = [];
         wizard.AppliedJewelEffects = [];
         wizard.AppliedCardEffects = [];
+        // Rebuilt stats hold the carriers' own stats again and no custom ones: nothing of Blood Moon gear to undo.
+        CustomGear.WornOn(wizard).Clear();
     }
 
     /// <summary>
@@ -138,6 +141,7 @@ internal static class EquipmentExtras {
             }
         }
 
+        UndoCustomGear(wizard);
         Forget(wizard);
     }
 
@@ -151,6 +155,13 @@ internal static class EquipmentExtras {
 
     private static void Apply(Wizard wizard) {
         var equipped = wizard.EquipmentBehavior?.EquippedItems ?? [];
+        // Blood Moon gear first, before any jewel or pet effect of the same slot is listed.
+        foreach (var item in equipped.ToList()) {
+            if (CustomGear.Of(item) is { } piece) {
+                ApplyCustomGear(wizard, item, piece);
+            }
+        }
+
         foreach (var item in equipped.ToList()) {
             var template = ItemHelper.GetItemTemplate(item);
             if (template is null) {
@@ -227,6 +238,135 @@ internal static class EquipmentExtras {
             Logger.Verbose("Item card effect {0} x{1} (slot {2}, id {3}) for {4}.",
                 Logger.Args(info.m_spellName, info.m_numSpells, slotHash, provide.m_internalID, wizard.CharId));
         }
+    }
+
+
+    // ------------------------------------------------------------------ Blood Moon gear (Game/Equipment/CustomGear.cs)
+
+    /// <summary>
+    /// Takes the QA carrier's own stats off a worn custom piece and puts the piece's own stats and cards on, each listed as
+    /// an effect of the piece's slot so the stats page and the deck window show them.
+    /// </summary>
+    private static void ApplyCustomGear(Wizard wizard, WizClientObjectItem item, CustomGear.Piece piece) {
+        var carrier = ItemHelper.GetItemTemplate(item);
+        if (carrier is null) {
+            return;
+        }
+
+        var worn = new CustomGear.Worn { ItemId = item.m_globalID.Full, Carrier = carrier, SlotHash = ItemHelper.GetItemSlotHash(carrier) };
+        foreach (var info in carrier.m_equipEffects ?? []) {
+            if (info is null) {
+                continue;
+            }
+
+            var nameHash = StringHash.Compute(info.m_effectName);
+            var shown = wizard.GameEffects.Find(e => e.m_effectNameID == nameHash && e.m_itemSlotID == worn.SlotHash
+                                                     && !wizard.AppliedCardEffects.Contains(e));
+            if (shown is null) {
+                continue;
+            }
+
+            wizard.GameEffects.Remove(shown);
+            if (!wizard.AddedCardEffects.Remove(shown)) {
+                wizard.RemovedCardEffects.Add(shown);
+            }
+
+            if (shown is ProvideSpellEffect provide) {
+                for (var i = 0; i < Math.Max(1, provide.m_numSpells); i++) {
+                    wizard.RemoveTemporarySpell(StringHash.Compute(provide.m_spellName));
+                }
+            }
+            else {
+                CharacterEffectHelper.RemoveGameEffectFromStats(wizard.GameStats, info);
+            }
+
+            worn.CarrierShown.Add(shown);
+        }
+
+        foreach (var (name, effect) in CustomGear.Effects(piece)) {
+            CharacterEffectHelper.AddStatisticEffectToStats(wizard.GameStats, name, effect);
+            worn.Added.Add((name, effect));
+            var shown = effect with { m_itemSlotID = worn.SlotHash, m_internalID = wizard.NextEffectId() };
+            wizard.GameEffects.Add(shown);
+            worn.Shown.Add(shown);
+            wizard.AddedCardEffects.Add(shown);
+        }
+
+        // Cards the piece gives: Blood Moon cards (CustomCards.json) and the game's own cards by name.
+        foreach (var provide in CustomGearCards(piece, worn.SlotHash)) {
+            provide.m_internalID = wizard.NextEffectId();
+            foreach (var card in Imlight.CoreLib.Game.Spells.CustomCards.CardsFor(provide)) {
+                wizard.AddTemporarySpell(card);
+            }
+
+            wizard.GameEffects.Add(provide);
+            worn.Shown.Add(provide);
+            wizard.AddedCardEffects.Add(provide);
+        }
+
+        CustomGear.WornOn(wizard).Add(worn);
+        Logger.Verbose("Custom gear {0} ({1}) worn by {2}: {3} QA stats off, {4} stats and {5} card lines on.",
+            Logger.Args(piece.Id, piece.Name, wizard.CharId, worn.CarrierShown.Count, worn.Added.Count, worn.Shown.Count - worn.Added.Count));
+    }
+
+    private static IEnumerable<ProvideSpellEffect> CustomGearCards(CustomGear.Piece piece, uint slotHash) {
+        foreach (var group in piece.Cards.GroupBy(c => c)) {
+            if (Imlight.CoreLib.Game.Spells.CustomCards.Provide(group.Key, group.Count(), slotHash) is { } provide) {
+                yield return provide;
+            }
+        }
+
+        foreach (var group in piece.Spells.GroupBy(s => s, StringComparer.OrdinalIgnoreCase)) {
+            var info = new ProvideSpellEffectInfo { m_effectName = "ProvideSpell", m_spellName = group.Key, m_numSpells = group.Count() };
+            if (SpellFactory.Exists(group.Key) && GameEffectFactory.CreateEffectFromInfo(info, slotHash) is ProvideSpellEffect provide) {
+                yield return provide;
+            }
+        }
+    }
+
+    /// <summary>Puts back what <see cref="ApplyCustomGear"/> changed: the carrier's stats come back only while it is still worn.</summary>
+    private static void UndoCustomGear(Wizard wizard) {
+        var list = CustomGear.WornOn(wizard);
+        var equipped = (wizard.EquipmentBehavior?.EquippedItems ?? []).Select(i => i.m_globalID.Full).ToHashSet();
+        foreach (var worn in list) {
+            foreach (var (name, effect) in worn.Added) {
+                CharacterEffectHelper.RemoveStatisticEffectFromStats(wizard.GameStats, name, effect);
+            }
+
+            foreach (var shown in worn.Shown) {
+                wizard.GameEffects.Remove(shown);
+                if (shown is ProvideSpellEffect provide) {
+                    Imlight.CoreLib.Game.Spells.CustomCards.RemoveCardsFor(wizard, provide);
+                }
+
+                if (!wizard.AddedCardEffects.Remove(shown)) {
+                    wizard.RemovedCardEffects.Add(shown);
+                }
+            }
+
+            if (!equipped.Contains(worn.ItemId)) {
+                continue;
+            }
+
+            foreach (var shown in worn.CarrierShown) {
+                var info = (worn.Carrier.m_equipEffects ?? []).FirstOrDefault(i => i is not null && StringHash.Compute(i.m_effectName) == shown.m_effectNameID);
+                wizard.GameEffects.Add(shown);
+                if (!wizard.RemovedCardEffects.Remove(shown)) {
+                    wizard.AddedCardEffects.Add(shown);
+                }
+
+                if (shown is ProvideSpellEffect provide) {
+                    foreach (var card in SpellFactory.CreateSpellsFromEffect(provide) ?? []) {
+                        wizard.AddTemporarySpell(card);
+                    }
+                }
+                else if (info is not null) {
+                    CharacterEffectHelper.AddGameEffectToStats(wizard.GameStats, info);
+                }
+            }
+        }
+
+        list.Clear();
     }
 
 }
