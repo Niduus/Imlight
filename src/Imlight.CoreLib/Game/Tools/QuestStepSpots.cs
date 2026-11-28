@@ -93,12 +93,19 @@ internal static class QuestStepSpots {
     /// Where the things this "use" step clicks stand in the zone (the four gems of "Get Some Bling" in the Hall of Champions),
     /// from the zone's placed objects the step names. The quest arrow points at one spot only, or none, for such a step.
     /// </summary>
-    internal static List<Imcodec.Math.Vector3> UsageObjects(string zone, string questName, string goalName) {
+    internal static List<Imcodec.Math.Vector3> UsageObjects(string zone, string questName, string goalName)
+        => Usage(zone, questName, goalName, standIns: true);
+
+    /// <summary>The spots of the step's own things only, never a stand-in (InteractQuestSelectComponent.StandInGoalsOf).</summary>
+    internal static List<Imcodec.Math.Vector3> OwnUsageObjects(string zone, string questName, string goalName)
+        => Usage(zone, questName, goalName, standIns: false);
+
+    private static List<Imcodec.Math.Vector3> Usage(string zone, string questName, string goalName, bool standIns) {
         if (string.IsNullOrEmpty(zone) || string.IsNullOrEmpty(questName) || string.IsNullOrEmpty(goalName)) {
             return [];
         }
 
-        return s_usageSpots.GetOrAdd($"{zone}|{questName}|{goalName}", _ => {
+        return s_usageSpots.GetOrAdd($"{zone}|{questName}|{goalName}|{standIns}", _ => {
             try {
                 var spots = new List<Imcodec.Math.Vector3>();
                 foreach (var group in ObjectsOf(zone).GroupBy(o => o.Template)) {
@@ -110,6 +117,18 @@ internal static class QuestStepSpots {
                     }
 
                     spots.AddRange(group.Select(o => o.Spot));
+                }
+
+                // Nothing of its own here: a thing that stands in for it, by the step's quest button picture (Sobaka's boat,
+                // InteractQuestSelectComponent.StandInGoalsOf).
+                if (standIns && spots.Count == 0
+                    && Imlight.CoreLib.Game.Zone.Components.InteractQuestSelectComponent.PictureOf(questName, goalName) is { Length: > 0 } picture) {
+                    foreach (var group in ObjectsOf(zone).GroupBy(o => o.Template)) {
+                        if (CoreObjectFactory.GetCoreTemplate(group.Key) is GameObjectTemplate template
+                            && string.Equals(Imlight.CoreLib.Game.Zone.Components.InteractQuestSelectComponent.PictureOf(template), picture, StringComparison.OrdinalIgnoreCase)) {
+                            spots.AddRange(group.Select(o => o.Spot));
+                        }
+                    }
                 }
 
                 return spots;
