@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Akka.Actor;
 using Imcodec.ObjectProperty;
@@ -28,6 +30,8 @@ using Imlight.CoreLib.Game.Events;
 using Imlight.CoreLib.Game.Housing;
 using Imlight.CoreLib.Game.Raids;
 using Imlight.CoreLib.Game.Results.Contexts;
+using Imlight.CoreLib.Game.World;
+using Imlight.CoreLib.Shared.Resources;
 using Imlight.CoreLib.Shared.Packets;
 using Imlight.CoreLib.WizardData.Collections;
 using Imlight.CoreLib.WizardData.Models.Player;
@@ -157,6 +161,12 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
 
                 return false;
             }
+        }
+
+        if (context is GenericResultContext { TriggerName: { Length: > 0 } padName }
+            && string.Equals(destinationZone, context.GetZonePath(), StringComparison.OrdinalIgnoreCase)
+            && PartnerArrival(destinationZone, padName, destinationLocation) is { } partnerSpot) {
+            destinationLocation = partnerSpot;
         }
 
         var msg = new ZONE_102_PROTOCOL.MSG_ZONETRANSFER {
@@ -323,6 +333,61 @@ internal sealed class ResTeleportHandler : BaseResultHandler<ResTeleport> {
         var aParent = a[..a.LastIndexOf('/')];
         var bParent = b[..b.LastIndexOf('/')];
         return aParent.Equals(bParent, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// A teleporter within a zone whose stored destination is the arrival spot beside its own pad ("TeleTo&lt;X&gt;" landing
+    /// at "LocationFrom&lt;X&gt;") would put the wizard back on the floor they are leaving. Yakhal Mountain's TeleToMid03,
+    /// TeleToLower01 and TeleToMid01 were stored like that (MR-YAKH-MAIN-005, 2026-11-28). The right spot is the one
+    /// beside the partner pad: the other teleporter whose way leads to this pad's spot. Null when nothing needs changing.
+    /// </summary>
+    private static string PartnerArrival(string zone, string padName, string destination) {
+        try {
+            var lands = Util.GetVectorFromCompactString(destination ?? "");
+            if ((lands.X == 0 && lands.Y == 0) || ArrivalSpots.ArrivalBeside(zone, padName) is not { } own
+                || !ArrivalSpots.Near(own, lands.X, lands.Y, lands.Z, 100f)) {
+                return null;
+            }
+
+            var pads = (Imlight.CoreLib.WizardData.Collections.ZoneDataCollection.GetZoneData(zone)?.Teleports ?? [])
+                .Where(t => t?.Teleport is not null && !string.IsNullOrEmpty(t.TriggerName))
+                .Select(t => (Name: (string) t.TriggerName, Lands: Util.GetVectorFromCompactString(t.Teleport.m_destinationLoc ?? ""),
+                    Beside: ArrivalSpots.ArrivalBeside(zone, t.TriggerName)))
+                .Where(t => t.Beside is not null)
+                .ToList();
+
+            // The pads (other than the pad itself) whose way lands beside the given pad's spot.
+            List<ArrivalSpots.Spot> LandingAt(ArrivalSpots.Spot spot, string self) => [.. pads
+                .Where(t => !string.Equals(t.Name, self, StringComparison.OrdinalIgnoreCase) && t.Beside.Name != spot.Name
+                    && ArrivalSpots.Near(spot, t.Lands.X, t.Lands.Y, t.Lands.Z, 100f))
+                .Select(t => t.Beside).DistinctBy(s => s.Name)];
+
+            // The partner's way leads here, so this way goes back beside the partner.
+            var partners = LandingAt(own, padName);
+
+            // Two partner pads both stored as landing beside themselves (Yakhal's TeleToMid03 and TeleToLower01): the one
+            // other pad like that whose spot no way leads to either.
+            if (partners.Count == 0) {
+                partners = [.. pads
+                    .Where(t => !string.Equals(t.Name, padName, StringComparison.OrdinalIgnoreCase) && t.Beside.Name != own.Name
+                        && ArrivalSpots.Near(t.Beside, t.Lands.X, t.Lands.Y, t.Lands.Z, 100f) && LandingAt(t.Beside, t.Name).Count == 0)
+                    .Select(t => t.Beside).DistinctBy(s => s.Name)];
+            }
+
+            if (partners.Count != 1) {
+                return null;
+            }
+
+            var spot = partners[0];
+            Logger.Information("Teleport: {0} in {1} is stored as landing beside its own pad ({2}); it goes to {3} beside its partner pad.",
+                Logger.Args(padName, zone, own.Name, spot.Name));
+
+            return string.Join(",", new[] { spot.X, spot.Y, spot.Z, spot.Direction }.Select(v => v.ToString(CultureInfo.InvariantCulture)));
+        }
+        catch (Exception e) {
+            Logger.Debug("Teleport: could not check {0}'s partner pad: {1}", Logger.Args(padName, e.Message));
+            return null;
+        }
     }
 
     // The stored teleport of the trigger or object these results run for, when it names a destination.

@@ -33,26 +33,63 @@ namespace Imlight.CoreLib.Game.World;
 /// </summary>
 internal static class ArrivalSpots {
 
-    // Zone path -> the zone's location names (empty when the zone file cannot be read).
-    private static readonly ConcurrentDictionary<string, string[]> s_locations = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>A named location of a zone: where it is and which way the player faces there.</summary>
+    internal sealed record Spot(string Name, float X, float Y, float Z, float Direction);
+
+    // Zone path -> the zone's named locations (empty when the zone file cannot be read).
+    private static readonly ConcurrentDictionary<string, Spot[]> s_spots = new(StringComparer.OrdinalIgnoreCase);
 
     private static readonly string[] s_prefixes = ["LocationFrom_", "LocationFrom", "From_", "From"];
+    private static readonly string[] s_teleportPrefixes = ["TeleportTo_", "TeleportTo", "TeleTo_", "TeleTo", "To_"];
 
-    /// <summary>The location names of a zone, read from its file once.</summary>
-    internal static string[] Locations(string zone) => s_locations.GetOrAdd(zone ?? "", name => {
+    /// <summary>The named locations of a zone, read from its file once.</summary>
+    internal static Spot[] Spots(string zone) => s_spots.GetOrAdd(zone ?? "", name => {
         try {
             if (name.Length == 0 || !ResourceManager.TryLoadArchive(name, out var wad) || ResourceManager.OpenZoneData(wad)?.ToArray() is not { } data
                 || !new BindSerializer().Deserialize<WizZoneData>(data, 1, out var zoneData) || zoneData?.m_locationList is null) {
                 return [];
             }
 
-            return [.. zoneData.m_locationList.Where(l => l is not null && !string.IsNullOrEmpty(l.m_locName)).Select(l => (string) l.m_locName)];
+            return [.. zoneData.m_locationList.Where(l => l is not null && !string.IsNullOrEmpty(l.m_locName))
+                .Select(l => new Spot((string) l.m_locName,l.m_location.X, l.m_location.Y, l.m_location.Z, l.m_direction))];
         }
         catch (Exception ex) {
             Logger.Debug("Arrival spots: the locations of {0} could not be read: {1}", Logger.Args(name, ex.Message));
             return [];
         }
     });
+
+    /// <summary>The location names of a zone.</summary>
+    internal static string[] Locations(string zone) => [.. Spots(zone).Select(s => s.Name)];
+
+    /// <summary>
+    /// The arrival spot named for a teleporter of the zone: "TeleToMid03" -> "LocationFromMid03", the spot beside that
+    /// teleporter's own pad where the way back from Mid03 lands. Null when the zone has none.
+    /// </summary>
+    internal static Spot ArrivalBeside(string zone, string teleporter) {
+        var key = TeleporterKey(teleporter);
+        if (key is null) {
+            return null;
+        }
+
+        return Spots(zone).FirstOrDefault(s => s_prefixes.FirstOrDefault(p => s.Name.StartsWith(p, StringComparison.OrdinalIgnoreCase)) is { } prefix
+            && Normalize(s.Name[prefix.Length..]) == key);
+    }
+
+    /// <summary>What a teleporter's name says it leads to ("TeleToMid03" -> "mid03"), or null for another kind of name.</summary>
+    internal static string TeleporterKey(string teleporter) {
+        if (string.IsNullOrEmpty(teleporter)) {
+            return null;
+        }
+
+        var prefix = s_teleportPrefixes.FirstOrDefault(p => teleporter.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+        var key = prefix is null ? "" : Normalize(teleporter[prefix.Length..]);
+
+        return key.Length >= 3 ? key : null;
+    }
+
+    internal static bool Near(Spot spot, float x, float y, float z, float range)
+        => ((spot.X - x) * (spot.X - x)) + ((spot.Y - y) * (spot.Y - y)) + ((spot.Z - z) * (spot.Z - z)) <= range * range;
 
     /// <summary>
     /// The spot of <paramref name="toZone"/> named after <paramref name="fromZone"/> ("From_&lt;place&gt;"), or null when
