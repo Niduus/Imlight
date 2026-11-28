@@ -93,6 +93,9 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     private readonly float _interactionRadius = 300.0f;
     private readonly Dictionary<ulong, IActorRef> _playersInInteractionRange = [];
     private readonly Dictionary<ulong, IActorRef> _playersInRenderRange = [];
+    // Players who came into the zone already within reach (OnPlayerJoin) and have not moved since: they are sent the
+    // options on the next wizbang round, which has their wizard (see OnPlayerJoin).
+    private readonly HashSet<ulong> _arrivedInReach = [];
     private List<IServiceComponent> _serviceComponents = [];
     private Dictionary<int, IServiceComponent> _optionIndexToComponent = [];
     private readonly Dictionary<IServiceComponent, int> _componentFirstOption = [];
@@ -121,6 +124,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
     }
 
     public override void OnPlayerLeave(IActorRef playerActor, ulong id) {
+        _arrivedInReach.Remove(id);
         if (_playersInInteractionRange.Any(x => x.Value == playerActor)) {
             var playerObj = _playersInInteractionRange.First(x => x.Value == playerActor).Key;
             _playersInInteractionRange.Remove(playerObj);
@@ -139,16 +143,11 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
 
         var playerId = playerObj.m_globalID.Full;
-
-        // Effective interaction radius = the SMALLEST any attached service asks for (default 300).
-        var interactionRadius = _serviceComponents.Count > 0
-            ? _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS)
-            : _interactionRadius;
+        _arrivedInReach.Remove(playerId);
 
         // Handle interaction range (for service options). A large quest object (Zafaria's fallen Zebra Scout Tower)
         // is reached at its edge too, not only near its center (ObjectReach).
-        var inRange = IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
-                      || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach));
+        var inRange = InReach(playerObj);
         if (inRange
             && !_playersInInteractionRange.ContainsKey(playerId)) {
             _playersInInteractionRange.Add(playerId, playerActor);
@@ -166,6 +165,16 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         // The newest session of a wizard replaces an old one (a relog or a trip back into the zone keeps the same
         // object id): the old session no longer answers, and asking it held up this NPC's symbol for everyone.
         _playersInRenderRange[playerId] = playerActor;
+    }
+
+    // Effective interaction radius = the SMALLEST any attached service asks for (default 300).
+    private bool InReach(CoreObject playerObj) {
+        var interactionRadius = _serviceComponents.Count > 0
+            ? _serviceComponents.Min(c => c.DEFAULT_INTERACTION_RADIUS)
+            : _interactionRadius;
+
+        return IsInHorizontalRadius(playerObj, interactionRadius) || ReachesShape(playerObj)
+               || (_floorReach > 0 && IsInHorizontalRadius(playerObj, _floorReach));
     }
 
     // The shape of a quest object that is not a character, when it is larger than the usual reach (ObjectReach).
@@ -252,6 +261,17 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
 
         _playersInRenderRange[playerObj.m_globalID.Full] = playerActor;
+
+        // Options were only sent when a player moved into reach, so a player who arrived next to something and stood
+        // still never got its "press X": the skip sign on the Krokotopia flying ship stands beside the spot a wizard
+        // lands on deck, and the skip only showed once they took a step (Niduus 2026-11-23: "the Oasis boat doesn't
+        // consistently have the skip boat ride interaction"; his log shows rides of 45 s and 20 s with no skip, then
+        // one skipped after he moved). The same held for Marleybone's airship signs and any door, sign or person next
+        // to where a wizard arrives. Asking the wizard here would wait on the session that is adding the player, so
+        // the next wizbang round (once a second) sends them, and the session keeps them until the game has loaded.
+        if (InReach(playerObj)) {
+            _arrivedInReach.Add(playerObj.m_globalID.Full);
+        }
     }
 
     [MessageHandler(typeof(ZONE_102_PROTOCOL.MSG_ZONEINTERACTION))]
@@ -489,6 +509,7 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             var wizard = result.Wizards[i];
             if (wizard != null) {
                 SendWizBang(result.PlayerActors[i], wizard);
+                SendOptionsOnArrival(result.PlayerActors[i], wizard);
 
                 continue;
             }
@@ -500,8 +521,28 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         }
     }
 
-    private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0, bool nextSection = false) {
-        if (AskWizard(playerActor) is not { } wizard) {
+    // A player who came into the zone within reach and has not moved yet is sent the options now (see OnPlayerJoin).
+    private void SendOptionsOnArrival(IActorRef playerActor, Wizard wizard) {
+        if (_arrivedInReach.Count == 0) {
+            return;
+        }
+
+        var arrived = _playersInRenderRange.Where(x => x.Value.Equals(playerActor) && _arrivedInReach.Contains(x.Key))
+            .Select(x => x.Key).ToList();
+        foreach (var playerId in arrived) {
+            _arrivedInReach.Remove(playerId);
+            if (_playersInInteractionRange.ContainsKey(playerId)) {
+                continue;
+            }
+
+            _playersInInteractionRange.Add(playerId, playerActor);
+            SendActorServiceOptions(playerActor, nextSection: true, knownWizard: wizard);
+        }
+    }
+
+    private void SendActorServiceOptions(IActorRef playerActor, int reinteract = 0, bool nextSection = false,
+                                         Wizard knownWizard = null) {
+        if ((knownWizard ?? AskWizard(playerActor)) is not { } wizard) {
             return;
         }
 
