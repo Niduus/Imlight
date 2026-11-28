@@ -1,0 +1,321 @@
+{
+  "m_questName": "NV-ROSE-MAIN-006",
+  "m_questNameID": 0,
+  "m_questTitle": "Where is His Mind?",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsKillCollect"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "Clue",
+        "m_descriptor2": "Megrim",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Fish_CrazyLegs_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Novus/NV_Z05_LaVilleRose",
+      "m_locationName": "La Ville Rose",
+      "m_goalName": "1_WizardQuestGoalsKillCollect",
+      "m_goalTitle": "WizardQuestGoals_KillCollect",
+      "m_goalType": "GOAL_TYPE_BOUNTYCOLLECT",
+      "m_npcAdjectives": [],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "NV-ROSE-MAIN-006"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "NV-ROSE-MAIN-005",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsKillCollect"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Are we sure they are not working with the Marleybonian government?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_039.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "No, true, true, they did the chocolate in the wells. At any rate, their agents are either scattered or captured. Victory is ours this day!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_040.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ma'am, there is still small matter of starvation. Remember, we're out of food?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moose_Manticore_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/The_Valet_NV-ROSE_008.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520451,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "SILENCE, you contemptable clump of contrariness. But, oui, I am indeed quite peckish. Forget this Cabal, we must find the Frame of Mind.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_041.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We have two hints to its location. But we need more. The fish know things. Make them tell us!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_042.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "'Behind the table,' 'where the ice stands glub' and 'where the cold forms a rose.' Those are our clues. But what do they mean?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_043.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They could mean-",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moose_Manticore_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/The_Valet_NV-ROSE_009.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520451,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Silence, you lumbering, clip-clopping clod! I have it! The first clue does indeed indicate Sur La Café Table... or an island behind it. But which?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_044.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Maybe that one with the standing ice spires and the frozen rose?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moose_Manticore_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/The_Valet_NV-ROSE_010.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520451,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Maybe that one with the standing ice spires and the frozen rose! Magnifique! I have solved the riddle!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_045.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I will arrange for a boat from the Theater District, Wizard. Take it to the Frame of Mind and ask your Dasein for Valencian Snapper.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_046.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-DEstate-NPC26-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "As I reconnect to myself, Wizard, you may notice new pathways between the Shards. You have seen them, oui? The holes in the sky?",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Wizard_NV-ROSE_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1717127,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

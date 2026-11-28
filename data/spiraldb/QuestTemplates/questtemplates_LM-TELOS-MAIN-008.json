@@ -1,0 +1,286 @@
+{
+  "m_questName": "LM-TELOS-MAIN-008",
+  "m_questNameID": 0,
+  "m_questTitle": "Heap of Trouble",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000711"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Storm Attunement Stone",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Quest_LM_Stone_Storm.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z00_Hub",
+      "m_locationName": "Telos",
+      "m_goalName": "1_WizardQuestGoals00000711",
+      "m_goalTitle": "WizardQuestGoals_00000711",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-TELOS-MAIN-008"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-TELOS-MAIN-007",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000711"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Impressive isn't it? Buck, there's someone I want you to meet. Wizard, I believe you have a Harmonic Gate to unlock.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-TELOS_142.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521342,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Wizard! Ha-ha! Five stones found. Sadly, that is all your map points to. Five. Not six.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Horse_Explorer_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Stallion_Quartermane_LM-TELOS_042_Edit.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Verily. While many regions are indicated, none seem to hold a Monitoring Station, as you call them. Perhaps the Old Judge never finished?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Crane_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Solomon_Crane_LM-TELOS_085.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521319,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC09_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Or the task is meant to get more difficult. There is one place we can look, a place of darkness Sky City drifted over several times.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Deer_Hero_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Buck_Gordon_LM-TELOS_043.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521343,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Egad! The Heap. Of course! I've been to that wretched hive. It is where lost things go. Which makes it a logical place to find something.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-TELOS_143.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521342,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Bantam",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Heap is through the Wildlands, beyond Ursai Village. Be careful, Wizard, lost things are also desperate things.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-TELOS_052.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But what manner of place is it?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-TELOS_140.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521345,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Heap is a cruel city. Unrelenting. Merciless to those who don't kiss up to its seedy underbelly. Which many don't. Because it's gross.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-TELOS_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521348,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But now the chaos and the violence are worse than ever, the streets run red with Wisps... and sometimes blue. The city cries out for a hero, for The Sh-",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Shadoe_LM-TELOS_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521348,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-TELOS-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Did you hear something, Wizard? No? Must have been the wind. I'm given to understand it sounds like voices sometimes.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Nothing_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-TELOS_141.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1521345,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

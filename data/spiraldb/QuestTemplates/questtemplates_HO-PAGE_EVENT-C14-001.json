@@ -1,0 +1,284 @@
+{
+  "m_questName": "HO-PAGE_EVENT-C14-001",
+  "m_questNameID": 0,
+  "m_questTitle": "Mythopoetic",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_Defeat",
+    "2_TalkTo"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "Spellwrit Fomori",
+        "m_count": 10,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Formori_Grim.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Avalon/AV_Z02_HighRoad",
+      "m_locationName": "High Road",
+      "m_goalName": "1_Defeat",
+      "m_goalTitle": "Defeat",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [
+        "AV-Giant-Fomori-PageEvent.AdjRef"
+      ],
+      "m_bountyTotal": 10,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 0,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_AV_CrabKnight_SirPike.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "<ITALICS>As you defeat the last Spellwrit Fomori, you discover a magical page of writing. This must be the Lost Page of Folklore! </ITALICS>",
+                "m_picture": "GUI/QuestButtons/Art_Quest_Incantation_Scroll.dds",
+                "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/Narrator_EVE_05.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Avalon/AV_Z00_Hub",
+      "m_locationName": "Caliburn",
+      "m_goalName": "2_TalkTo",
+      "m_goalTitle": "Talk To",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "AV-HUB-NPC13_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "HO-PAGE_EVENT-C14-001"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "HO-PAGE_EVENT-C01-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_Defeat",
+        "2_TalkTo"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Underway",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-HUB-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Spellwrit Fomori have been seen along the High Road. Search for them there, before they can elude us!",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/SirPikedelLago_EVE_05.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-HUB-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Good Wizard, what can the illustrious Sir Pike del Lago do you for this day?",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/SirPikedelLago_EVE_01.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-HUB-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "<ITALICS>The Book of Lost Pages</ITALICS>? No, I do not have it. Oh, it is in the hands of the Carpe Diem Society? Ah, that is our quest!",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/SirPikedelLago_EVE_02.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-HUB-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yes, I have heard of possessed monsters such as you describe. A band of Fomori Giants may have fallen to the curse.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/SirPikedelLago_EVE_03.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-HUB-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Seek out these Spellwrit Fomori on the High Road. Mayhaps they have your Lost Page of Folklore.",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/SirPikedelLago_EVE_04.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AV-HUB-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Spellwrit Fomori had the Lost Page of Folklore? Who knew they could read? Bravo!",
+            "m_picture": "",
+            "m_soundFile": "|Sound_Dialogue_GEN|WorldData|Sound/Dialogue/SirPikedelLago_EVE_06.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

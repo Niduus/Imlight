@@ -1,0 +1,13 @@
+{
+  "Name": "PL-FRIG-ENC-001",
+  "Description": "PL-FRIG-ENC-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2920,
+  "MaxGold": 2920,
+  "ExperienceAmount": 499150,
+  "TrainingPoints": 0,
+  "Items": []
+}

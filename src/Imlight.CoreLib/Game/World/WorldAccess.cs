@@ -37,10 +37,11 @@ namespace Imlight.CoreLib.Game.World;
 
 internal static class WorldAccess {
 
-    // The Spiral Door's worlds, in the order the game lists them.
+    // The Spiral Door's worlds, in the order the game lists them (its WorldHubZones.xml). Arcanum was missing, so Baba
+    // Yaga's PL-FORL-MAIN-012 could never open it (2026-11-28).
     private static readonly string[] s_worlds = [
         "WizardCity", "Krokotopia", "Marleybone", "MooShu", "DragonSpire", "Grizzleheim", "Celestia", "Wysteria",
-        "Zafaria", "Avalon", "Azteca", "Aquila", "Khrysalis", "Polaris", "Mirage", "Empyrea", "Karamelle", "Lemuria",
+        "Zafaria", "Avalon", "Azteca", "Aquila", "Khrysalis", "Polaris", "Arcanum", "Mirage", "Empyrea", "Karamelle", "Lemuria",
         "Novus", "Wallaru", "Darkmoor", "Ahmarra",
     ];
 

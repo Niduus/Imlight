@@ -1,0 +1,13 @@
+{
+  "Name": "AH-EAST-ENC-001",
+  "Description": "Ahmarra quest Untangling Nauts (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 690,
+  "MaxGold": 690,
+  "ExperienceAmount": 87220,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "EM-AERI-J-ENC-002",
+  "Description": "EM-AERI-J-ENC-002 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 4310,
+  "MaxGold": 4310,
+  "ExperienceAmount": 215232,
+  "TrainingPoints": 0,
+  "Items": []
+}

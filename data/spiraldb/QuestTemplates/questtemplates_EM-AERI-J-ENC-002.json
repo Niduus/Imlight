@@ -1,0 +1,1094 @@
+{
+  "$type": "Imcodec.ObjectProperty.TypeCache.EncounterTemplate, Imcodec.ObjectProperty",
+  "m_vars": [],
+  "m_questName": "EM-AERI-J-ENC-002",
+  "m_questNameID": 0,
+  "m_questTitle": "QuestTitle_155361",
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
+  "m_startGoals": [
+    "Goal"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_proximityTag": "Enter_Activator Volume EM_BeastMountain",
+      "m_zoneExit": false,
+      "m_goalName": "Goal",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000008",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "",
+                  "m_nameOverride": "WizQst155361_00000001",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000000",
+                  "m_picture": "GUI/NpcPortraits/Beastman_Warrior_B_MOB.dds",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/BeastmanGuardKvort_EMP_01.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 1,
+                  "m_cameraOffsetX": -373.7503,
+                  "m_cameraOffsetY": -3020.216,
+                  "m_cameraOffsetZ": 371.9187,
+                  "m_pitch": -0.002727147,
+                  "m_yaw": 3.109899,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 1,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [],
+                  "m_dialogAnimationList": [
+                    "0|1391599|Gen_Dial_01|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 3,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+            "m_add": true,
+            "m_templateID": 1397680
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst155361_00000013",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_MountainPath.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "EM_Beastman_Warrior_A.AdjRef",
+        "EM_Beastman_Warrior_A_02.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 1",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 1
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "EM-AERI-NPC01_Persona",
+                  "m_nameOverride": "",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000002",
+                  "m_picture": "",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_62.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 0,
+                  "m_cameraOffsetX": -1315.599,
+                  "m_cameraOffsetY": -4505.989,
+                  "m_cameraOffsetZ": 379.1865,
+                  "m_pitch": 0.05727284,
+                  "m_yaw": -2.463284,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 1,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [
+                    "EM_StandIn_Pork instance"
+                  ],
+                  "m_dialogAnimationList": [
+                    "0|EM_StandIn_Pork instance|Gen_Dial_01|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 3,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00002877",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/NpcPortraits/Beastman_Warrior_B_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "EM-Vine_Blocker.AdjRef"
+      ],
+      "m_itemTotal": 1,
+      "m_goalName": "Goal 2",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000300",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResEmote, Imcodec.ObjectProperty",
+            "m_emoteName": "Cast",
+            "m_emoteState": "ActionEmoting",
+            "m_loop": false,
+            "m_particleAsset": "",
+            "m_particleNode": "",
+            "m_personaName": "",
+            "m_soundAsset": "",
+            "m_usePersona": false,
+            "m_useTarget": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveTriggerObject, Imcodec.ObjectProperty",
+            "m_triggerObjName": "EM-Vine_Blocker instance"
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWait, Imcodec.ObjectProperty",
+            "m_secondsToWait": 4
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "EM-AERI-NPC01_Persona",
+                  "m_nameOverride": "",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000003",
+                  "m_picture": "",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_63.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 0,
+                  "m_cameraOffsetX": -3005.218,
+                  "m_cameraOffsetY": -5618.416,
+                  "m_cameraOffsetZ": 373.0269,
+                  "m_pitch": 0.07727277,
+                  "m_yaw": 0.7567135,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 1,
+                  "m_walkAwayNpcTemplateID": 1397674,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 1,
+                  "m_walkAwayUseCurrentFacing": true,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": true,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [
+                    "EM_StandIn_Pork instance02"
+                  ],
+                  "m_dialogAnimationList": [
+                    "0|EM_StandIn_Pork instance02|Gen_Dial_01|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 3,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst155361_00000014",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/QuestButtons/EM-VineBlocker.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "EM-Vine_Blocker"
+      ],
+      "m_genericEvents": [
+        "EM-Vine_Blocker"
+      ],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_proximityTag": "Enter_Activator Volume EM_BeastMountain02",
+      "m_zoneExit": false,
+      "m_goalName": "Goal 3",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000123",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "",
+                  "m_nameOverride": "WizQst155361_00000006",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000005",
+                  "m_picture": "GUI/NpcPortraits/Beastman_Warrior_A_MOB.dds",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/BeastmanBraveKtoch_EMP_01.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 1,
+                  "m_cameraOffsetX": -9076.918,
+                  "m_cameraOffsetY": -4858.913,
+                  "m_cameraOffsetZ": 1163.457,
+                  "m_pitch": -0.0127272,
+                  "m_yaw": -1.063283,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 1,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [],
+                  "m_dialogAnimationList": [
+                    "0|1391600|Gen_Dial_01|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 3,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst155361_00000007",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_MountainPath.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "EM_Beastman_Warrior_B.AdjRef",
+        "EM_Beastman_Warrior_A_03.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 4",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00002878",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/NpcPortraits/Beastman_Warrior_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_itemAdjectives": [
+        "EM-Vine_Blocker02.AdjRef"
+      ],
+      "m_itemTotal": 1,
+      "m_goalName": "Goal 5",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000300",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResEmote, Imcodec.ObjectProperty",
+            "m_emoteName": "Cast",
+            "m_emoteState": "ActionEmoting",
+            "m_loop": false,
+            "m_particleAsset": "",
+            "m_particleNode": "",
+            "m_personaName": "",
+            "m_soundAsset": "",
+            "m_usePersona": false,
+            "m_useTarget": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveTriggerObject, Imcodec.ObjectProperty",
+            "m_triggerObjName": "EM-Vine_Blocker02 instance"
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst155361_00000014",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/QuestButtons/EM-VineBlocker.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "EM-Vine_Blocker02"
+      ],
+      "m_genericEvents": [
+        "EM-Vine_Blocker02"
+      ],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_zoneEntry": false,
+      "m_zoneTag": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_proximityTag": "Enter_Activator Volume EM_BeastMountain03",
+      "m_zoneExit": false,
+      "m_goalName": "Goal 6",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_00000123",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResActorDialog, Imcodec.ObjectProperty",
+            "m_dialogPrefix": "",
+            "m_activePersona": "",
+            "m_registryEntry": "",
+            "m_dialog": {
+              "m_dialogTag": "Hyperlink",
+              "m_dialogEntries": [
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "EM-AERI-NPC01_Persona",
+                  "m_nameOverride": "",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000009",
+                  "m_picture": "",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_64.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 0,
+                  "m_cameraOffsetX": -7307.612,
+                  "m_cameraOffsetY": 3008.421,
+                  "m_cameraOffsetZ": 2001.475,
+                  "m_pitch": 0.2273047,
+                  "m_yaw": -1.867989,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 3,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [
+                    "EM_StandIn_Pork instance03"
+                  ],
+                  "m_dialogAnimationList": [
+                    "0|EM_StandIn_Pork instance03|Gen_Dial_01|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 3,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                },
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "",
+                  "m_nameOverride": "WizQst155361_00000011",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000010",
+                  "m_picture": "GUI/NpcPortraits/Beastman_Warrior_A_MOB.dds",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/BeastmanSentinelKtinga_EMP_01.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 1,
+                  "m_cameraOffsetX": -6501.484,
+                  "m_cameraOffsetY": 3774.334,
+                  "m_cameraOffsetZ": 2160.669,
+                  "m_pitch": -0.002727299,
+                  "m_yaw": 1.083547,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 3,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": false,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [
+                    "EM_StandIn_Pork instance03"
+                  ],
+                  "m_dialogAnimationList": [
+                    "0|1391601|Gen_Dial_01|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 3,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                },
+                {
+                  "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                  "m_personaName": "EM-AERI-NPC01_Persona",
+                  "m_nameOverride": "",
+                  "m_nameSTKey": "",
+                  "m_guiDisplay": "",
+                  "m_maxTimeSeconds": -1,
+                  "m_invisible": false,
+                  "m_dialog": "WizQst155361_00000015",
+                  "m_picture": "",
+                  "m_soundFile": "|Sound_Dialogue_EMP|WorldData|Sound/Dialogue/Pork_EMP_65.mp3",
+                  "m_action": "",
+                  "m_dialogEvent": "",
+                  "m_actorTemplateID": 0,
+                  "m_cameraName": "LOCATION",
+                  "m_interpolationDuration": 1,
+                  "m_cameraOffsetX": -7307.612,
+                  "m_cameraOffsetY": 3008.421,
+                  "m_cameraOffsetZ": 2001.475,
+                  "m_pitch": 0.2273047,
+                  "m_yaw": -1.867989,
+                  "m_roll": 0,
+                  "m_cameraShakeType": "",
+                  "m_cameraShakeDuration": 0,
+                  "m_cameraShakeAmplitude": 0,
+                  "m_bypassCameraOnReview": true,
+                  "m_cameraZoneName": "Empyrea/Interiors/EM_Z01_MountainPath",
+                  "m_duration": 0,
+                  "m_delay": 0,
+                  "m_cameraHidePlayers": 3,
+                  "m_walkAwayNpcTemplateID": 0,
+                  "m_walkAwayExitDirectionInDegrees": 0,
+                  "m_walkAwayFadeTime": 0,
+                  "m_walkAwayUseCurrentFacing": false,
+                  "m_standInPlayerTag": "",
+                  "m_fadeOutCamera": false,
+                  "m_snapCameraToPlayerAtExit": true,
+                  "m_secondaryCameraName": "",
+                  "m_secondaryInterpolationDuration": 0,
+                  "m_npcStandInList": [
+                    "EM_StandIn_Pork instance03"
+                  ],
+                  "m_dialogAnimationList": [
+                    "0|EM_StandIn_Pork instance03|Gen_Dial_02|4"
+                  ],
+                  "m_dialogTurningList": [],
+                  "m_npcYawOffsetInDegrees": 0,
+                  "m_allowPlayerToMove": false,
+                  "m_soundEffectFile": "",
+                  "m_musicFile": "",
+                  "m_nonStackableMusic": false,
+                  "m_nonRepeatableMusic": false,
+                  "m_playMusicAtSFXVolume": false,
+                  "m_soundEffectDelay": 0,
+                  "m_musicDelay": 0,
+                  "m_musicFadeTime": 0,
+                  "m_dontReleaseCameraAtExit": false,
+                  "m_disableBackButton": false,
+                  "m_enableExitButton": false,
+                  "m_cameraFadeType": "",
+                  "m_cameraFadeTime": 0.5,
+                  "m_idleAnimation": "",
+                  "m_spamTime": 0,
+                  "m_playSoundIfSpamming": false,
+                  "m_playMusicIfSpamming": false,
+                  "m_stopMusicFadeTime": 0,
+                  "m_restartMusicFadeTime": 0,
+                  "m_meetsRequirements": false,
+                  "m_secondaryCameraInitalDelay": 0,
+                  "m_displayButtonsOnTimedDialog": false
+                }
+              ],
+              "m_madlibs": [],
+              "m_dialogEvents": [],
+              "m_noAggroWhileDialogIsUp": false,
+              "m_noAggroNoDelay": false
+            },
+            "m_randomDialog": false,
+            "m_quest": "",
+            "m_broadcastToZone": false,
+            "m_displayInQuestList": false,
+            "m_oneShot": false
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "WizQst155361_00000013",
+        "m_descriptor2": "",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/QuestButtons/Location_EM_MountainPath.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "EM_Beastman_Warrior_D.AdjRef",
+        "EM_Beastman_Warrior_A_04.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal 7",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_completeResults": {
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleAccompanyNPC, Imcodec.ObjectProperty",
+            "m_add": false,
+            "m_templateID": 1397680
+          }
+        ]
+      },
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizardMobs_00002879",
+        "m_count": 1
+      },
+      "m_locationName": "ZoneLocName_1397677",
+      "m_displayImage1": "GUI/NpcPortraits/Beastman_Warrior_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Empyrea/Interiors/EM_Z01_MountainPath",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    }
+  ],
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "EM-AERI-J-ENC-002",
+        "m_maxRolls": 0
+      }
+    ]
+  },
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "Goal"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 1"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 1"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 2"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 2"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 3"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 3"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 4"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 4"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 5"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 5"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 6"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 6"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal 7"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal 7"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 0
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 1,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": []
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
+}

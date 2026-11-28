@@ -1,0 +1,13 @@
+{
+  "Name": "KT-TOMBS-MAIN-009",
+  "Description": "Krokotopia quest Puzzles & Pathways (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 85,
+  "MaxGold": 85,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

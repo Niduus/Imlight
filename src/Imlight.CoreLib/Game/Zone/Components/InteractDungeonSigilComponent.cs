@@ -102,7 +102,127 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         }
     }
 
-    public string NpcNameKey => TryResolveDestination(out var sigil) ? TeamUpSigils.DisplayKeyNow(sigil.DestinationZone) : "";
+    public string NpcNameKey {
+        get {
+            if (_nameKey is not null) {
+                return _nameKey;
+            }
+
+            if (!TryResolveDestination(out var sigil)) {
+                return "";
+            }
+
+            var key = TeamUpSigils.DisplayKeyNow(sigil.DestinationZone);
+            // Many dungeons carry the name of the area they are in (every Moon Cliffs cave and tower says "Moon Cliffs",
+            // Triton Avenue's towers "Triton Avenue"), so the pad named the area, not the dungeon (2026-11-26). The game's
+            // own sigil names are in SigilText.lang: the entry named like the pad or the dungeon zone is used instead.
+            var hereKey = TeamUpSigils.DisplayKeyNow(Entity.Zone?.ZonePath);
+            if (string.IsNullOrEmpty(key) || SameText(key, hereKey)) {
+                var sigilKey = SigilTextKey((string) SigilInfo?.m_zoneTag2, sigil.DestinationZone);
+                if (!string.IsNullOrEmpty(sigilKey)) {
+                    Logger.Information("Dungeon sigil {0}: named '{1}' from SigilText ({2}) instead of its area's name.",
+                        Logger.Args(SigilInfo?.m_zoneTag2, Locale.GetEnglishName(sigilKey), sigilKey));
+                    key = sigilKey;
+                }
+                else {
+                    Logger.Information("Dungeon sigil {0}: no SigilText name for {1}; it keeps its area's name '{2}'.",
+                        Logger.Args(SigilInfo?.m_zoneTag2, sigil.DestinationZone, Locale.GetEnglishName(key)));
+                }
+            }
+
+            _nameKey = key ?? "";
+            return _nameKey;
+        }
+    }
+
+    private string _nameKey;
+
+    private static bool SameText(string key, string other)
+        => !string.IsNullOrEmpty(other)
+           && (string.Equals(key, other, StringComparison.OrdinalIgnoreCase)
+               || string.Equals(Locale.GetEnglishName(key), Locale.GetEnglishName(other), StringComparison.OrdinalIgnoreCase));
+
+    private static Dictionary<string, string> s_sigilTextByName;
+    // "Twoface's Lair", "WhiteFlame's Study": the owner's part ("twoface", "whiteflame") to its key, for pads named only by
+    // the owner (Bastion's "Teleport to TwoFace", "Teleport to TymenWhiteFlame", 2026-11-26).
+    private static Dictionary<string, string> s_sigilTextByOwner;
+    private const int MIN_OWNER_LENGTH = 6;
+    private static readonly object s_sigilTextLock = new();
+
+    // The SigilText.lang key whose text is the pad's name ("Teleport-VespaCave": "Vespa Cave") or the dungeon zone's
+    // ("KR_Z02_VespaCave"), letters and digits only; null when none is.
+    private static string SigilTextKey(string padName, string zone) {
+        Dictionary<string, string> byName, byOwner;
+        lock (s_sigilTextLock) {
+            if (s_sigilTextByName is null) {
+                var built = new Dictionary<string, string>(StringComparer.Ordinal);
+                var owners = new Dictionary<string, string>(StringComparer.Ordinal);
+                var shared = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var (id, text) in Locale.Table("SigilText") ?? new Dictionary<string, string>()) {
+                    var name = Plain(text);
+                    if (name.Length > 0) {
+                        built.TryAdd(name, $"SigilText_{id}");
+                    }
+
+                    // The owner's part of a "<owner>'s <place>" name; an owner with two different places names neither.
+                    var possessive = text?.IndexOf("'s ", StringComparison.Ordinal) ?? -1;
+                    if (possessive > 0 && Plain(text[..possessive]) is { Length: >= MIN_OWNER_LENGTH } owner) {
+                        if (owners.TryGetValue(owner, out var known) && !string.Equals(Locale.GetEnglishName(known), text, StringComparison.OrdinalIgnoreCase)) {
+                            shared.Add(owner);
+                        }
+                        else {
+                            owners.TryAdd(owner, $"SigilText_{id}");
+                        }
+                    }
+                }
+
+                foreach (var owner in shared) {
+                    owners.Remove(owner);
+                }
+
+                s_sigilTextByName = built;
+                s_sigilTextByOwner = owners;
+            }
+
+            byName = s_sigilTextByName;
+            byOwner = s_sigilTextByOwner;
+        }
+
+        var candidates = NameCandidates(padName, zone).Where(c => c.Length > 0).Distinct().ToList();
+        foreach (var candidate in candidates) {
+            if (byName.TryGetValue(candidate, out var key)) {
+                return key;
+            }
+        }
+
+        // The longest owner that one of the names holds ("tymenwhiteflame" holds "whiteflame").
+        return byOwner
+            .Where(o => candidates.Any(c => c.Contains(o.Key, StringComparison.Ordinal)))
+            .OrderByDescending(o => o.Key.Length)
+            .Select(o => o.Value)
+            .FirstOrDefault();
+    }
+
+    private static IEnumerable<string> NameCandidates(string padName, string zone) {
+        if (!string.IsNullOrEmpty(padName)) {
+            // "Teleport-KR-Grotto", "Teleport to Akilles Tower", "Sigil_To_DeathsHead_Cave": without the teleport words and
+            // a world code in front.
+            var trimmed = Regex.Replace(padName, @"^(?i:teleport|sigil)[\s_-]*(?i:to)?[\s_-]*", "");
+            trimmed = Regex.Replace(trimmed, @"^(?i:interior\s*sigil)[\s_-]*", "");
+            yield return Plain(trimmed);
+            yield return Plain(Regex.Replace(trimmed, @"^[A-Z]{2}[-_]", ""));
+        }
+
+        if (!string.IsNullOrEmpty(zone)) {
+            // "Khrysalis/Interiors/KR_Z02_VespaCave": the last part without its world, area and interior codes.
+            var leaf = zone[(zone.LastIndexOf('/') + 1)..];
+            var parts = leaf.Split('_').Where(p => !Regex.IsMatch(p, @"^([A-Z]{2}|Z\d+|I\d+|T\d+)$"));
+            yield return Plain(string.Join("", parts));
+        }
+    }
+
+    private static string Plain(string text)
+        => string.IsNullOrEmpty(text) ? "" : new string(text.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
     public string NpcTextKey => string.IsNullOrEmpty(NpcNameKey) ? "" : "GUI_EnterDoor";
     public WizBangs WizBang => WizBangs.None;
     public string StateName => null;
@@ -236,6 +356,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             _charOf[playerActor] = playerWizard.CharId;
         }
         _litFor.Remove(playerActor);
+        _sentLook.Remove(playerActor);
         Show(playerActor, playerWizard, "join");
     }
 
@@ -267,6 +388,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         _litFor.Remove(playerActor);
         _darkFor.Remove(playerActor);
         _checkedAt.Remove(playerActor);
+        _sentLook.Remove(playerActor);
         Timers?.Cancel(("SigilConfirm", playerActor));
         LeaveParty(playerActor);
     }
@@ -290,6 +412,7 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
 
         _litFor.Clear();
         _litFor.UnionWith(_players);
+        _sentLook.Clear();
         Timers?.StartSingleTimer(RELIGHT_ALL_TIMER,
             new ZONE_102_PROTOCOL.MSG_DUNGEONSIGILRELIGHT { Why = "look changed in the Customs tab" }, RELIGHT_ALL_DELAY);
     }
@@ -347,6 +470,9 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         }
     }
 
+    // The look each player was last sent, so the same look is not played again (see Light).
+    private readonly Dictionary<IActorRef, string> _sentLook = [];
+
     private void Light(IActorRef playerActor, string why, bool lastOnly = false) {
         if (playerActor is null || !IsAvailable) {
             return;
@@ -355,9 +481,14 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
         if (_darkFor.Contains(playerActor)) {
             Timers?.Cancel(("SigilConfirm", playerActor));
             Entity.ChangeStateExclusiveSender(DARK_STATE, playerActor);
-            Logger.Debug("Dungeon sigil {0}: kept dark for {1}, who does not meet its requirements ({2}).",
-                Logger.Args(Entity.Info?.m_zoneTag ?? SigilInfo.m_zoneTag2.ToString(), playerActor.Path.Name, why));
+            // Said only when the look changes: on every arrival and first step each dark pad of the zone wrote a line
+            // (MoMi, 2026-11-28: a burst of them after each quest, with the game stuttering).
+            if (!_sentLook.TryGetValue(playerActor, out var before) || before != DARK_STATE) {
+                Logger.Debug("Dungeon sigil {0}: kept dark for {1}, who does not meet its requirements ({2}).",
+                    Logger.Args(Entity.Info?.m_zoneTag ?? SigilInfo.m_zoneTag2.ToString(), playerActor.Path.Name, why));
+            }
 
+            _sentLook[playerActor] = DARK_STATE;
             return;
         }
 
@@ -368,15 +499,26 @@ internal sealed partial class InteractDungeonSigilComponent(ZoneEntity entity)
             look = ZoneObjects.SIGIL_ADVANCED_STATE;
         }
         var path = ZoneObjects.SigilStatePath(look);
+        // The same look again (the first step after arriving): only its last state, with no light-up played again and no
+        // second send. Each pad replayed its whole light-up on arrival, on the first step and 1.5 s later, so a zone with
+        // several pads stuttered after every quest that ended with a trip (MoMi, 2026-11-28).
+        var same = _sentLook.TryGetValue(playerActor, out var sent) && sent == path[^1];
+        if (same) {
+            lastOnly = true;
+        }
+
         var states = lastOnly ? path[^1..] : path;
         foreach (var state in states) {
             Entity.ChangeStateExclusiveSender(state, playerActor);
         }
 
-        Logger.Debug("Dungeon sigil {0} (gid {1}): sent state {2} (hash {3}) to {4} ({5}).",
-            Logger.Args(Entity.Info?.m_zoneTag ?? SigilInfo.m_zoneTag2.ToString(), Entity.ActiveGameObject?.m_globalID.Full ?? 0,
-                string.Join(" then ", states), string.Join(", ", states.Select(s => StringHash.Compute(s))),
-                playerActor.Path.Name, why));
+        _sentLook[playerActor] = path[^1];
+        if (!same) {
+            Logger.Debug("Dungeon sigil {0} (gid {1}): sent state {2} (hash {3}) to {4} ({5}).",
+                Logger.Args(Entity.Info?.m_zoneTag ?? SigilInfo.m_zoneTag2.ToString(), Entity.ActiveGameObject?.m_globalID.Full ?? 0,
+                    string.Join(" then ", states), string.Join(", ", states.Select(s => StringHash.Compute(s))),
+                    playerActor.Path.Name, why));
+        }
 
         // A look of two states: its last one goes once more a moment later, for a game still busy with the first.
         if (!lastOnly && path.Length > 1) {

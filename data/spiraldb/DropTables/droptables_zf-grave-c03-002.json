@@ -1,0 +1,13 @@
+{
+  "Name": "ZF-GRAVE-C03-002",
+  "Description": "ZF-GRAVE-C03-002 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 45,
+  "MaxGold": 45,
+  "ExperienceAmount": 1345,
+  "TrainingPoints": 0,
+  "Items": []
+}

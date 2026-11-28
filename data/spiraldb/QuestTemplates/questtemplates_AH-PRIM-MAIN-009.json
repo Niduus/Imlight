@@ -1,0 +1,444 @@
+{
+  "m_questName": "AH-PRIM-MAIN-009",
+  "m_questNameID": 0,
+  "m_questTitle": "History101",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000018"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bartleby Effigy",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_AH_Petrified_Bartleby_A.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/AH_Z04_PrimalArchipelago",
+      "m_locationName": "Primal Archipelago",
+      "m_goalName": "1_WizardQuestGoals00000018",
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Ahmarra/AH_Z04_PrimalArchipelago",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 606539207,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bartleby Effigy",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/Buttons/Button_Cantrips.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/AH_Z04_PrimalArchipelago",
+      "m_locationName": "Primal Archipelago",
+      "m_goalName": "2_WizardQuestGoals00000901",
+      "m_goalTitle": "WizardQuestGoals_00000901",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 640093639,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Bartleby Effigy",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z05I04_Library_A_INT",
+      "m_locationName": "Primal Archipelago",
+      "m_goalName": "3_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Ahmarra/Interiors/AH_Z05I04_Library_A_INT",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 1897110896,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Clues",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Art_Portrait_Unknown.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/AH_Z04_PrimalArchipelago",
+      "m_locationName": "Primal Archipelago",
+      "m_goalName": "4_WizardQuestGoals00000018",
+      "m_goalTitle": "WizardQuestGoals_00000018",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 23530951,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AH-PRIM-NPC22_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Welcome back. I see the Shellion captain has rallied to your side.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-PRIM_083.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1756054,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/AH_Z04_PrimalArchipelago",
+      "m_locationName": "Primal Archipelago",
+      "m_goalName": "5_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "AH-PRIM-NPC22_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "AH-PRIM-MAIN-009"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "AH-PRIM-MAIN-008",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000018"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_WizardQuestGoals00000901"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_WizardQuestGoals00000901"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_WizardQuestGoalsExplore"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_WizardQuestGoalsExplore"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "4_WizardQuestGoals00000018"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "4_WizardQuestGoals00000018"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "5_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "5_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, yeah, let's not get all weepy. You saved me, I saved you. You want to find Miranda Briar. I want to feed her to a soakin' shark.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Turtle_FanaticCaptain_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Soulik_en_Shellion_Terra_AH-PRIM_022.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1765233,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Soulik found us in the Western Sea. We're all in this together, I guess.",
+            "m_picture": "GUI/NpcPortraits/TurtleFanatic_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Phobus_Anchorite_AH-PRIM_040.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1756039,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, maybe. We'll go see about fixing up that heap you call a ship, probably owe you that much. You finish up here.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Turtle_FanaticCaptain_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Soulik_en_Shellion_Terra_AH-PRIM_023.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1765233,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Sorry mate, but there isn't a drop left in you anymore.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Zander_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Zander_AH-PRIM_053.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1756060,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We still gotta find a route to the Forbidden City. Did you get what you needed, Zand?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Moose_Professor_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Tarrak_Hadfield_AH-PRIM_073.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1761075,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I did. I skimmed many minds in the Tree Village. They thought often of... the Historium... and a bizarre rendition of Bartleby.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Zander_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Zander_AH-PRIM_054.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1756060,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-PRIM-NPC07-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I'd hazard the latter leads to the former, and the former holds information we might use. Do you know where to go, Wizard?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Zander_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Zander_AH-PRIM_055.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1756060,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

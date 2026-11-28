@@ -1,0 +1,236 @@
+{
+  "m_questName": "LM-SKY-MAIN-005",
+  "m_questNameID": 0,
+  "m_questTitle": "To Save Sky City!",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsKillCollect"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "Entry Code",
+        "m_descriptor2": "Eye Robot",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Drone_Eye_F_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/LM_Z06_SkyCity",
+      "m_locationName": "Sky City",
+      "m_goalName": "1_WizardQuestGoalsKillCollect",
+      "m_goalTitle": "WizardQuestGoals_KillCollect",
+      "m_goalType": "GOAL_TYPE_BOUNTYCOLLECT",
+      "m_npcAdjectives": [],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-SKY-MAIN-005"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-SKY-MAIN-004",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsKillCollect"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "This is not good. This is very bad. I can't disrupt the flow - it's too strong. There's no way to stop the Mind Ray!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Doctor_Varkoz_LM-SKY_010.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524738,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Oh yes there is - stop its maker! We need to take Morg down once and for all. Come on, Wizard - let's team up and fight him.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Deer_Hero_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Buck_Gordon_LM-SKY_029.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524712,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC12_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Buck! Ah... You're a miracle!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Thun_LM-SKY_010.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524737,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "No, I'm just a Deer, with a Deer's courage. Morg told me where his lair is, but he bragged that nobody can breach the gates. How do we get in?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Deer_Hero_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Buck_Gordon_LM-SKY_030.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524712,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC13_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Eye Robots! Morg reprogrammed them - if you dismantle their data banks you can find the Entry Code to unlock the gate!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Resistance_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Doctor_Varkoz_LM-SKY_011.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524738,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC11_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Mongonium Badges are ready. Take one, Buck. The Resistance will go distract the Neighborhood Watch - you attack the Eye Robots. Let's go!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Deer_Scientist_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Wilma_Deering_LM-SKY_014.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524736,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I seem to have arrived a little late.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Duck_HeroineF_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Duck_Savage_LM-SKY_136.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524739,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

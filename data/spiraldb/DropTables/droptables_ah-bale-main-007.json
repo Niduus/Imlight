@@ -1,0 +1,13 @@
+{
+  "Name": "AH-BALE-MAIN-007",
+  "Description": "Ahmarra quest Mock Turtle's Wrong (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 640,
+  "MaxGold": 640,
+  "ExperienceAmount": 80990,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "DM-MORT-SIDE-001",
+  "Description": "Darkmoor quest Eye-Catching (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1030,
+  "MaxGold": 1030,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

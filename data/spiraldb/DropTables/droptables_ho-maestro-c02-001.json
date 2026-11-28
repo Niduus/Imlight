@@ -1,0 +1,13 @@
+{
+  "Name": "HO-Maestro-C02-001",
+  "Description": "HO-Maestro-C02-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 150,
+  "MaxGold": 150,
+  "ExperienceAmount": 1490,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,20 @@
+{
+  "Name": "AV-GAUNT-C01-020",
+  "Description": "AV-GAUNT-C01-020 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 845,
+  "MaxGold": 845,
+  "ExperienceAmount": 12675,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1350258",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

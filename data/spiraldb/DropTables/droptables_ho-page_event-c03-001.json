@@ -1,0 +1,13 @@
+{
+  "Name": "HO-PAGE_EVENT-C03-001",
+  "Description": "WizardCity quest Right As Rain (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 120,
+  "MaxGold": 120,
+  "ExperienceAmount": 25,
+  "TrainingPoints": 0,
+  "Items": []
+}

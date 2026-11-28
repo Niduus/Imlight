@@ -1,0 +1,271 @@
+{
+  "m_questName": "LM-URSAI-MAIN-007",
+  "m_questNameID": 0,
+  "m_questTitle": "The Chicken's Coup",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000274"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 673648071,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "the Volcano",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_Sigil_4_Player.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z02_Volcano",
+      "m_locationName": "Killawahoo",
+      "m_goalName": "1_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Lemuria/Interiors/LM_Z02_Volcano",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-URSAI-MAIN-007"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-URSAI-MAIN-006",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000274"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Oh right, we've already done that bit. Anyway, as I was saying, us real heroes have awesome hero tools... such as the Wahoo Net.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_012.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Net's toast now, but like the Bantam mantle itself, it was passed down from Bantam father to son. It caught many a flung Lemur over the years.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_013.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "See, ever since a would-be Wahoo saved my ancestor from Wing Brotherhood pirates, my family has been the sworn protector of mistreated Lemurs.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_014.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-SKY-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wizard, are these stairs? This is definitely not a natural geological formation. No doubt one of the Old One's Monitoring Stations is close.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_LinNoHat_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Dasein_LM-URSAI_032.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1524717,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But eventually, Lemuria settled down and the Bantam was needed less. So he became a Ghost, waiting, watching from the shadows.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_016.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "There were no eruptions, no Wahoos to save. Then, one day the ground shook and the sky changed colors. Suddenly everyone needs saving again!",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_017.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Tosh Hole",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Um yeah, speaking of which, my grip is slipping. I'm going to fall! Ah waahooooo! I'm OK. But there are... creatures? HELP!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Musician_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Tosh_Hole_LM-URSAI_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Sit tight, little Wahoo! The Bantam - and the Wizard - will save you! But how? Oh hey, look, there are stairs over there. Angel! It's hero time.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_018.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Why, we're standing in the very domain of the Old One, aren't we? It's so... not what I expected. Are those... buttons?",
+            "m_picture": "GUI/NpcPortraits/Portrait_Chicken_Hero_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Bantam_LM-URSAI_023.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520127,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

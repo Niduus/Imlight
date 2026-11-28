@@ -1,0 +1,13 @@
+{
+  "Name": "NV-PreAH-ENC-001",
+  "Description": "Novus quest Fog of Lore (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1090,
+  "MaxGold": 1090,
+  "ExperienceAmount": 137060,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "WC-MAIN-C01-004",
+  "Description": "WC-MAIN-C01-004 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 13,
+  "MaxGold": 13,
+  "ExperienceAmount": 15,
+  "TrainingPoints": 0,
+  "Items": []
+}

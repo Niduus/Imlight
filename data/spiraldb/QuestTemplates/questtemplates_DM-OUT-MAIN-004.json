@@ -1,0 +1,286 @@
+{
+  "m_questName": "DM-OUT-MAIN-004",
+  "m_questNameID": 0,
+  "m_questTitle": "Into the Howling Lands",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000825"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "By Fire",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_Quest_AZ_Fire_Blocker.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Darkmoor/DM_Z00_OutsidersCamp",
+      "m_locationName": "Outsiders Camp",
+      "m_goalName": "1_WizardQuestGoals00000825",
+      "m_goalTitle": "WizardQuestGoals_00000825",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "DM-OUT-MAIN-004"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "DM-GRAVE-MAIN-011",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000825"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He organized the Great Houses and keeps them under control through fear and manipulation. There are also tales of experiments. Nasty stuff.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_064.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "So it makes sense he's trying to find the Scholomance. Supposedly, it's an ancient academy of magic. And I mean... ANCIENT.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_065.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Before spell cards, before incantations, when magic was more than ever an expression of pure will, the instructors there discovered things.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_066.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Some say they were on the cutting edge, playing with the six fundamental schools, Shadow Magic, even early attempts at Spell Weaving.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_067.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But they did this through experimentation on unwilling subjects, things so dark it's said Bartleby himself turned away in disgust.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_068.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If magic is an expression of will, the Scholomance is its most sadistic and amoral utterance, a power that corrupts the soul of the user.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_069.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "For generations it was lost, until a traveling mystic happened upon it. It twisted his mind until he unleashed the Curse that changed Darkmoor forever.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_070.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The mystic disappeared, no one found the Scholomance since... well, until Keziah... I think. She was always cagey about it.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_071.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But we should get going. Whether she knows the way to the Scholomance or not, we have to save her and the others!",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_072.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-MORT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I just sort of *sniff sniff* followed your trail to the camp, Wizard. You led me to your friends and now they led you to me.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Human_AngryMob_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Bruno_DM-OUT_022.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687161,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

@@ -1,0 +1,616 @@
+{
+  "m_questName": "AH-STORM-MAIN-004",
+  "m_questNameID": 0,
+  "m_questTitle": "Wraith & Peace",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000339"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Dais",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/AH_Z03_IslandOfTheStorm_B",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "1_WizardQuestGoals00000339",
+      "m_goalTitle": "WizardQuestGoals_00000339",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Ahmarra/AH_Z03_IslandOfTheStorm_B",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 606539207,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Path of Peace",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03_InsideTheStorm",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "2_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Ahmarra/Interiors/AH_Z03_InsideTheStorm",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 640093639,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Path of Peace",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/SummonedImages/Spell_Cantrip_HotColdOrb.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03_InsideTheStorm",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "3_WizardQuestGoals00000897",
+      "m_goalTitle": "WizardQuestGoals_00000897",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 673648071,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Runic Repository",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_Sigil_4_Player.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "4_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 673648071,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Runic Repository",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_Sigil_4_Player.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "5_WizardQuestGoals00000274",
+      "m_goalTitle": "WizardQuestGoals_00000274",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 707202503,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Passive-Aggressive Wraith",
+        "m_descriptor2": "WizardMobs_00005175",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Khrulhu_Rage_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "6_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 740756935,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Code Puzzle",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Use_PuzzlePlinth_Arcanum_A.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "7_WizardQuestGoals00000353",
+      "m_goalTitle": "WizardQuestGoals_00000353",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 774311367,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Circuit Rune",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_AH_Slider_Object_A.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/Interiors/AH_Z03I03_RunicRepository",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "8_WizardQuestGoals00000058",
+      "m_goalTitle": "WizardQuestGoals_00000058",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 807865799,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "AH-STORM-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "You return with the first rune. Excellent. But three more are necessary to repair the Control Wall.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_045.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1779136,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Ahmarra/AH_Z03_IslandOfTheStorm_B",
+      "m_locationName": "Island Of The Storm",
+      "m_goalName": "9_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "AH-STORM-NPC03_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "AH-STORM-MAIN-004"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "AH-STORM-MAIN-003",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000339"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_WizardQuestGoals00000274"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_WizardQuestGoals00000274"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_WizardQuestGoals00000897"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_WizardQuestGoals00000897"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "4_WizardQuestGoals00000274"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "4_WizardQuestGoals00000274"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "5_WizardQuestGoals00000274"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "5_WizardQuestGoals00000274"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "6_WizardQuestGoalsKill"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "6_WizardQuestGoalsKill"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "7_WizardQuestGoals00000353"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "7_WizardQuestGoals00000353"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "8_WizardQuestGoals00000058"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "8_WizardQuestGoals00000058"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "9_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "9_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-STORM-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "She knew I would see it and would send you to stop it, just as her fleets scour the seas for other relics - red herrings, decoys to draw my gaze.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_039.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1779136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-STORM-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I will need to adjust my thinking, try to to deduce what she really wants-",
+            "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_040.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1779136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-STORM-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The dais? Oh, yes, those upon it are trapped there, fuel for the Storm Engine. It feeds on resentment, bitterness and hatred.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_041.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1779136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-STORM-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I know you want to free them, but we - no, do what you must. You will need the Circuit Runes scattered across the island to repair the Control Wall.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_042.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1779136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-STORM-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But the storm itself will alter your path according to the temperament of its hosts. Approach the dais to see for yourself.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_043.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1779136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "AH-STORM-NPC03_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "This first path will lead you to a maze of ruins. Use your Calescent Tracker to find your way.",
+            "m_picture": "GUI/NpcPortraits/Portrait_Tree_BartlebyProjection_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/AH/Bartleby_AH-STORM_044.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1779136,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

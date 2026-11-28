@@ -234,7 +234,17 @@ internal sealed class InteractObjectStateComponent(ZoneEntity entity)
             current = null;
         }
 
+        // An object quest steps are about (Last Wood's fire pits: Head to Foot puts them out) is used for those steps only. Its
+        // own use was offered to everyone at any time, so a wizard who had put the pits out long ago could put them out again
+        // (2026-11-25). A dungeon switch a trigger listens to stays usable (IsZoneSwitchWithoutGoal).
+        var questObject = wizard is not null && !obelisk && Entity.Template is GameObjectTemplate questTemplate
+                          && InteractQuestSelectComponent.UsageGoalsOf(questTemplate).Any();
+
         foreach (var option in GetStateOptions(Entity.Template as GameObjectTemplate)) {
+            if (questObject && !IsZoneSwitchWithoutGoal(option, wizard, current)) {
+                continue;
+            }
+
             // A quest's own option is offered by its usage goal (InteractQuestSelectComponent). A dungeon lever's option is
             // also the dungeon's own switch: its state change opens gates for anyone, with or without the quest
             // (Counterweight East's levers name Metal Madness, but Stolen Away needs the same gates to reach Sprockets).

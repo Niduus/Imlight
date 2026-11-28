@@ -1,0 +1,13 @@
+{
+  "Name": "AH-PRIM-MAIN-009",
+  "Description": "Ahmarra quest History101 (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 450,
+  "MaxGold": 450,
+  "ExperienceAmount": 56070,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "MR-CARA-ENC-002",
+  "Description": "MR-CARA-ENC-002 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 2500,
+  "MaxGold": 2500,
+  "ExperienceAmount": 400000,
+  "TrainingPoints": 0,
+  "Items": []
+}

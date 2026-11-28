@@ -1,0 +1,13 @@
+{
+  "Name": "KR-CRES-C04-001",
+  "Description": "KR-CRES-C04-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1200,
+  "MaxGold": 1200,
+  "ExperienceAmount": 123970,
+  "TrainingPoints": 0,
+  "Items": []
+}

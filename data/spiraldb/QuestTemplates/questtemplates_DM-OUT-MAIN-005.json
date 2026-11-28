@@ -1,0 +1,1231 @@
+{
+  "m_questName": "DM-OUT-MAIN-005",
+  "m_questNameID": 0,
+  "m_questTitle": "To the Black Lagoon!",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Magician continues to follow the Emperor's path, I see. But the Emperor is sometimes blind, and sometimes willfully so.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_039.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Long ago, Darkmoor was a world of humans, and a nexus of magical energies familiar and forbidden. Shadow Magic is the name given the latter.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_040.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And a sisterhood developed to study it, to harness it, to remove the stigma from it. Perhaps that is why Bartleby ignored what happened next.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_041.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Because a wanderer came, known to legend as Balaur. He used Shadow and weaving and nameless things and he found the Scholomance.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_042.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And the Shadow Witches were changed by it, as all Darkmoor was changed by it. They followed Balaur, his symbols, his tales of the Scholomance.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_043.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But then he was gone and all he knew was lost with him, the Scholomance closed forever. Only its would-be disciples remained.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_044.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Reflexive obedience to a hazily remembered concept they never themselves saw - that is the doctrine of the Scholomari, my former doctrine...",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_045.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Until I found the very thing they sought and was repulsed by it. Now I shall tell you how to get there and we shall see how you respond.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_046.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We're here. Everyone ready to go?",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_081.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Fool must turn the Wheel and reverse the Hierophant.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_047.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I am. You are the Knave of Wands.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_048.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Darkmoor/DM_Z00_OutsidersCamp",
+      "m_locationName": "Outsiders Camp",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "DM-CAMP-NPC01B_Persona",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 606539207,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yeah, Wizard, I'm coming with. This place, I know it well, and I can help you through it. And Keziah...",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_082.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700033,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Fool must turn the Wheel and reverse the Hierophant.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_047.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Yeah, that. Wait, am I the Fool?",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_083.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700033,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I am. You are the Knave of Wands.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_048.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Good to know. Off we go then?",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_084.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700033,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Scion, a moment. I know you seek restitution from the Broken Branch's leader and I wish you luck. But their cure... they could save us all...",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_033.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1687136,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC03-D_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "...You must bring it back to us.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_034.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1687136,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Firecat_Theatre",
+      "m_locationName": "Fireglobe Theatre",
+      "m_goalName": "2_WizardQuestGoals00000143",
+      "m_goalTitle": "WizardQuestGoals_00000143",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 640093639,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-BLACK-NPC-001_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Well, here we are. Who says you can't go home again?",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_085.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1700033,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Colossus_ThroneRoom",
+      "m_locationName": "Gobblestone Castle",
+      "m_goalName": "3_WizardQuestGoals00000143",
+      "m_goalTitle": "WizardQuestGoals_00000143",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 673648071,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "We're here. Everyone ready to go?",
+                "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_081.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Triton_T1",
+      "m_locationName": "Triton Avenue",
+      "m_goalName": "4_WizardQuestGoals00000143",
+      "m_goalTitle": "WizardQuestGoals_00000143",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 707202503,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Unicorn_T1",
+      "m_locationName": "Unicorn Way",
+      "m_goalName": "5_WizardQuestGoals00000143",
+      "m_goalTitle": "WizardQuestGoals_00000143",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 740756935,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_Cyclops_T2",
+      "m_locationName": "Akilles Keep",
+      "m_goalName": "6_WizardQuestGoals00000166",
+      "m_goalTitle": "WizardQuestGoals_00000166",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_HauntedCave_T1",
+      "m_locationName": "Nightshade's Tower",
+      "m_goalName": "7_WizardQuestGoals00000166",
+      "m_goalTitle": "WizardQuestGoals_00000166",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "The History of Magic",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/QuestButtons/Art_Quest_Book_Pedestal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "The Magician continues to follow the Emperor's path, I see. But the Emperor is sometimes blind, and sometimes willfully so.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_039.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Long ago, Darkmoor was a world of humans, and a nexus of magical energies familiar and forbidden. Shadow Magic is the name given the latter.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_040.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And a sisterhood developed to study it, to harness it, to remove the stigma from it. Perhaps that is why Bartleby ignored what happened next.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_041.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Because a wanderer came, known to legend as Balaur. He used Shadow and weaving and nameless things and he found the Scholomance.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_042.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And the Shadow Witches were changed by it, as all Darkmoor was changed by it. They followed Balaur, his symbols, his tales of the Scholomance.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_043.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "But then he was gone and all he knew was lost with him, the Scholomance closed forever. Only its would-be disciples remained.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_044.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Reflexive obedience to a hazily remembered concept they never themselves saw - that is the doctrine of the Scholomari, my former doctrine...",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_045.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "DM-CAMP-NPC01B_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Until I found the very thing they sought and was repulsed by it. Now I shall tell you how to get there and we shall see how you respond.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Scholomari_FortuneF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Keziah_DM-OUT_046.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1675588,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "WizardCity/WC_Streets/Interiors/WC_OldeTown_T2",
+      "m_locationName": "Sapphyra's Tower",
+      "m_goalName": "8_WizardQuestGoals00000143",
+      "m_goalTitle": "WizardQuestGoals_00000143",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "DM-OUT-MAIN-005"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "DM-HOWL-MAIN-008",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_WizardQuestGoals00000143"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_WizardQuestGoals00000143"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_WizardQuestGoals00000143"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_WizardQuestGoals00000143"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "4_WizardQuestGoals00000143"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "4_WizardQuestGoals00000143"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "5_WizardQuestGoals00000143"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "5_WizardQuestGoals00000143"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "6_WizardQuestGoals00000166"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "6_WizardQuestGoals00000166"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "7_WizardQuestGoals00000166"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "7_WizardQuestGoals00000166"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "8_WizardQuestGoals00000143"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "8_WizardQuestGoals00000143"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, so looks like the Gray Man was right. Our road leads to the Scholomance, which means it bends through... *sigh* ...the Black Lagoon.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_078.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We have already begun preparations to move the camp. The less time we linger here the better.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_031.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yes, we will continue to aid you, Scion. It seems little Velma was right. In your wake lay the tatters of empire. Let the Great Houses crumble!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_032.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Two down, two to go, and the Black Lagoon is home to the House of Wands, the Scholomari. Not my favorite bunch. But Keziah can fill you in.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_079.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "She's waiting for you by the fire. She has a lot to say, a lot you need to know before we get to the Black Lagoon.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_080.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC03-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, so looks like the Gray Man was right. Our road leads to the Scholomance, which means it bends through... *sigh* ...the Black Lagoon.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_078.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC03-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We have already begun preparations to move the camp. The less time we linger here the better.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_031.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC03-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yes, we will continue to aid you, Scion. It seems little Velma was right. In your wake lay the tatters of empire. Let the Great Houses crumble!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_032.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC03-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Two down, two to go, and the Black Lagoon is home to the House of Wands, the Scholomari. Not my favorite bunch. But Keziah can fill you in.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_079.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC03-D_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "She's waiting for you by the fire. She has a lot to say, a lot you need to know before we get to the Black Lagoon.",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_080.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, Wizard, I'm coming with. This place, I know it well, and I can help you through it. And Keziah...",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_082.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Yeah, that. Wait, am I the Fool?",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_083.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Good to know. Off we go then?",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_084.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Scion, a moment. I know you seek restitution from the Broken Branch's leader and I wish you luck. But their cure... they could save us all...",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_033.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC04_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "...You must bring it back to us.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portraits_OutsiderQueen_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Queen_Glorina_DM-OUT_034.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1687136,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-BLACK-NPC-001_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Well, here we are. Who says you can't go home again?",
+            "m_picture": "GUI/NpcPortraits/Portrait_VampireHunterF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Velma_von_Venkman_DM-OUT_085.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1700033,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

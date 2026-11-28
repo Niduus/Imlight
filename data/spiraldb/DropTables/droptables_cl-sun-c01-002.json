@@ -1,0 +1,13 @@
+{
+  "Name": "CL-SUN-C01-002",
+  "Description": "CL-SUN-C01-002 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 530,
+  "MaxGold": 530,
+  "ExperienceAmount": 10345,
+  "TrainingPoints": 0,
+  "Items": []
+}

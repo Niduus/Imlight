@@ -1,0 +1,13 @@
+{
+  "Name": "EM-HUSK-ENC-004",
+  "Description": "EM-HUSK-ENC-004 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 460,
+  "MaxGold": 460,
+  "ExperienceAmount": 51177,
+  "TrainingPoints": 0,
+  "Items": []
+}

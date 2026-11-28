@@ -1,0 +1,228 @@
+{
+  "$type": "Imcodec.ObjectProperty.TypeCache.EncounterTemplate, Imcodec.ObjectProperty",
+  "m_vars": [],
+  "m_questName": "KT-CRY7-C03-001",
+  "m_questNameID": 0,
+  "m_questTitle": "QuestTitle_140E9",
+  "m_questInfo": "",
+  "m_questPrep": "",
+  "m_questUnderway": "",
+  "m_questComplete": "",
+  "m_startGoals": [
+    "Goal 2"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_personaName": "KT-CRY7-NPC02_ok_Persona",
+      "m_usePatron": false,
+      "m_goalName": "Goal 2",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0
+      },
+      "m_locationName": "ZoneLocName_549700",
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Salamander_Slave_Storm_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "Ddl_KT_TotBI_Rahea"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Krokotopia/KT_Tomb/Interiors/KT_Crypt06_Map02_Ice",
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Hyperlink",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-CRY7-NPC02_ok_Persona",
+                "m_nameOverride": "WizQst140E9_00000015",
+                "m_nameSTKey": "",
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": -1,
+                "m_invisible": false,
+                "m_dialog": "WizQst140E9_00000002",
+                "m_picture": "",
+                "m_soundFile": "|Sound_Dialogue_KT|WorldData|Sound/Dialogue/Rahea_QST_02.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 82137,
+                "m_cameraName": "LOCATION",
+                "m_interpolationDuration": 1,
+                "m_cameraOffsetX": -31332,
+                "m_cameraOffsetY": 599.5221,
+                "m_cameraOffsetZ": 388.9123,
+                "m_pitch": 0.5275624,
+                "m_yaw": 0.7912736,
+                "m_roll": 0,
+                "m_cameraShakeType": "",
+                "m_cameraShakeDuration": 0,
+                "m_cameraShakeAmplitude": 0,
+                "m_bypassCameraOnReview": true,
+                "m_cameraZoneName": "Krokotopia/KT_Tomb/Interiors/KT_Crypt06_Map02_Ice",
+                "m_duration": 0,
+                "m_delay": 0,
+                "m_cameraHidePlayers": 0,
+                "m_walkAwayNpcTemplateID": 0,
+                "m_walkAwayExitDirectionInDegrees": 0,
+                "m_walkAwayFadeTime": 0,
+                "m_walkAwayUseCurrentFacing": false,
+                "m_standInPlayerTag": "",
+                "m_fadeOutCamera": false,
+                "m_snapCameraToPlayerAtExit": false,
+                "m_secondaryCameraName": "",
+                "m_secondaryInterpolationDuration": 0,
+                "m_npcStandInList": [],
+                "m_dialogAnimationList": [],
+                "m_dialogTurningList": [],
+                "m_npcYawOffsetInDegrees": 0,
+                "m_allowPlayerToMove": false,
+                "m_soundEffectFile": "",
+                "m_musicFile": "",
+                "m_nonStackableMusic": false,
+                "m_nonRepeatableMusic": false,
+                "m_playMusicAtSFXVolume": false,
+                "m_soundEffectDelay": 0,
+                "m_musicDelay": 0,
+                "m_musicFadeTime": 0,
+                "m_dontReleaseCameraAtExit": false,
+                "m_disableBackButton": false,
+                "m_enableExitButton": false,
+                "m_cameraFadeType": "",
+                "m_cameraFadeTime": 0,
+                "m_idleAnimation": "",
+                "m_spamTime": 0,
+                "m_playSoundIfSpamming": false,
+                "m_playMusicIfSpamming": false,
+                "m_stopMusicFadeTime": 0,
+                "m_restartMusicFadeTime": 0,
+                "m_meetsRequirements": false,
+                "m_secondaryCameraInitalDelay": 0,
+                "m_displayButtonsOnTimedDialog": false
+              }
+            ],
+            "m_madlibs": [],
+            "m_dialogEvents": [],
+            "m_noAggroWhileDialogIsUp": false,
+            "m_noAggroNoDelay": false
+          }
+        ]
+      },
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_npcAdjectives": [
+        "KrokTut-Ice-KTBoss-L56.AdjRef"
+      ],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL",
+      "m_goalName": "Goal",
+      "m_goalNameID": 0,
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalUnderway": "",
+      "m_hyperlink": "",
+      "m_completeText": "",
+      "m_tallyCounter": {
+        "m_percentChance": 100,
+        "m_descriptor": "",
+        "m_descriptor2": "WizQst140E9_00000003",
+        "m_count": 0
+      },
+      "m_locationName": "ZoneLocName_549700",
+      "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_Krok_Tut_Guard_Ice.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [
+        "Ddl_KT_TotBI_WardenAbasi"
+      ],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_destinationZone": "Krokotopia/KT_Tomb/Interiors/KT_Crypt06_Map02_Ice",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_noQuestHelper": false,
+      "m_petOnlyQuest": false,
+      "m_hideGoalFloatyText": false,
+      "m_hideGoal": false,
+      "m_requiresMagicWeavingSchool": "",
+      "m_behaviors": []
+    }
+  ],
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+        "m_eventName": "ImlightStartEncounter:KT-CRY7-C04-001",
+        "m_subEventName": ""
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "KT-CRY7-C03-001",
+        "m_maxRolls": 0
+      }
+    ]
+  },
+  "m_prepAlways": true,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "Goal 2"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "Goal"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 0
+    },
+    {
+      "m_goalsAND": [
+        "Goal"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 0
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 1,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": []
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_defaultDialogAnimation": [],
+  "m_skipQHAutoSelect": false,
+  "m_questEffectInfoList": [],
+  "m_forceInteraction": false,
+  "m_checkInventoryForCrafting": false,
+  "m_playAsYourPetNPC": false,
+  "m_activityType": "ACTIVITY_NotActivity",
+  "m_behaviors": []
+}

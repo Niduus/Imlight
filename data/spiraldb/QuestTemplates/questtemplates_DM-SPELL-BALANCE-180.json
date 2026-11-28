@@ -1,0 +1,932 @@
+{
+  "m_questName": "DM-SPELL-BALANCE-180",
+  "m_questNameID": 0,
+  "m_questTitle": "As the Wheel Learns",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsUseItem"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Tarot Table",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_Quest_DM_TarotTable_A.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Darkmoor/DM_Z00_OutsidersCamp",
+      "m_locationName": "Outsiders Camp",
+      "m_goalName": "1_WizardQuestGoalsUseItem",
+      "m_goalTitle": "WizardQuestGoals_UseItem",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 606539207,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC24_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Wilkommen, Valued Citizen, please to come to Vana's Varieties, the latest in artisanal delights in up-and-coming Gutenstadt.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Street_Nana_DM-SPELL_001.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704305,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC24_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Enjoy your dessert and have a contemporary and successful afternoon. Wait... wait... WAIT! I know you! You are the one who ousted Nana!",
+                "m_picture": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Street_Nana_DM-SPELL_002.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704305,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC24_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I lost my job because of you! Oh, 'Karamelle needs to rebrand, nobody trusts Nana, the sweetsy schtick got real old real fast.'",
+                "m_picture": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Street_Nana_DM-SPELL_003.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704305,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC24_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Now I work for a fusion candy shop, blending our sweet gummies with Marlzipan from the Isle of Dogs. Have you ever tried Marlzipan?",
+                "m_picture": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Street_Nana_DM-SPELL_004.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704305,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KM-KCITY-NPC24_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "It tastes like suffering. So, here, have a coupon to Vana's Varieties in Gutenstadt. My compliments.",
+                "m_picture": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Street_Nana_DM-SPELL_005.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704305,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "",
+      "m_locationName": "Karamelle City",
+      "m_goalName": "2_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "KM-KCITY-NPC24_Persona",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 707202503,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Changed Pingouinonia",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_Quest_Photomancy.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/PL_Z00_Walruskberg",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "3_WizardQuestGoals00000748",
+      "m_goalTitle": "WizardQuestGoals_00000748",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 640093639,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Vana's Varieties",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Karamelle/Interiors/KM_Z07_VanasVarieties",
+      "m_locationName": "Gutenstadt",
+      "m_goalName": "4_WizardQuestGoals00000761",
+      "m_goalTitle": "WizardQuestGoals_00000761",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Karamelle/Interiors/KM_Z07_VanasVarieties",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.ScavengeGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 740756935,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Changed Pingouinonia",
+        "m_descriptor2": "",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Art_Quest_Photomancy.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": true,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Polaris/PL_Z00_Walruskberg",
+      "m_locationName": "Walruskberg",
+      "m_goalName": "5_WizardQuestGoals00000748",
+      "m_goalTitle": "WizardQuestGoals_00000748",
+      "m_goalType": "GOAL_TYPE_USAGE",
+      "m_itemAdjectives": [],
+      "m_itemTotal": 1
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 673648071,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Vana",
+        "m_descriptor2": "WizardMobs_00005018",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Karamelle/Interiors/KM_Z07_VanasVarieties",
+      "m_locationName": "Gutenstadt",
+      "m_goalName": "6_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 774311367,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Gah... oh, you again. Remember me? I'm Qhatlady, not Copy Qhat. We're making a spell together.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_017.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Smart aleck.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_018.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Ah, yes, these Photomances of Pingouinonia rejuvenated do indeed show the turning of the wheel. One wonders if it will ever turn back around.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_019.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "And from what you describe, it seems you had the necessary experience in the fallen empire of Karamelle.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_020.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Curious how both times, it was your hand that spun fate around. Hmm. Our spell has shape and energy; now all it needs is Balance.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_021.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Thus we are here, near the nexus of Selenopolis, in the world where Balance Magic was born. Focus here on your magic and your memories.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_022.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Call the Wheel of Fortune into being and imprint it onto a Spell Card.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_023.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Krokotopia/KT_Hub",
+      "m_locationName": "The Oasis",
+      "m_goalName": "7_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "DM-CAMP-NPC28_Persona",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 807865799,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Wheel of Fortune",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Krokotopia/KT_Hub",
+      "m_locationName": "The Oasis",
+      "m_goalName": "8_WizardQuestGoals00000835",
+      "m_goalTitle": "WizardQuestGoals_00000835",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Krokotopia/KT_Hub",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 841420231,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "HA! I did it! I made a new spell! We? Who are you? I don't seem to recall a Wizard helping me.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_024.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "KT-HUB-NPC19_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "*Siiiiighhh* You did well.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_025.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1704303,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Krokotopia/KT_Hub",
+      "m_locationName": "The Oasis",
+      "m_goalName": "9_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "DM-CAMP-NPC28_Persona",
+      "m_usePatron": false
+    },
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.BountyGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 673648071,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Vana",
+        "m_descriptor2": "WizardMobs_00005018",
+        "m_count": 1,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "GUI/NpcPortraits/Portrait_Hamster_ImperfectF_A_MOB.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Karamelle/Interiors/KM_Z07_VanasVarieties",
+      "m_locationName": "Gutenstadt",
+      "m_goalName": "10_WizardQuestGoalsKill",
+      "m_goalTitle": "WizardQuestGoals_Kill",
+      "m_goalType": "GOAL_TYPE_BOUNTY",
+      "m_npcAdjectives": [],
+      "m_bountyTotal": 1,
+      "m_bountyType": "BT_MOB_KILL"
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "DM-SPELL-BALANCE-180"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "DM-MORT-MAIN-010",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsUseItem"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "2_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "2_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "3_WizardQuestGoals00000748"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "3_WizardQuestGoals00000748"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "4_WizardQuestGoals00000761"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "4_WizardQuestGoals00000761"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "5_WizardQuestGoals00000748"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "5_WizardQuestGoals00000748"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "6_WizardQuestGoalsKill"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "6_WizardQuestGoalsKill"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "7_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "7_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "8_WizardQuestGoals00000835"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "8_WizardQuestGoals00000835"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "9_WizardQuestGoalsTalkNPC"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "9_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [
+        "10_WizardQuestGoalsKill"
+      ],
+      "m_completeQuest": false,
+      "m_requiredORCount": 1
+    },
+    {
+      "m_goalsAND": [
+        "10_WizardQuestGoalsKill"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "GAAH! Oh, wait, wait, it's you. Me? I'm Qhatlady. No, NOT Copy Qhat. Qhatlady. Very different person. We fought in Sepidious, remember?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "NO! AHHH, fine. Then I don't remember you either. I was deployed by the Arcanum to find a certain wayward Wizard and see if they are okay.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "So if you see any absentminded Wizards, tell them to stay okay and- wait, hmmm... what is that?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I've heard of those cards! I once met an Outsider named Veda? Vada? Vadi-something... she told me of this ancient magic. The Cabal toyed with it for years.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We came up with a ritual to sort of absorb experience over a short time and concentrate it into a new Spell. Couldn't make it work.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But maybe we just need one of these cards as a base. If only there was some Wizard who remembered fighting me in Empyrea I could recruit to help.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_006.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If there were, I would tell them such a spell would need a shape, positive energy, negative energy and elemental infusion.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_007.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "DM-CAMP-NPC28_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "If this completely hypothetical Wizard were interested, I would tell them to grab a card from that table to give the spell its shape.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_CabalistF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/DM_1.590/Qhatlady_DM-SPELL_008.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1704303,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": false,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

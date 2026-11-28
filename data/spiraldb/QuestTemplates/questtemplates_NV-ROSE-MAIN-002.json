@@ -1,0 +1,414 @@
+{
+  "m_questName": "NV-ROSE-MAIN-002",
+  "m_questNameID": 0,
+  "m_questTitle": "Table Flip",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsTalkNPC"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.PersonaGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+        "m_dialogs": [
+          {
+            "m_dialogTag": "Completion",
+            "m_dialogEntries": [
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Bienvenu to Sur La Café Table, the hippest and edgiest Cafe in all the Spiral and the beating heart of La Ville Rose's Theater District!",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Isobel_NV-ROSE_001.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520453,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "*EARTHQUAKE!*",
+                "m_picture": "GUI/QuestButtons/Art_Quest_Complete.dds",
+                "m_soundFile": "Sound/Dialogue/SFX_NV-ROSE_002.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 0,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oh no, my Café! The earthquake is crumbling it. Quickly, there are people trapped inside. Someone must rescue them.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Isobel_NV-ROSE_002.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520453,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Desole, Wizard, I don't know anything about feathers. I was out here all night. And, non, non picture frames either.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Isobel_NV-ROSE_003.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520453,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "I want to like this place. C'est chic, non? But it has been only trouble since we arrived.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Isobel_NV-ROSE_004.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520453,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Food shortages, fish that wear shoes, and that fool who started fires. What is wrong with this world?",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Isobel_NV-ROSE_005.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520453,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "It's not a world! It's a being from beyond everything known, a living black hole that seeks to absorb life itself!",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_MonkF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/String_Caster_Fuzhi_NV-ROSE_048.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520464,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC03_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "Oui? Tres edgy. Perhaps I will stick around a while longer.",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_TownieF_E_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/Isobel_NV-ROSE_006.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520453,
+                "m_cameraName": ""
+              },
+              {
+                "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+                "m_personaName": "NV-ROSE-NPC11_Persona",
+                "m_nameOverride": "",
+                "m_nameSTKey": null,
+                "m_guiDisplay": "",
+                "m_maxTimeSeconds": 0,
+                "m_invisible": false,
+                "m_requirements": null,
+                "m_dialog": "*Sigh*",
+                "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Cat_MonkF_A_NPC.dds",
+                "m_soundFile": "Sound/Dialogue/String_Caster_Fuzhi_NV-ROSE_049.mp3",
+                "m_action": "",
+                "m_dialogEvent": "",
+                "m_actorTemplateID": 1520464,
+                "m_cameraName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Novus/NV_Z05_LaVilleRose",
+      "m_locationName": "La Ville Rose",
+      "m_goalName": "1_WizardQuestGoalsTalkNPC",
+      "m_goalTitle": "WizardQuestGoals_TalkNPC",
+      "m_goalType": "GOAL_TYPE_PERSONA",
+      "m_personaName": "NV-ROSE-NPC03_Persona",
+      "m_usePatron": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "NV-ROSE-MAIN-002"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "NV-ROSE-MAIN-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsTalkNPC"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Regardless, they must be replaced with less talky-walky fish. Simple fish. Like delicious Valencian Snapper. Perhaps you have a way to do this?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_017.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "A Frame of Mind? Non, we have seen no such thing. But I wonder...",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_018.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Maybe the talking fish was actually Dasein reaching out, Citizen. It did mention a frame, eh.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moose_Manticore_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/The_Valet_NV-ROSE_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520451,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "I was just about to say that, you vitamin-deficient lackwit! Desole, Wizard, the Moosetaurs once oppressed us for the Walrusks.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_019.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Some retain their rudeness to Pingouins. But he is right about the fish. 'The Frame is behind the table,' it said.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_020.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Perhaps it means Sur La Café Table... it was the very first thing we built when we settled in. Go now. Talk to its proprietor.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_021.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Earthquakes? Who was fighting? I specifically ordered peace. If I find out who was fighting, they will get the back of my fin.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_022.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-ROSE-NPC01_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "There. That should settle things down. Hrumph, it was probably Monquistans anyway. Very temperamental, spreading their drama to our shores.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Penguin_MaxineF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Maxine_Rockhoppierre_NV-ROSE_023.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520450,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

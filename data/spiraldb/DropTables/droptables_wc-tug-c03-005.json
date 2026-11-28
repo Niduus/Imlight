@@ -1,0 +1,13 @@
+{
+  "Name": "WC-TUG-C03-005",
+  "Description": "WC-TUG-C03-005 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1590,
+  "MaxGold": 1590,
+  "ExperienceAmount": 49020,
+  "TrainingPoints": 0,
+  "Items": []
+}

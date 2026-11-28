@@ -1,0 +1,305 @@
+{
+  "m_questName": "NV-GALL-MAIN-002",
+  "m_questNameID": 0,
+  "m_questTitle": "Wish From La Rose",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoalsExplore"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "Frame of Mind Island",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Novus/NV_Z05_LaVilleRose",
+      "m_locationName": "La Ville Rose",
+      "m_goalName": "1_WizardQuestGoalsExplore",
+      "m_goalTitle": "WizardQuestGoals_Explore",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Novus/NV_Z05_LaVilleRose",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "NV-GALL-MAIN-002"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "NV-GALL-MAIN-001",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoalsExplore"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-DEstate-NPC26-B_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They are but expanded Frames of Mind, harmless Breaches in Space-Time connecting the fragments of my mind and body.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Wizard_NV-GALL_003.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1717127,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Tung Ak",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But do not worry, they are confined to Novus alone. Tung-Ak may have bored into the Spiral, but I am not him. Not anymore.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Tung_Ak_NV-GALL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Isobel",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "C'est still difficult to focus on any one thing. There is noise, static, chaos. A Shard is a morass of minds, a tangle of conflicting wishes.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Isobel_NV-GALL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Isobel",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "One man wants what his neighbor has; the neighbor just wants what the man can't get. I can give anything, if they could decide what they need.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Isobel_NV-GALL_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Maxine",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They need fish? The Pingouins already have fish. Do... do they not normally wear shoes? Very well, I shall create a bounty of this Valencian Snapper.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Maxine_NV-GALL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Nana",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Voila. C'est done. Open more Frames of Mind and I can do this for everyone. Non more conflict. Non more duels. Non more quakes.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Nana_NV-GALL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Judge Veg",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Cabal is here, I know. I've been trying to reach out to them, to the ones I met before. But they don't hear. They don't want to.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Judge_Veg_NV-GALL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Copy Qhat",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "They try to hide, but I can sense them when they gather; their minds become beacons. They're here.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Copy_Qhat_NV-GALL_001.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "",
+            "m_nameOverride": "Dasein G2 Copy Qhat",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "There are different wants... different factions. I can't read clearly through the fog of thoughts. Convince them, please, to stop.",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G2_Copy_Qhat_NV-GALL_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 0,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC07_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ahem... Maxine Rockhoppierre, Citizen Like All Others But Still Supreme In Her Own Way, has sent me to fetch you.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moose_Manticore_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/The_Valet_NV-GALL_012.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546276,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-CON-NPC07_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Probably because there are now holes in the sky and fish falling like snow.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Moose_Manticore_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/The_Valet_NV-GALL_013.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1546276,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

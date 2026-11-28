@@ -1,0 +1,13 @@
+{
+  "Name": "WC-OLDE-MAIN-003",
+  "Description": "WC-OLDE-MAIN-003 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 13,
+  "MaxGold": 13,
+  "ExperienceAmount": 55,
+  "TrainingPoints": 0,
+  "Items": []
+}

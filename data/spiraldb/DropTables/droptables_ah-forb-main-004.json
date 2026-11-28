@@ -1,0 +1,13 @@
+{
+  "Name": "AH-FORB-MAIN-004",
+  "Description": "Ahmarra quest The Very Odd Folk (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 940,
+  "MaxGold": 940,
+  "ExperienceAmount": 118370,
+  "TrainingPoints": 0,
+  "Items": []
+}

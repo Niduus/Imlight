@@ -1,0 +1,13 @@
+{
+  "Name": "AH-WEST-SIDE-001",
+  "Description": "Ahmarra quest Save the Princess! (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 590,
+  "MaxGold": 590,
+  "ExperienceAmount": 12,
+  "TrainingPoints": 0,
+  "Items": []
+}

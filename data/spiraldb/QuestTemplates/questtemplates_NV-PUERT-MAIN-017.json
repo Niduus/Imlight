@@ -1,0 +1,322 @@
+{
+  "m_questName": "NV-PUERT-MAIN-017",
+  "m_questNameID": 0,
+  "m_questTitle": "A Challenging Challenge",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000734"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 572984775,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "the Nobles to Dasein",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/Location_Universal.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Novus/NV_Z03_PuertoNuovo_VA",
+      "m_locationName": "Puerto Nuovo",
+      "m_goalName": "1_WizardQuestGoals00000734",
+      "m_goalTitle": "WizardQuestGoals_00000734",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Novus/NV_Z03_PuertoNuovo_VA",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "NV-PUERT-MAIN-017"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "NV-PUERT-MAIN-016",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000734"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "How has it come to this? For decades Valencia and Monquista prospered under mutual trade agreements. But now you abandon us. It wounds us.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_070.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "And... I suppose, my equally dear friend, arresting you was perhaps... presumptuous. In the glory of the miraculous Grove, we lost sight... I guess.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Monkey_Noble_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Don_Manzana_NV-PUERT_043.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562153,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Even I must confess to being mesmerized by the notion of giant spinning coins. Neither of us is to blame, I think, for this... misadventure.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_071.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "But I know who is to blame.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_072.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Marleybone?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Monkey_Noble_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Don_Manzana_NV-PUERT_044.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562153,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "No. I blame DASEIN!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_073.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Do you not see it? HE gave the Pingouins our tasty Valencian Snapper, HE gave you your endless bananas. HE put our Valencian Steel in the wrong place!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_074.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Our asking Dasein for things disrupted the perfect harmony of mercantile economics. How can we endure this threat to our very way of life?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_075.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC06_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Oh no.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Monkey_Noble_B_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Don_Manzana_NV-PUERT_045.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562153,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Oh yes. We must DUEL! This... planetary personage offends us to our core. I demand satisfaction! I demand it for BOTH of us!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_076.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC14_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Above all, I demand what I have demanded from the very beginning: for nobody to get anything! Don Manzana, Wizard - we go!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Portrait_Unicorn_Prince_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/Principe_Mario_di_Mario_NV-PUERT_077.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562164,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "NV-PUERT-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Wizard, why do they wish to fight?",
+            "m_picture": "|_Shared|WorldData|GUI/QuestButtons/KM_Z00_CavityChamberVoid.dds",
+            "m_soundFile": "Sound/Dialogue/Dasein_G4_Baby_Ponce_NV-PUERT_002.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1562152,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}

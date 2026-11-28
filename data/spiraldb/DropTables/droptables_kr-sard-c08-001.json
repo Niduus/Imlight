@@ -1,0 +1,20 @@
+{
+  "Name": "KR-SARD-C08-001",
+  "Description": "KR-SARD-C08-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1050,
+  "MaxGold": 1050,
+  "ExperienceAmount": 108480,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "1203277",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

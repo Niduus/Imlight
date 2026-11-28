@@ -1,0 +1,32 @@
+{
+  "Name": "AV-WILD-C02-001",
+  "Description": "AV-WILD-C02-001 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 1730,
+  "MaxGold": 1730,
+  "ExperienceAmount": 60900,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "220314",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220314",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    },
+    {
+      "ItemId": "220292",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

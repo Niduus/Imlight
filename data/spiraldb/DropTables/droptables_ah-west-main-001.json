@@ -1,0 +1,13 @@
+{
+  "Name": "AH-WEST-MAIN-001",
+  "Description": "Ahmarra quest The Sinking City (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 350,
+  "MaxGold": 350,
+  "ExperienceAmount": 43610,
+  "TrainingPoints": 0,
+  "Items": []
+}

@@ -1,0 +1,13 @@
+{
+  "Name": "AR-PostLM-FIRE-ENC-129B",
+  "Description": "WizardCity quest Bugs Dig Doug (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 1725,
+  "MaxGold": 1725,
+  "ExperienceAmount": 250,
+  "TrainingPoints": 0,
+  "Items": []
+}

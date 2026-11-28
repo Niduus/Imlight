@@ -1,0 +1,20 @@
+{
+  "Name": "WC-MAIN-C01-010",
+  "Description": "WC-MAIN-C01-010 (from the game\u0027s own quest file)",
+  "RollChance": 1,
+  "Weight": 100,
+  "NoneChance": 0,
+  "PityCounter": 0,
+  "MinGold": 0,
+  "MaxGold": 0,
+  "ExperienceAmount": 115,
+  "TrainingPoints": 0,
+  "Items": [
+    {
+      "ItemId": "160218",
+      "ItemName": "",
+      "Notes": "",
+      "Requirements": null
+    }
+  ]
+}

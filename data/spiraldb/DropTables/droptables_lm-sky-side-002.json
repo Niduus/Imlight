@@ -1,0 +1,13 @@
+{
+  "Name": "LM-SKY-SIDE-002",
+  "Description": "Lemuria quest Sugar is Bad for You (from Wizard404)",
+  "RollChance": 1.0,
+  "Weight": 100,
+  "NoneChance": 0.0,
+  "PityCounter": 0.0,
+  "MinGold": 14750,
+  "MaxGold": 14750,
+  "ExperienceAmount": 0,
+  "TrainingPoints": 0,
+  "Items": []
+}

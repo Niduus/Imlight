@@ -272,6 +272,31 @@ internal partial class QuestService {
     /// .stuck: every guard runs for the wizard's quests at once (used objects come back, quests with nothing to do move
     /// on, turned-off steps are done or explained), and each quest says what step it is on.
     /// </summary>
+    // A .stuck goes in quest-reports.zip (Game/Tools/QuestReports): each active quest's open step, its count and the spot.
+    private void NoteStuckForReports(Wizard wizard) {
+        try {
+            var steps = new List<(string Quest, string Step, int Count, int Total)>();
+            foreach (var instance in wizard.QuestBehavior.CurrentQuestInstances.ToList()) {
+                var template = CachedQuestTemplates.FirstOrDefault(q => q.m_questName == instance.QuestName);
+                foreach (var progress in instance.GoalProgress ?? []) {
+                    if (!instance.IsGoalActive(progress.GoalName)) {
+                        continue;
+                    }
+
+                    var goal = template?.m_goals?.FirstOrDefault(g => g.m_goalName == progress.GoalName);
+                    steps.Add((instance.QuestName, progress.GoalName, (int) progress.CurrentProgress,
+                        goal is null ? 0 : (int) Imlight.CoreLib.Game.Madlibs.QuestMadlibs.GetGoalTotal(goal)));
+                }
+            }
+
+            var at = GetActiveGameObject()?.m_location;
+            Imlight.CoreLib.Game.Tools.QuestReports.Stuck(wizard, steps, wizard.Zone, at?.X ?? 0, at?.Y ?? 0, at?.Z ?? 0);
+        }
+        catch (Exception e) {
+            Logger.Debug("Quest reports: .stuck snapshot failed: {0}", Logger.Args(e.Message));
+        }
+    }
+
     private void CommandStuck(Wizard wizard) {
         if (!QuestSafety.Enabled) {
             CommandReply("The quest safety guards are switched off on this server ([QuestSafety] Enabled).");
@@ -285,6 +310,7 @@ internal partial class QuestService {
         }
 
         var lines = RepairActiveQuests(wizard, fromCommand: true);
+        NoteStuckForReports(wizard);
         if (restored.Count > 0) {
             lines.Insert(0, $"Brought back for your quests: {string.Join(", ", restored.Select(r => QuestSafety.NameOf(r.TemplateId)).Distinct())} (leave the area and come back if you can't see it).");
         }

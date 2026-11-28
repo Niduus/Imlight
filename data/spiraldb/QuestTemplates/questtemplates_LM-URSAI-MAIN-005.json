@@ -1,0 +1,356 @@
+{
+  "m_questName": "LM-URSAI-MAIN-005",
+  "m_questNameID": 0,
+  "m_questTitle": "Writ At Large",
+  "m_questInfo": null,
+  "m_questPrep": null,
+  "m_questUnderway": null,
+  "m_questComplete": null,
+  "m_startGoals": [
+    "1_WizardQuestGoals00000352"
+  ],
+  "m_goals": [
+    {
+      "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
+      "m_goalNameID": 2559431,
+      "m_goalUnderway": null,
+      "m_hyperlink": null,
+      "m_completeText": null,
+      "m_completeResults": {
+        "m_results": []
+      },
+      "m_goalRequirements": null,
+      "m_tallyCounter": {
+        "m_percentChance": 1.0,
+        "m_descriptor": "the Sacred Writs",
+        "m_descriptor2": "",
+        "m_count": 0,
+        "m_tallyResults": {
+          "m_results": []
+        }
+      },
+      "m_displayImage1": "|_Shared|WorldData|GUI/QuestButtons/EM-ZANA-MAIN-002_1-2.dds",
+      "m_displayImage2": "",
+      "m_clientTags": [],
+      "m_genericEvents": [],
+      "m_autoQualify": false,
+      "m_autoComplete": false,
+      "m_dialogList": null,
+      "m_noQuestHelper": false,
+      "m_destinationZone": "Lemuria/Interiors/LM_Z01_TempleofAnswers",
+      "m_locationName": "Wildlands",
+      "m_goalName": "1_WizardQuestGoals00000352",
+      "m_goalTitle": "WizardQuestGoals_00000352",
+      "m_goalType": "GOAL_TYPE_WAYPOINT",
+      "m_zoneEntry": true,
+      "m_zoneTag": "Lemuria/Interiors/LM_Z01_TempleofAnswers",
+      "m_proximityTag": "",
+      "m_zoneExit": false
+    }
+  ],
+  "m_startResults": {
+    "m_results": []
+  },
+  "m_endResults": {
+    "m_results": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
+        "m_tableName": "LM-URSAI-MAIN-005"
+      }
+    ]
+  },
+  "m_requirements": {
+    "m_requirements": [
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ReqHasEntry, Imcodec.ObjectProperty",
+        "m_entryName": "Complete",
+        "m_displayName": null,
+        "m_isQuestRegistry": true,
+        "m_questName": "LM-URSAI-MAIN-004",
+        "m_applyNOT": false,
+        "m_operator": "ROP_AND"
+      }
+    ],
+    "m_applyNOT": false,
+    "m_operator": "ROP_AND"
+  },
+  "m_prepRequirements": null,
+  "m_pruneRequirements": null,
+  "m_prepAlways": false,
+  "m_clientTags": [],
+  "m_goalLogic": [
+    {
+      "m_goalsAND": [
+        "1_WizardQuestGoals00000352"
+      ],
+      "m_goalsOR": [],
+      "m_goalsToAdd": [],
+      "m_completeQuest": true,
+      "m_requiredORCount": 1
+    }
+  ],
+  "m_questLevel": 1,
+  "m_questRepeat": 0,
+  "m_onStartQuestScript": "",
+  "m_onEndQuestScript": "",
+  "m_dialogList": {
+    "$type": "Imcodec.ObjectProperty.TypeCache.ActorDialogList, Imcodec.ObjectProperty",
+    "m_dialogs": [
+      {
+        "m_dialogTag": "Prep",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "In my defense, it's because those words, in the form of the Sacred Writs, were stolen from us generations ago by... the Ghost Who Squawks.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_024.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "*Gasps!* The very name is terrifying!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_IslanderF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Ursai_Villagers_LM-URSAI_004.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520129,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "So the Ghost is real?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Kodi_LM-URSAI_015.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520126,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "He is. But he is not a Ghost. He is a monster. And his real name is: the Bantam!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_025.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC08_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "*Louder gasps!* That name is slightly less terrifying, but I'm still concerned!",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_IslanderF_A_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Ursai_Villagers_LM-URSAI_005.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520129,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Bantam and his Koolakamba thugs hate everything Ursai Village stands for, especially our relationship with our Founder, the Ol' Boi.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_026.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "The Bantam stole the Sacred Writs and keeps them like a prize in his lair to sever that relationship, to keep us from His words.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_027.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Ursai has miraculously gone generations without botching the Killawahoo Ceremony, but here we are. Now, we need the Sacred Writs for guidance.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_028.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "We're begging you, Wizard. Please rescue the Sacred Writs from the Bantam in the Temple of Truth before the Angry Mountain devours us all.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_029.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          }
+        ]
+      },
+      {
+        "m_dialogTag": "Complete",
+        "m_dialogEntries": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "By the Ol' Boi's boots, you did it! You got the Sacred Writs! Let me have a look at them.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_031.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "'From the mouth of the Old One...' yada yada... 'Lemurs shall be my shepherds...' uh huh... 'thou shalt not eat calamari...' The heck is calamari?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_032.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Anwhoo, let me just find the bit about the Killawahoo... Ah ha! Here we are... Uh huh. Mmhm. Oh. Oh. Oooh.",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_033.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC05_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Well, Juju, what does it say? Does it tell us how to circumvent fiery doom?",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Bear_Islander_C_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Kodi_LM-URSAI_016.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520126,
+            "m_cameraName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.NPCDialogEntry, Imcodec.ObjectProperty",
+            "m_personaName": "LM-URSAI-NPC02_Persona",
+            "m_nameOverride": "",
+            "m_nameSTKey": null,
+            "m_guiDisplay": "",
+            "m_maxTimeSeconds": 0,
+            "m_invisible": false,
+            "m_requirements": null,
+            "m_dialog": "Well...",
+            "m_picture": "|_Shared|WorldData|GUI/NpcPortraits/Lemur_Hierarchs_E_NPC.dds",
+            "m_soundFile": "Sound/Dialogue/LM/Juju_LM-URSAI_034.mp3",
+            "m_action": "",
+            "m_dialogEvent": "",
+            "m_actorTemplateID": 1520123,
+            "m_cameraName": ""
+          }
+        ]
+      }
+    ]
+  },
+  "m_missionDoors": [],
+  "m_dynaMods": [],
+  "m_isHidden": false,
+  "m_outdated": false,
+  "m_noQuestHelper": false,
+  "m_mainline": true,
+  "m_activityType": "ACTIVITY_NotActivity"
+}
