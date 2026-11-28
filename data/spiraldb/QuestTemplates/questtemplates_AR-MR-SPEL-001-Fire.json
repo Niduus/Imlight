@@ -462,7 +462,9 @@
         "MR_Zuliman_Chest",
         "DS_GoldChest"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "MR_Zuliman_Chest"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z04_MottomanTreasureCave",

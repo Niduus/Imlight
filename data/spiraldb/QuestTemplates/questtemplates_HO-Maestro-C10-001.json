@@ -277,6 +277,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300230",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_M_wizard_military_3BLUE.dds",
       "m_displayImage2": "",
@@ -654,6 +657,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300233",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_YoungDrake_A_NPC.dds",
       "m_displayImage2": "",
@@ -1098,6 +1104,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300236",
       "m_displayImage1": "GUI/NpcPortraits/Human_YoungMalistaire_NPC.dds",
       "m_displayImage2": "",
@@ -1475,6 +1484,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300224",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_The_Professor.dds",
       "m_displayImage2": "",
@@ -1582,6 +1594,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300237",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_M_wizard_military_1BLUE.dds",
       "m_displayImage2": "",
@@ -1758,6 +1773,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300224",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_The_Professor.dds",
       "m_displayImage2": "",
@@ -2396,6 +2414,13 @@
             "$type": "Imcodec.ObjectProperty.TypeCache.ResToggleQuestEffect, Imcodec.ObjectProperty",
             "m_addEffect": false,
             "m_effectName": "Malistaire"
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7238679,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
@@ -3372,6 +3397,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300237",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_M_wizard_military_1BLUE.dds",
       "m_displayImage2": "",
@@ -4272,6 +4300,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1300224",
       "m_displayImage1": "GUI/NpcPortraits/Art_Portrait_The_Professor.dds",
       "m_displayImage2": "",

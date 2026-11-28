@@ -615,6 +615,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_locationName": "ZoneLocName_1240220",
       "m_displayImage1": "GUI/NpcPortraits/Portrait_LadyoftheLake_A_NPC.dds",
       "m_displayImage2": "",
@@ -1473,6 +1476,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {
@@ -1482,6 +1488,15 @@
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
         "m_tableName": "KR-SARD-C08-001",
         "m_maxRolls": 0
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 1203277,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": ""
       }
     ]
   },

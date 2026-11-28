@@ -664,7 +664,9 @@
         "ZF_Egg_Clutch",
         "CL_Egg_Clutch"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_EggClutch_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z07_I07_PoachersHome",
@@ -891,7 +893,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

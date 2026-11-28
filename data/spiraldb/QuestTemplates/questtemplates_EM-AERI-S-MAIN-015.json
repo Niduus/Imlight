@@ -55,7 +55,9 @@
         "EM-Pod",
         "EM-DisguisePod"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-DisguisePod"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z00_Aeriel_HUB",

@@ -93,7 +93,9 @@
       "m_clientTags": [
         "KR-Pollen"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-CollectPollen"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",

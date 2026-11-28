@@ -449,7 +449,9 @@
       "m_clientTags": [
         "DS_Cistern"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GetQuintessenceofFear"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "DragonSpire/DS_A2_Battle/Interiors/DS_Necropolis_Crypt3",

@@ -298,7 +298,9 @@
         "AZ-BrokenStatue_Head",
         "AZ-BrokenStatue_Fixed"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-BrokenStatue_Fixed_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z00_Zocalo",

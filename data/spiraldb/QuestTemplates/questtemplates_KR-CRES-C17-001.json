@@ -706,7 +706,9 @@
         "KR-SeaWeedBait",
         "KR-SeaWeedBait-Object"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-SeaWeedBait"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z06_CrescentBeach",
@@ -750,7 +752,9 @@
         "KR-SeaWeedBait",
         "KR-SeaWeedBait-Object"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-SeaWeedBait"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z06_CrescentBeach",

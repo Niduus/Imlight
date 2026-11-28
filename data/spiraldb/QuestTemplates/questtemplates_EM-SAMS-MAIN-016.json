@@ -41,7 +41,9 @@
       "m_clientTags": [
         "EM-DeathLichen"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-DeathLichen"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z14_ChaosJungle",
@@ -477,7 +479,9 @@
       "m_clientTags": [
         "EM-DeathLichen"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-DeathLichen"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/Interiors/EM_Z14_FeralClearing",

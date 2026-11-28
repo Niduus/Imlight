@@ -45,7 +45,9 @@
         "AV-HangingBridgeObject",
         "AV-HangingBridge_StateObject-Test"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-HangingBridge"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z04_TheWild",

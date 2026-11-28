@@ -53,9 +53,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z05_Armory",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume-Room1Entry",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -430,9 +430,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z05_Armory",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume-Room2",
       "m_zoneExit": false,
       "m_goalName": "4_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

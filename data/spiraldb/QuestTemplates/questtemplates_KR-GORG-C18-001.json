@@ -323,9 +323,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Khrysalis/Interiors/KR_Z04_I06_DyingSunTower",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_ActiasTaunt",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoals00000165",
       "m_goalNameID": 0,
@@ -798,7 +798,38 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-QuestLight-Umbra_DyingSun",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-QuestLight-Umbra_DyingSun",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "On",
+            "m_zoneName": "Khrysalis/KR_Z04_TyrianGorge",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-TyrianGorge-NPC05DyvimTyrian",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "KR-TyrianGorge-NPC05DyvimTyrian",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Khrysalis/KR_Z04_TyrianGorge",
+            "m_bShowsObject": true,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -815,7 +846,9 @@
       "m_clientTags": [
         "KR-Shadow-Self-Projector"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-GORG-C18-001ShadowSelf"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z04_I06_DyingSunTower",

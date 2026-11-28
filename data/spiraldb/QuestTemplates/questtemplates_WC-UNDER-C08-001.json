@@ -41,7 +41,9 @@
       "m_clientTags": [
         "WC-TU-BatteryPieces"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "WC-UNDER-Storm-Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_Triton_Underwater/WC_Triton_Warren01",

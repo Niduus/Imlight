@@ -135,7 +135,9 @@
         "AV-OUTER-PomTree-StateObject-Test",
         "AV-OUTER-PomTree"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-YARD-C05-002Pom"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z07_OuterYard",

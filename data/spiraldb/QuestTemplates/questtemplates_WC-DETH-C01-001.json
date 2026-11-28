@@ -41,7 +41,9 @@
       "m_clientTags": [
         "WC_Invisible_Usable_Object"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CinematicComplete"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_HauntedCave",
@@ -114,7 +116,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

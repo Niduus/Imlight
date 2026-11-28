@@ -22,13 +22,7 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": [
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
-            "m_eventName": "TowerOne",
-            "m_subEventName": ""
-          }
-        ]
+        "m_results": []
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -233,7 +227,9 @@
         "DecayBook",
         "Ddl_WC_SC_Tower01"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "DecayBook"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "",

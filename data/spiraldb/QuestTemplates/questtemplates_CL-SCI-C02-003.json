@@ -66,7 +66,9 @@
         "CL-TeslaTower3b",
         "CL-TeslaTower4b"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_TeslaTower_Used04b"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -214,7 +216,9 @@
         "CL-TeslaTower3b",
         "CL-TeslaTower4b"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_TeslaTower_Used02b"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -281,7 +285,9 @@
         "CL-TeslaTower3b",
         "CL-TeslaTower4b"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_TeslaTower_Used03b"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z09_Science_Center",
@@ -313,18 +319,7 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": [
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
-            "m_dynaModClientTag": "CL-TeslaTower1b instance",
-            "m_dynaModRemove": false,
-            "m_useQuestAsOriginator": false,
-            "m_dynaModState": "On",
-            "m_zoneName": "Celestia/CL_Z09_Science_Center",
-            "m_bShowsObject": false,
-            "m_persist": false
-          }
-        ]
+        "m_results": []
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

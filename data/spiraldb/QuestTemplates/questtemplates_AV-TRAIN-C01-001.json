@@ -52,7 +52,9 @@
       "m_clientTags": [
         "AV-MissingScroll-1"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MissingScroll-1"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z04_TheWild",
@@ -105,7 +107,9 @@
       "m_clientTags": [
         "AV-MissingScroll-2"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MissingScroll-2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z04_TheWild",
@@ -158,7 +162,9 @@
       "m_clientTags": [
         "AV-MissingScroll-3"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MissingScroll-3"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z04_TheWild",
@@ -211,7 +217,9 @@
       "m_clientTags": [
         "AV-MissingScroll-4"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MissingScroll-4"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",
@@ -264,7 +272,9 @@
       "m_clientTags": [
         "AV-MissingScroll-5"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-MissingScroll-5"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",

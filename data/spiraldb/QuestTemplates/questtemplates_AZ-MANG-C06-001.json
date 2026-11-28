@@ -888,7 +888,9 @@
       "m_clientTags": [
         "AZ_Humungo_Egg"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ_Avian_Egg_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z02_Mine04",

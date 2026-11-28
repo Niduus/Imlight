@@ -41,7 +41,9 @@
       "m_clientTags": [
         "AZ-ZULTUN-OBJ-LOSTCHARM"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-LostCharms"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/AZ_Z05_ZultunDock",

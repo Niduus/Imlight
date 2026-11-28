@@ -24,7 +24,58 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResTeleport, Imcodec.ObjectProperty",
+            "m_destinationLoc": "Target location",
+            "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
+            "m_exitTeleporter": 0,
+            "m_teleporterTag": 0,
+            "m_teleportType": "TELEPORT_STATIC",
+            "m_transitionID": 0
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "PL-WAL-DancingBear",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Polaris/Interiors/Z00_I02_OperaHouse_Dressingroom",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddElixir, Imcodec.ObjectProperty",
+            "m_sourceType": "QuestAddElixir",
+            "m_templateID": 1217900
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResEmote, Imcodec.ObjectProperty",
+            "m_emoteName": "Cast",
+            "m_emoteState": "ActionEmoting",
+            "m_loop": false,
+            "m_particleAsset": "",
+            "m_particleNode": "",
+            "m_personaName": "",
+            "m_soundAsset": "",
+            "m_usePersona": false,
+            "m_useTarget": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPlaySound, Imcodec.ObjectProperty",
+            "m_router": {
+              "m_locX": 0,
+              "m_locY": 0,
+              "m_locZ": 0,
+              "m_routingType": "ROUTING_ACTOR",
+              "m_useLocation": false,
+              "m_useTriggerLocation": false
+            },
+            "m_soundName": "Magical_Whoosh",
+            "m_blocking": true,
+            "m_reinteractTime": 0
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -41,7 +92,9 @@
       "m_clientTags": [
         "PL-WAL-DancingBear"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PL-WAL-DancingBear"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_Operahouse_Dressingroom",
@@ -753,7 +806,9 @@
       "m_clientTags": [
         "PL-WAL-EmpressPillow"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PL-WAL-EmpressPillow"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
@@ -1246,7 +1301,38 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResTeleport, Imcodec.ObjectProperty",
+            "m_destinationLoc": "CenterStage",
+            "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",
+            "m_exitTeleporter": 0,
+            "m_teleporterTag": 0,
+            "m_teleportType": "TELEPORT_STATIC",
+            "m_transitionID": 0
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResEmote, Imcodec.ObjectProperty",
+            "m_emoteName": "Dance",
+            "m_emoteState": "ActionEmoting",
+            "m_loop": false,
+            "m_particleAsset": "",
+            "m_particleNode": "",
+            "m_personaName": "",
+            "m_soundAsset": "",
+            "m_usePersona": false,
+            "m_useTarget": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResWizPlayMusic, Imcodec.ObjectProperty",
+            "m_musicName": "PL_DanceSequence_Clumsy",
+            "m_fadeTime": 3,
+            "m_flagA": false,
+            "m_flagB": false,
+            "m_flagC": false,
+            "m_startDelay": 0
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -1263,7 +1349,9 @@
       "m_clientTags": [
         "PL-WAL-CenterStage"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PL-WAL-CenterStage"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Polaris/Interiors/PL_Z00_OperaHouse",

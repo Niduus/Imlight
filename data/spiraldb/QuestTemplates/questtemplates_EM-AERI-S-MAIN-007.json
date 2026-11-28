@@ -266,9 +266,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Empyrea/EM_Z01_Jungle",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume EM-AERI-S-MAIN-007",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoals00000165",
       "m_goalNameID": 0,

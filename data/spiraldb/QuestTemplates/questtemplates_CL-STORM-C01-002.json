@@ -57,7 +57,9 @@
       "m_clientTags": [
         "CL-MoonDial"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-STORM-C01-002MoonDialUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z07_Storm_Lord_Temple",
@@ -163,13 +165,7 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": [
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
-            "m_dynaModClientTag": "CL-KrakenObject",
-            "m_useQuestAsOriginator": false
-          }
-        ]
+        "m_results": []
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

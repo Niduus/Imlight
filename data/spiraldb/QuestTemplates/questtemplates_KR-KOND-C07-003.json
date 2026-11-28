@@ -444,9 +444,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Khrysalis/KR_Z10_KondhaDesert",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_KR-KOND-C07-003Goal03Volume",
       "m_zoneExit": false,
       "m_goalName": "4_WizardQuestGoals00000165",
       "m_goalNameID": 0,

@@ -41,7 +41,9 @@
       "m_clientTags": [
         "CL-SeaFoam-Crystal"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Use_SeaFoam"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z05_The_Floating_Land",
@@ -93,7 +95,9 @@
       "m_clientTags": [
         "CL-StormLordAltar"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-LAND-C01-002UseStormAltar"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z05_The_Floating_Land",

@@ -651,7 +651,28 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "MR_Dunes_Bridge instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Finished",
+            "m_zoneName": "Arcanum/Interiors/AR_Dunes",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AR_SandBridge_Collision",
+            "m_dynaModRemove": true,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Arcanum/Interiors/AR_Dunes",
+            "m_bShowsObject": false,
+            "m_persist": false
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -668,7 +689,9 @@
       "m_clientTags": [
         "AR-ChasmObject"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AR-ChasmObject"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Arcanum/Interiors/AR_Dunes",
@@ -1096,7 +1119,41 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": []
+        "m_results": [
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AR-PortalFromSandSea instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "",
+            "m_zoneName": "Arcanum/Interiors/AR_Dunes",
+            "m_bShowsObject": true,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AR-PortalToSandSea instance",
+            "m_useQuestAsOriginator": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResAddDynaMod, Imcodec.ObjectProperty",
+            "m_dynaModClientTag": "AR-WorldDoorFake instance",
+            "m_dynaModRemove": false,
+            "m_useQuestAsOriginator": false,
+            "m_dynaModState": "Active",
+            "m_zoneName": "Arcanum/Interiors/AR_Dunes",
+            "m_bShowsObject": false,
+            "m_persist": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
+            "m_eventName": "FinishIt",
+            "m_subEventName": ""
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResMarkZoneNoWarn, Imcodec.ObjectProperty"
+          }
+        ]
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -1114,7 +1171,9 @@
         "AR-WorldDoorFake",
         "AR-WorldDoorFake02"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AR-WorldDoorFake"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Arcanum/Interiors/AR_Dunes",

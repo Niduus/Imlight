@@ -441,7 +441,9 @@
       "m_clientTags": [
         "KR-PhoenixKey"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "Event-KR-PhoenixKey"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z07_I06_PhoenixBot",
@@ -816,7 +818,9 @@
       "m_clientTags": [
         "KR-PhoenixEgg"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "Event-KR-PhoenixEgg"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z07_I07_PhoenixTop",

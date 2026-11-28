@@ -24,6 +24,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "WizQst16B0A9_00000025",
@@ -59,6 +62,9 @@
       "m_goalUnderway": "",
       "m_hyperlink": "",
       "m_completeText": "",
+      "m_completeResults": {
+        "m_results": []
+      },
       "m_tallyCounter": {
         "m_percentChance": 100,
         "m_descriptor": "",
@@ -1990,7 +1996,7 @@
                   "m_picture": "GUI/NpcPortraits/Portrait_Human_DSCrusader_B_MOB.dds",
                   "m_soundFile": "|Sound_Dialogue_CAT|WorldData|Sound/Dialogue/SquireGreggor_CAT_01.mp3",
                   "m_action": "",
-                  "m_dialogEvent": "",
+                  "m_dialogEvent": "Greggor_StopMusic",
                   "m_actorTemplateID": 0,
                   "m_cameraName": "LOCATION",
                   "m_interpolationDuration": 2,
@@ -2729,12 +2735,24 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResDropTable, Imcodec.ObjectProperty",
         "m_tableName": "WC-CATA-ENC-002",
         "m_maxRolls": 0
+      },
+      {
+        "$type": "Imcodec.ObjectProperty.TypeCache.ResItemLoot, Imcodec.ObjectProperty",
+        "m_itemTemplateID": 1479459,
+        "m_ignoreBankLimit": false,
+        "m_zoneLevelMin": 0,
+        "m_zoneLevelMax": 0,
+        "m_sendLootMessage": false,
+        "m_sourceType": ""
       }
     ]
   },

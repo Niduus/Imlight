@@ -210,7 +210,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal00BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z01i1_Survey_Camp",
@@ -421,7 +423,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal01BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z02i1_Crab_Realm",
@@ -632,7 +636,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal02BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z03i1_District_of_the_Stars",
@@ -843,7 +849,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal03BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z04_Temple_Of_The_Stars",
@@ -1054,7 +1062,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal04BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z05i4_FloatingLand",
@@ -1265,7 +1275,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal05BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z06i1_StormHaven",
@@ -1476,7 +1488,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal06BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z07i1_Storm_Lord_Temple",
@@ -1687,7 +1701,9 @@
         "CL_ZodiacTome_Loom",
         "CL_ZodiacTome_Messenger"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal07BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z08_Temple_Of_The_Moon/MoonC2",
@@ -1906,7 +1922,9 @@
         "CL_ZodiacTome_Stag",
         "CL_ZodiacTome_Warden"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal08BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z09i1_Science_Center",
@@ -2125,7 +2143,9 @@
         "CL_ZodiacTome_Stag",
         "CL_ZodiacTome_Warden"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal09BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/Interiors/CL_Z10i3_Kingdom_Of_The_Crabs",
@@ -2344,7 +2364,9 @@
         "CL_ZodiacTome_Stag",
         "CL_ZodiacTome_Warden"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal10BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z11_Temple_Of_The_Sun",
@@ -2563,7 +2585,9 @@
         "CL_ZodiacTome_Stag",
         "CL_ZodiacTome_Warden"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-MAIN-C02-001Goal11BookUse"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z12_Test_of_the_Spheres/MoonRoom",

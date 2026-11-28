@@ -229,7 +229,9 @@
         "CL_Teleporter_Stars",
         "CL_HubTeleporter"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Teleporter_Stars_Used"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Hub",
@@ -475,7 +477,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

@@ -745,7 +745,9 @@
       "m_clientTags": [
         "AZ-ConchShell"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AZ-ConchShell"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Azteca/Interiors/AZ_Z11_Butterfly_Shrine",
@@ -1109,7 +1111,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

@@ -22,15 +22,7 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": [
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyEntry, Imcodec.ObjectProperty",
-            "m_questName": "",
-            "m_entryName": "QT-SPH5-C02-002",
-            "m_isQuestRegistry": false,
-            "m_value": 0
-          }
-        ]
+        "m_results": []
       },
       "m_tallyCounter": {
         "m_percentChance": 1,
@@ -389,7 +381,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",

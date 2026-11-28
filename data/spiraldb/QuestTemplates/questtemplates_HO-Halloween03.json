@@ -378,7 +378,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResTimeStampEntry, Imcodec.ObjectProperty",

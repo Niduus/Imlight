@@ -1237,7 +1237,9 @@
       "m_clientTags": [
         "KR-HornedCrown"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-HornedCrown"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/Interiors/KR_Z08_I06_Dreamroom1",

@@ -41,7 +41,9 @@
       "m_clientTags": [
         "PA_Pegasus_Chow"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA_Pegasus_Chow-Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/PA_Z01_Pegasus",
@@ -257,7 +259,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

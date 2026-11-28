@@ -64,7 +64,9 @@
         "AV-Bell-StateObject-Test",
         "AV-Bell"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-Bell"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z02_HighRoad",
@@ -1331,7 +1333,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       },
       {
         "$type": "Imcodec.ObjectProperty.TypeCache.ResAddTreasureSpell, Imcodec.ObjectProperty"

@@ -40,7 +40,9 @@
       "m_clientTags": [
         "UnicornPumpkin"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "UnicornPumpkin"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_Unicorn",

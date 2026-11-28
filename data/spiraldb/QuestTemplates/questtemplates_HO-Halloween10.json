@@ -41,7 +41,9 @@
         "GetGhostPink",
         "DDl_WC_FA_PinkGhost"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotGhostPink"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Streets/WC_Firecat",

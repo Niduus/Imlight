@@ -43,6 +43,20 @@
             "m_activate": true,
             "templateID": 0,
             "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 5704592,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 6763260,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -530,6 +544,20 @@
             "m_activate": true,
             "templateID": 0,
             "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 5704607,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 6763262,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },
@@ -723,6 +751,13 @@
             "m_broadcastToZone": false,
             "m_displayInQuestList": true,
             "m_oneShot": false
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 5704614,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           },
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
@@ -3432,6 +3467,9 @@
       "m_behaviors": []
     }
   ],
+  "m_startResults": {
+    "m_results": []
+  },
   "m_endResults": {
     "m_results": [
       {

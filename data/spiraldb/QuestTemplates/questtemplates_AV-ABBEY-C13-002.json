@@ -84,7 +84,9 @@
         "AV-TapestryPiece06",
         "AV-Tapestry"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-Tapestry"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z01_KnightsHall",

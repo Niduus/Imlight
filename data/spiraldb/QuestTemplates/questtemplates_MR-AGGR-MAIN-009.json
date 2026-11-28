@@ -323,9 +323,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z02_TheRoost",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_MR-AGGR-MAIN-009_Goal02",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -592,9 +592,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z02_TheRoost02",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_MR-AGGR-MAIN-009Gaol04",
       "m_zoneExit": false,
       "m_goalName": "5_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

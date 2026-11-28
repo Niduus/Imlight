@@ -249,20 +249,7 @@
       "m_hyperlink": "",
       "m_completeText": "",
       "m_completeResults": {
-        "m_results": [
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResModifyEntry, Imcodec.ObjectProperty",
-            "m_questName": "WC-ST07-C03-001",
-            "m_entryName": "QT-WC-ST07-Gate2",
-            "m_isQuestRegistry": true,
-            "m_value": 1
-          },
-          {
-            "$type": "Imcodec.ObjectProperty.TypeCache.ResPostEvent, Imcodec.ObjectProperty",
-            "m_eventName": "SecondGate",
-            "m_subEventName": ""
-          }
-        ]
+        "m_results": []
       },
       "m_tallyCounter": {
         "m_percentChance": 1,

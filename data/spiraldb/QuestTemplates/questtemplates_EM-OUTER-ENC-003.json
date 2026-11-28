@@ -675,6 +675,20 @@
           {
             "$type": "Imcodec.ObjectProperty.TypeCache.ResRemoveTriggerObject, Imcodec.ObjectProperty",
             "m_triggerObjName": "EM-IndustrialFixture-CollisionBlocker instance"
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7574761,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
+          },
+          {
+            "$type": "Imcodec.ObjectProperty.TypeCache.ResSpawn, Imcodec.ObjectProperty",
+            "m_spawnID": 7574764,
+            "m_activate": true,
+            "templateID": 0,
+            "nodes": []
           }
         ]
       },

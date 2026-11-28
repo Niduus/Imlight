@@ -52,7 +52,9 @@
       "m_clientTags": [
         "CL-MagicObject"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-DIST-C02-001UseMagicObject"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
@@ -253,7 +255,9 @@
       "m_clientTags": [
         "CL-WarObject"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-DIST-C02-001UseWarObject"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
@@ -454,7 +458,9 @@
       "m_clientTags": [
         "CL-DeviceObject"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-DIST-C02-001UseDeviceObject"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",
@@ -655,7 +661,9 @@
       "m_clientTags": [
         "CL-AncientPedestal"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-DIST-C02-001UseAncientPedestal"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z03_District_Of_The_Stars",

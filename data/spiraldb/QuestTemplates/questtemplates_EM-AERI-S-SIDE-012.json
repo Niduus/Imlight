@@ -45,7 +45,9 @@
         "EM-Debris02",
         "EM-Debris03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "EM-Debris"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Empyrea/EM_Z01_Jungle",
@@ -235,7 +237,7 @@
         "m_zoneLevelMin": 0,
         "m_zoneLevelMax": 0,
         "m_sendLootMessage": false,
-        "m_sourceType": "QuestItemLoot"
+        "m_sourceType": ""
       }
     ]
   },

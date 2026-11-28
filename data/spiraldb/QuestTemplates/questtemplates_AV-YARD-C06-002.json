@@ -325,7 +325,9 @@
       "m_clientTags": [
         "AV-OUTER-Lever"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV-YARD-C06-002Lever"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/Interiors/AV_Z07_TowerOverlook",

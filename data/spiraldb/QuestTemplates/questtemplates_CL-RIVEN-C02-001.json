@@ -41,7 +41,9 @@
       "m_clientTags": [
         "CL-MedallionPiece"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL-RIVEN-C02-001MedallionGet"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Z06_StormHaven",

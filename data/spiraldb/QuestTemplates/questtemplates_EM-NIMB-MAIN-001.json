@@ -134,9 +134,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Empyrea/EM_Z07_NimbusCitadel",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume-DamagedCommsDevice",
       "m_zoneExit": false,
       "m_goalName": "2_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,

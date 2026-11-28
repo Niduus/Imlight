@@ -462,9 +462,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z03_BuriedGardens",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume MR-CATE-MAIN-007_Goal02",
       "m_zoneExit": false,
       "m_goalName": "3_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -844,9 +844,9 @@
     },
     {
       "$type": "Imcodec.ObjectProperty.TypeCache.WaypointGoalTemplate, Imcodec.ObjectProperty",
-      "m_zoneEntry": true,
+      "m_zoneEntry": false,
       "m_zoneTag": "Mirage/Interiors/MR_Z03_BuriedGardens",
-      "m_proximityTag": "",
+      "m_proximityTag": "Enter_Activator Volume MR-CATE-MAIN-007_Goal04",
       "m_zoneExit": false,
       "m_goalName": "5_WizardQuestGoalsExploreZone",
       "m_goalNameID": 0,
@@ -1224,7 +1224,9 @@
       "m_clientTags": [
         "MR_Chronoshard_Agouti"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "MR_Chronoshard_Agouti"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z03_BuriedGardens",
@@ -1567,7 +1569,9 @@
       "m_clientTags": [
         "MR_Chronoshard_Agouti_Dais"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "MR_Chronoshard_Agouti_Dais"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Mirage/Interiors/MR_Z03_TabbiManor",

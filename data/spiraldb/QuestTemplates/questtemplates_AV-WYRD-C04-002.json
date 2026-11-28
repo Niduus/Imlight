@@ -41,7 +41,9 @@
       "m_clientTags": [
         "AV_Raven_Feathers"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "AV_Raven_Feather_Found"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Avalon/AV_Z05_TheWyrd",

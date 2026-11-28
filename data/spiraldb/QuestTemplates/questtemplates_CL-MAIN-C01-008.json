@@ -203,7 +203,9 @@
       "m_clientTags": [
         "CL_Astrolabe"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "CL_Use_AstroLabe_03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Celestia/CL_Hub",

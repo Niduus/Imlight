@@ -524,7 +524,9 @@
       "m_clientTags": [
         "PA-MagicTextbook"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "PA-SIDE-C03Text"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Wysteria/Interiors/PA_Library_Archive",

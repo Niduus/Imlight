@@ -589,7 +589,9 @@
         "KR-BurningBeeHouse3",
         "KR-BurningBeeHouse4"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-PutOutFire1"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
@@ -648,7 +650,9 @@
         "KR-BurningBeeHouse3",
         "KR-BurningBeeHouse4"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-PutOutFire2"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
@@ -707,7 +711,9 @@
         "KR-BurningBeeHouse3",
         "KR-BurningBeeHouse4"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-PutOutFire3"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",
@@ -766,7 +772,9 @@
         "KR-BurningBeeHouse3",
         "KR-BurningBeeHouse4"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "KR-PutOutFire4"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Khrysalis/KR_Z02_MoonCliffs",

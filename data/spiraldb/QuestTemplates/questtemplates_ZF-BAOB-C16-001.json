@@ -227,7 +227,9 @@
       "m_clientTags": [
         "ZF-Library_Book"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "ZF_Library_Book"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "Zafaria/Interiors/ZF_Z01_I02_Library_Classroom",

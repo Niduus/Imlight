@@ -56,7 +56,9 @@
         "BobForApple03",
         "DDl_WC_RW_Tub03"
       ],
-      "m_genericEvents": [],
+      "m_genericEvents": [
+        "GotApple03"
+      ],
       "m_autoQualify": true,
       "m_autoComplete": false,
       "m_destinationZone": "WizardCity/WC_Ravenwood",
