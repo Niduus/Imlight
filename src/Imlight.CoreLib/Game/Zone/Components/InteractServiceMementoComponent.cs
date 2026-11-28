@@ -807,9 +807,13 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
         var npcIconOrDefault = string.IsNullOrEmpty(highestPriority?.NpcIcon)
             ? gameObjTemplate?.m_sIcon.ToString()
             : highestPriority.NpcIcon;
-        var npcNameKeyOrDefault = string.IsNullOrEmpty(highestPriority?.NpcNameKey)
-            ? DEFAULT_NAME_KEY
-            : highestPriority.NpcNameKey;
+        // The picture the object's own file gives its prompt (Milaka's crystal, a Crystal Sample, a Flax node), when
+        // nothing else gives one (TemplatePromptText).
+        if (string.IsNullOrEmpty(npcIconOrDefault) && gameObjTemplate is not null) {
+            npcIconOrDefault = TemplatePromptText.Icon(gameObjTemplate.m_templateID);
+        }
+
+        var npcNameKeyOrDefault = PromptNameKey(highestPriority?.NpcNameKey, gameObjTemplate);
         // Only a person is talked to: a lever, chest or portal with no text of its own says "to Interact", as live.
         var isPerson = gameObjTemplate?.m_behaviors?.OfType<NPCBehaviorTemplate>().Any() ?? true;
         var npcTextKeyOrDefault = string.IsNullOrEmpty(highestPriority?.NpcTextKey)
@@ -823,6 +827,30 @@ internal sealed class InteractServiceMementoComponent(ZoneEntity entity)
             m_serviceOptions = allOptions,
             m_personaMadlibs = _madlibBlock
         };
+    }
+
+    /// <summary>
+    /// The prompt's name. A service that names the object by its template's plain name (or by nothing) gives way to
+    /// the name the zone file gives this placed object (Crystal Grove's hub stones "To Chronius' Tower", "To Spider
+    /// Hive", "To Spiderkeeper's Tower" and its street stones "To Teleport Hub", which all said "Teleport Stone"), then
+    /// to the title the object's own file gives its prompt (Milaka's crystal "Milaka Jewelbender", which had no name).
+    /// A service with a name of its own (a sigil's dungeon, a custom stone) keeps it.
+    /// </summary>
+    private string PromptNameKey(string serviceKey, GameObjectTemplate template) {
+        var plainName = (string) template?.m_displayName;
+        if (!string.IsNullOrEmpty(serviceKey) && !string.Equals(serviceKey, plainName, StringComparison.Ordinal)) {
+            return serviceKey;
+        }
+
+        if (Imlight.CoreLib.Shared.Resources.CoreObjectFactory.OverrideNameKey(Entity.Info) is { } placedName) {
+            return placedName;
+        }
+
+        if (template is not null && TemplatePromptText.Title(template.m_templateID) is { Length: > 0 } title) {
+            return title;
+        }
+
+        return string.IsNullOrEmpty(serviceKey) ? DEFAULT_NAME_KEY : serviceKey;
     }
 
     private void SetMadLibBlock() {
